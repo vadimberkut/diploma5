@@ -120,7 +120,8 @@
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
     <Compile Include="ImageHelper.cs" />
-    <Compile Include="Models\ChannelAverageResult.cs" />
+    <Compile Include="Models\BgrChannelAverageResult.cs" />
+    <Compile Include="Models\LabChannelAverageResult.cs" />
     <Compile Include="Models\ShadowDetectionLabParams.cs" />
     <Compile Include="Models\ShadowDetectionMSParams.cs" />
     <Compile Include="Program.cs" />

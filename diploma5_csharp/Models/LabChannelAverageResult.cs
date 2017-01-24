@@ -1,6 +1,6 @@
 ﻿namespace diploma5_csharp.Models
 {
-    public class ChannelAverageResult
+    public class LabChannelAverageResult
     {
         public double L { get; set; }
         public double A { get; set; }

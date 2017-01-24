@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using diploma5_csharp.Models;
 using Emgu.CV;
 using Emgu.CV.CvEnum;
+using Emgu.CV.Features2D;
 using Emgu.CV.Structure;
 
 namespace diploma5_csharp
@@ -108,6 +110,55 @@ namespace diploma5_csharp
 
             return shadowMask;
 
+        }
+
+        public Image<Emgu.CV.Structure.Bgr, Byte> RemoveUsingAditiveMethod(Image<Bgr, Byte> image, Image<Gray, Byte> shadowMask)
+        {
+            //Image<Bgr, Byte> result = new Image<Bgr, byte>(image.Size);
+            Image<Bgr, Byte> result = image.Clone();
+
+            SplittedByMask<BgrChannels> splited = ImageHelper.SplitImageByMask(image, shadowMask);
+
+            List<double> lightAvg = StatisticsHelper.Average(new List<double[]>() { splited.Out.B, splited.Out.G, splited.Out.R });
+            List<double> shadowAvg = StatisticsHelper.Average(new List<double[]>() { splited.In.B, splited.In.G, splited.In.R });
+
+            double diffB = lightAvg[0] - shadowAvg[0];
+            double diffG = lightAvg[1] - shadowAvg[1];
+            double diffR = lightAvg[2] - shadowAvg[2];
+
+            for (int i = 0; i < image.Rows; i += 1)
+            {
+                for (int j = 0; j < image.Cols; j += 1)
+                {
+                    Bgr color = image[i, j];
+                    Gray maskColor = shadowMask[i, j];
+
+                    if(maskColor.Intensity == 255)
+                        result[i, j] = new Bgr(color.Blue + diffB, color.Green + diffG, color.Red + diffR);
+                }
+            }
+
+            return result;
+        }
+
+        public Image<Emgu.CV.Structure.Bgr, Byte> RemoveUsingBasicLightModelMethod(Image<Bgr, Byte> image)
+        {
+            return image;
+        }
+
+        public Image<Emgu.CV.Structure.Bgr, Byte> RemoveUsingCombinedMethod(Image<Bgr, Byte> image)
+        {
+            return image;
+        }
+
+        public Image<Emgu.CV.Structure.Bgr, Byte> RemoveUsingLabMethod(Image<Bgr, Byte> image)
+        {
+            return image;
+        }
+
+        public Image<Emgu.CV.Structure.Bgr, Byte> RemoveUsingConstantMethod(Image<Bgr, Byte> image)
+        {
+            return image;
         }
     }
 }

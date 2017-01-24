@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace diploma5_csharp
 {
@@ -14,6 +16,12 @@ namespace diploma5_csharp
             average /= data.Length;
             return average;
         }
+
+        public static List<double> Average(List<double[]> data)
+        {
+            return data.Select(Average).ToList();
+        }
+
         public static double StandartDeviation(double[] data)
         {
             double stdDevL = 0;

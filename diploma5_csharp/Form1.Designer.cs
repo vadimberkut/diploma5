@@ -214,6 +214,7 @@
             this.buttonShadowRemovalAditiveMethod.TabIndex = 15;
             this.buttonShadowRemovalAditiveMethod.Text = "Aditive";
             this.buttonShadowRemovalAditiveMethod.UseVisualStyleBackColor = true;
+            this.buttonShadowRemovalAditiveMethod.Click += new System.EventHandler(this.buttonShadowRemovalAditiveMethod_Click);
             // 
             // buttonShadowRemovalConstantMethod
             // 

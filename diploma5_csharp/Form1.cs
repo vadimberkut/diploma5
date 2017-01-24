@@ -244,6 +244,13 @@ namespace diploma5_csharp
 
 
         //SHADOW REMOVAL
+        private void buttonShadowRemovalAditiveMethod_Click(object sender, EventArgs e)
+        {
+            var result = _appState.Shadow.RemoveUsingAditiveMethod(_appState.InputImageBgr, _appState.ShadowMaskImageGray);
+            _appState.SetOutputImage(result);
+            this.DisplayImageInPictureBox(pictureBox3, result.Bitmap);
+        }
+
 
         //FOG
 
@@ -253,5 +260,7 @@ namespace diploma5_csharp
         {
 
         }
+
+        
     }
 }

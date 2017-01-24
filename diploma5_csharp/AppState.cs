@@ -29,5 +29,9 @@ namespace diploma5_csharp
         {
             this.ShadowMaskImageGray = inputImage;
         }
+        public void SetOutputImage(Image<Bgr, byte> image)
+        {
+            this.OutputImageBgr = image;
+        }
     }
 }

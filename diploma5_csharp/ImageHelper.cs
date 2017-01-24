@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Accord.Math;
 using diploma5_csharp.Models;
 using Emgu.CV;
@@ -24,7 +25,20 @@ namespace diploma5_csharp
             return result;
         }
 
-        public static ChannelAverageResult CalcLabChannelAverage(Image<Lab, Byte> image)
+        public static BgrChannelAverageResult CalcBgrChannelAverage(Image<Bgr, Byte> image)
+        {
+            BgrChannels channels = GetBgrChannels(image);
+
+            BgrChannelAverageResult result = new BgrChannelAverageResult()
+            {
+                R = StatisticsHelper.Average(channels.B),
+                G = StatisticsHelper.Average(channels.G),
+                B = StatisticsHelper.Average(channels.R)
+            };
+            return result;
+        }
+
+        public static LabChannelAverageResult CalcLabChannelAverage(Image<Lab, Byte> image)
         {
             double L_avg = 0;
             double A_avg = 0;
@@ -46,7 +60,7 @@ namespace diploma5_csharp
             L_avg /= count;
             A_avg /= count;
             B_avg /= count;
-            ChannelAverageResult result = new ChannelAverageResult()
+            LabChannelAverageResult result = new LabChannelAverageResult()
             {
                 L = L_avg,
                 A = A_avg,
@@ -114,6 +128,60 @@ namespace diploma5_csharp
         {
             image.Data[i, j, 0] = value;
         }
+
+        public static SplittedByMask<BgrChannels> SplitImageByMask(IInputArray inputImage, Image<Gray, Byte> mask)
+        {
+            var inputArray = inputImage.GetInputArray();
+            var mat = inputArray.GetMat();
+            var image = mat.ToImage<Bgr, Byte>();
+            var size = image.Size.Width * image.Size.Height;
+
+            List<int[]> InIndexes = new List<int[]>();
+            List<int[]> OutIndexes = new List<int[]>();
+
+            for (int i = 0; i < image.Rows; i += 1)
+            {
+                for (int j = 0; j < image.Cols; j += 1)
+                {
+                    Bgr color = image[i, j];
+                    Gray maskColor = mask[i, j];
+
+                    if (maskColor.Intensity == 255)
+                        InIndexes.Add(new []{ i, j });
+                    else
+                        OutIndexes.Add(new[] { i, j });
+                }
+            }
+
+            int size2 = InIndexes.Count + OutIndexes.Count;
+            SplittedByMask<BgrChannels> result = new SplittedByMask<BgrChannels>()
+            {
+                In = new BgrChannels(InIndexes.Count),
+                Out = new BgrChannels(OutIndexes.Count)
+            };
+
+            int ii, jj;
+            for (int k = 0; k < InIndexes.Count; k += 1)
+            {
+                ii = InIndexes[k][0];
+                jj = InIndexes[k][1];
+
+                result.In.B[k] = image[ii, jj].Blue;
+                result.In.G[k] = image[ii, jj].Green;
+                result.In.R[k] = image[ii, jj].Red;
+            }
+            for (int k = 0; k < OutIndexes.Count; k += 1)
+            {
+                ii = OutIndexes[k][0];
+                jj = OutIndexes[k][1];
+
+                result.Out.B[k] = image[ii, jj].Blue;
+                result.Out.G[k] = image[ii, jj].Green;
+                result.Out.R[k] = image[ii, jj].Red;
+            }
+
+            return result;
+        }
     }
 
 
@@ -154,5 +222,11 @@ namespace diploma5_csharp
         }
 
         public double[] Intensity;
+    }
+
+    public class SplittedByMask<T>
+    {
+        public T In;
+        public T Out;
     }
 }
