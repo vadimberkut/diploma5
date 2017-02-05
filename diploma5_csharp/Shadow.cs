@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using Accord.MachineLearning;
 using diploma5_csharp.Models;
 using Emgu.CV;
 using Emgu.CV.CvEnum;
 using Emgu.CV.Features2D;
 using Emgu.CV.Structure;
+using Accord.Statistics.Distributions.DensityKernels;
 
 namespace diploma5_csharp
 {
@@ -232,9 +234,99 @@ namespace diploma5_csharp
             return result;
         }
 
-        public Image<Emgu.CV.Structure.Bgr, Byte> RemoveUsingLabMethod(Image<Bgr, Byte> image)
+        public Image<Emgu.CV.Structure.Bgr, Byte> RemoveUsingLabMethod(Image<Bgr, Byte> image, Image<Gray, Byte> shadowMask)
         {
-            return image;
+            Image<Bgr, Byte> result = image.Clone();
+            Image<Lab, Byte> labImage = ImageHelper.ToLab(image);
+            Image<Bgr, Byte> msResult = image.Clone();
+
+            Image<Gray, Byte> lightMask = shadowMask.ThresholdBinaryInv(new Gray(254), new Gray(255));
+
+            Lab avgLight = labImage.GetAverage(lightMask);
+            Lab avgShadow = labImage.GetAverage(shadowMask);
+
+
+            //Apply Mean shift
+            // Use a fixed seed for reproducibility
+            Accord.Math.Random.Generator.Seed = 0;
+
+            // Declare some data to be clustered
+//            double[][] input =
+//            {
+//                new double[] { -5, -2, -4 },
+//                new double[] { -5, -5, -6 },
+//                new double[] {  2,  1,  1 },
+//                new double[] {  1,  1,  2 },
+//                new double[] {  1,  2,  2 },
+//                new double[] {  3,  1,  2 },
+//                new double[] { 11,  5,  4 },
+//                new double[] { 15,  5,  6 },
+//                new double[] { 10,  5,  6 },
+//            };
+
+            var arr = labImage.ManagedArray;
+            var data = labImage.Data;
+            var bytes = labImage.Bytes;
+
+            int length = labImage.Rows*labImage.Cols;
+            double[][] input = new double[length][];
+
+            for (int i = 0; i < labImage.Rows; i += 1)
+            {
+                for (int j = 0; j < labImage.Cols; j += 1)
+                {
+                    int index = labImage.Width * i + j;
+                    input[index] = new double[labImage.NumberOfChannels];
+
+                    for (int k = 0; k < labImage.NumberOfChannels; k += 1)
+                    {
+                        input[index][k] = data[i, j, k];
+                    }
+                }
+            }
+
+            // Create a uniform kernel density function
+            UniformKernel kernel = new UniformKernel();
+
+            // Create a new Mean-Shift algorithm for 3 dimensional samples
+            MeanShift meanShift = new MeanShift(dimension: 3, kernel: kernel, bandwidth: 2);
+
+            // Learn a data partitioning using the Mean Shift algorithm
+            MeanShiftClusterCollection clustering = meanShift.Learn(input);
+
+            // Predict group labels for each point
+            int[] labels = clustering.Decide(input);
+
+            // As a result, the first two observations should belong to the
+            //  same cluster (thus having the same label). The same should
+            //  happen to the next four observations and to the last three.
+
+            //Display Result
+            Dictionary<int,Bgr> labelColors = new Dictionary<int, Bgr>();
+            for (int i = 0; i < labImage.Rows; i += 1)
+            {
+                for (int j = 0; j < labImage.Cols; j += 1)
+                {
+                    int index = labImage.Width * i + j;
+                    int label = labels[index];
+
+                    //add color for label
+                    if (!labelColors.ContainsKey(label))
+                    {
+                        Random rand = new Random();
+                        labelColors.Add(label, new Bgr(rand.Next(256), rand.Next(256), rand.Next(256)));
+                    }
+                    Bgr labelColor = labelColors[label];
+
+                    msResult[i, j] = labelColor;
+
+                }
+            }
+            EmguCvWindowManager.Display(msResult, "1_msResult");
+
+            //determine regions contain both shadow and non-shadow pixels
+
+            return result;
         }
 
         public Image<Emgu.CV.Structure.Bgr, Byte> RemoveUsingConstantMethod(Image<Bgr, Byte> image)

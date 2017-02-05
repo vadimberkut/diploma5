@@ -233,6 +233,7 @@
             this.buttonShadowRemovalLabMethod.TabIndex = 17;
             this.buttonShadowRemovalLabMethod.Text = "LAB";
             this.buttonShadowRemovalLabMethod.UseVisualStyleBackColor = true;
+            this.buttonShadowRemovalLabMethod.Click += new System.EventHandler(this.buttonShadowRemovalLabMethod_Click);
             // 
             // buttonShadowRemovalCombinedMethod
             // 
