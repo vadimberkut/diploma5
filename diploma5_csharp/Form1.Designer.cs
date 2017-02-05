@@ -251,6 +251,7 @@
             this.buttonShadowRemovalBasicLightModelMethod.TabIndex = 19;
             this.buttonShadowRemovalBasicLightModelMethod.Text = "BasicLightModel";
             this.buttonShadowRemovalBasicLightModelMethod.UseVisualStyleBackColor = true;
+            this.buttonShadowRemovalBasicLightModelMethod.Click += new System.EventHandler(this.buttonShadowRemovalBasicLightModelMethod_Click);
             // 
             // Form1
             // 

@@ -240,7 +240,10 @@ namespace diploma5_csharp
         }
 
 
+        private void Form1_Load(object sender, EventArgs e)
+        {
 
+        }
 
 
         //SHADOW REMOVAL
@@ -251,16 +254,11 @@ namespace diploma5_csharp
             this.DisplayImageInPictureBox(pictureBox3, result.Bitmap);
         }
 
-
-        //FOG
-
-
-
-        private void Form1_Load(object sender, EventArgs e)
+        private void buttonShadowRemovalBasicLightModelMethod_Click(object sender, EventArgs e)
         {
-
+            var result = _appState.Shadow.RemoveUsingBasicLightModelMethod(_appState.InputImageBgr, _appState.ShadowMaskImageGray);
+            _appState.SetOutputImage(result);
+            this.DisplayImageInPictureBox(pictureBox3, result.Bitmap);
         }
-
-        
     }
-}
+    }

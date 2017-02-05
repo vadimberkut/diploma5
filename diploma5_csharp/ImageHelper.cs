@@ -1,10 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using Accord.Math;
 using diploma5_csharp.Models;
 using Emgu.CV;
 using Emgu.CV.CvEnum;
 using Emgu.CV.Structure;
+using System.Collections.Generic;
 
 namespace diploma5_csharp
 {
@@ -22,6 +21,13 @@ namespace diploma5_csharp
         {
             Image<Gray, Byte> result = new Image<Gray, byte>(image.Size);
             CvInvoke.CvtColor(image, result, ColorConversion.Bgr2Gray);
+            return result;
+        }
+
+        public static Image<Ycc, Byte> ToYCrCb(Image<Bgr, Byte> image)
+        {
+            Image<Ycc, Byte> result = new Image<Ycc, byte>(image.Size);
+            CvInvoke.CvtColor(image, result, ColorConversion.Bgr2YCrCb);
             return result;
         }
 

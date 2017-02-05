@@ -141,13 +141,52 @@ namespace diploma5_csharp
             return result;
         }
 
-        public Image<Emgu.CV.Structure.Bgr, Byte> RemoveUsingBasicLightModelMethod(Image<Bgr, Byte> image)
+        public Image<Emgu.CV.Structure.Bgr, Byte> RemoveUsingBasicLightModelMethod(Image<Bgr, Byte> image, Image<Gray, Byte> shadowMask)
         {
-            return image;
+            Image<Bgr, Byte> result = image.Clone();
+
+            SplittedByMask<BgrChannels> splited = ImageHelper.SplitImageByMask(image, shadowMask);
+
+            List<double> lightAvg = StatisticsHelper.Average(new List<double[]>() { splited.Out.B, splited.Out.G, splited.Out.R });
+            List<double> shadowAvg = StatisticsHelper.Average(new List<double[]>() { splited.In.B, splited.In.G, splited.In.R });
+//
+//            double ratioB = lightAvg[0] / shadowAvg[0];
+//            double ratioG = lightAvg[1] / shadowAvg[1];
+//            double ratioR = lightAvg[2] / shadowAvg[2];
+
+            double ratioB = lightAvg[0] / shadowAvg[0] - 1;
+            double ratioG = lightAvg[1] / shadowAvg[1] - 1;
+            double ratioR = lightAvg[2] / shadowAvg[2] - 1;
+
+            for (int i = 0; i < image.Rows; i += 1)
+            {
+                for (int j = 0; j < image.Cols; j += 1)
+                {
+                    Bgr color = image[i, j];
+                    Gray maskColor = shadowMask[i, j];
+
+                    //                    if (maskColor.Intensity == 255)
+                    //                        result[i, j] = new Bgr(color.Blue * ratioB, color.Green * ratioG, color.Red * ratioR);
+
+                    int ki = maskColor.Intensity == 255 ? 0 : 1;
+
+                    double blue = color.Blue * (ratioB + 1) / (ki * ratioB + 1);
+                    double green = color.Green * (ratioG + 1) / (ki * ratioG + 1);
+                    double red = color.Red * (ratioR + 1) / (ki * ratioR + 1);
+
+                    blue = blue > 255 ? 255 : (blue < 0 ? 0 : blue);
+                    green = green > 255 ? 255 : (green < 0 ? 0 : green);
+                    red = red > 255 ? 255 : (red < 0 ? 0 : red);
+
+                    result[i, j] = new Bgr(blue, green, red);
+                }
+            }
+            return result;
         }
 
-        public Image<Emgu.CV.Structure.Bgr, Byte> RemoveUsingCombinedMethod(Image<Bgr, Byte> image)
+        public Image<Emgu.CV.Structure.Bgr, Byte> RemoveUsingCombinedMethod(Image<Bgr, Byte> image, Image<Gray, Byte> shadowMask)
         {
+            Image<Ycc, Byte> YcrcbImage = ImageHelper.ToYCrCb(image);
             return image;
         }
 
