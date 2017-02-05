@@ -260,5 +260,12 @@ namespace diploma5_csharp
             _appState.SetOutputImage(result);
             this.DisplayImageInPictureBox(pictureBox3, result.Bitmap);
         }
+
+        private void buttonShadowRemovalCombinedMethod_Click(object sender, EventArgs e)
+        {
+            var result = _appState.Shadow.RemoveUsingCombinedMethod(_appState.InputImageBgr, _appState.ShadowMaskImageGray);
+            _appState.SetOutputImage(result);
+            this.DisplayImageInPictureBox(pictureBox3, result.Bitmap);
+        }
     }
     }

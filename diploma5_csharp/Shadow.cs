@@ -117,7 +117,7 @@ namespace diploma5_csharp
             //Image<Bgr, Byte> result = new Image<Bgr, byte>(image.Size);
             Image<Bgr, Byte> result = image.Clone();
 
-            SplittedByMask<BgrChannels> splited = ImageHelper.SplitImageByMask(image, shadowMask);
+            SplittedByMask<BgrChannels> splited = ImageHelper.SplitImageBgrByMask(image, shadowMask);
 
             List<double> lightAvg = StatisticsHelper.Average(new List<double[]>() { splited.Out.B, splited.Out.G, splited.Out.R });
             List<double> shadowAvg = StatisticsHelper.Average(new List<double[]>() { splited.In.B, splited.In.G, splited.In.R });
@@ -145,7 +145,7 @@ namespace diploma5_csharp
         {
             Image<Bgr, Byte> result = image.Clone();
 
-            SplittedByMask<BgrChannels> splited = ImageHelper.SplitImageByMask(image, shadowMask);
+            SplittedByMask<BgrChannels> splited = ImageHelper.SplitImageBgrByMask(image, shadowMask);
 
             List<double> lightAvg = StatisticsHelper.Average(new List<double[]>() { splited.Out.B, splited.Out.G, splited.Out.R });
             List<double> shadowAvg = StatisticsHelper.Average(new List<double[]>() { splited.In.B, splited.In.G, splited.In.R });
@@ -186,8 +186,50 @@ namespace diploma5_csharp
 
         public Image<Emgu.CV.Structure.Bgr, Byte> RemoveUsingCombinedMethod(Image<Bgr, Byte> image, Image<Gray, Byte> shadowMask)
         {
-            Image<Ycc, Byte> YcrcbImage = ImageHelper.ToYCrCb(image);
-            return image;
+            Image<Bgr, Byte> result = image.Clone();
+            Image<Ycc, Byte> YCrCbImage = ImageHelper.ToYCrCb(image);
+
+//            Image<Gray, Byte> lightMask = shadowMask.ThresholdToZeroInv(new Gray(254));// inverse shadow mask
+            Image<Gray, Byte> lightMask = shadowMask.ThresholdBinaryInv(new Gray(254), new Gray(255));
+
+            Ycc avgLight = YCrCbImage.GetAverage(lightMask);
+            Ycc avgShadow = YCrCbImage.GetAverage(shadowMask);
+
+            double diffY = avgLight.Y - avgShadow.Y;
+            double diffCb = avgLight.Cb - avgShadow.Cb;
+            double diffCr = avgLight.Cr - avgShadow.Cr;
+
+            double ratioY = avgLight.Y / avgShadow.Y;
+            double ratioCb = avgLight.Cb / avgShadow.Cb;
+            double ratioCr = avgLight.Cr / avgShadow.Cr;
+
+            for (int i = 0; i < YCrCbImage.Rows; i += 1)
+            {
+                for (int j = 0; j < YCrCbImage.Cols; j += 1)
+                {
+                    Ycc color = YCrCbImage[i, j];
+                    Gray maskColor = shadowMask[i, j];
+
+                    if (maskColor.Intensity == 255)
+                    {
+                        int ki = maskColor.Intensity == 255 ? 0 : 1;
+
+                        double y = color.Y + 1*diffY;
+                        double cb = color.Cb*ratioCb;
+                        double cr = color.Cr*ratioCr;
+
+                        y = y > 255 ? 255 : (y < 0 ? 0 : y);
+                        cb = cb > 255 ? 255 : (cb < 0 ? 0 : cb);
+                        cr = cr > 255 ? 255 : (cr < 0 ? 0 : cr);
+
+                        YCrCbImage[i, j] = new Ycc(y, cr, cb);
+                    }
+                }
+            }
+
+            CvInvoke.CvtColor(YCrCbImage, result, ColorConversion.YCrCb2Bgr);
+
+            return result;
         }
 
         public Image<Emgu.CV.Structure.Bgr, Byte> RemoveUsingLabMethod(Image<Bgr, Byte> image)

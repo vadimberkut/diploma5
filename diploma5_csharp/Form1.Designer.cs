@@ -242,6 +242,7 @@
             this.buttonShadowRemovalCombinedMethod.TabIndex = 18;
             this.buttonShadowRemovalCombinedMethod.Text = "Combined";
             this.buttonShadowRemovalCombinedMethod.UseVisualStyleBackColor = true;
+            this.buttonShadowRemovalCombinedMethod.Click += new System.EventHandler(this.buttonShadowRemovalCombinedMethod_Click);
             // 
             // buttonShadowRemovalBasicLightModelMethod
             // 

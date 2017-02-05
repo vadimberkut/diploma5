@@ -137,6 +137,11 @@ namespace diploma5_csharp
 
         public static SplittedByMask<BgrChannels> SplitImageByMask(IInputArray inputImage, Image<Gray, Byte> mask)
         {
+            return new SplittedByMask<BgrChannels>();
+        }
+
+        public static SplittedByMask<BgrChannels> SplitImageBgrByMask(IInputArray inputImage, Image<Gray, Byte> mask)
+        {
             var inputArray = inputImage.GetInputArray();
             var mat = inputArray.GetMat();
             var image = mat.ToImage<Bgr, Byte>();
