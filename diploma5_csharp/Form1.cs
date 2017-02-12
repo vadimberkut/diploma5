@@ -281,5 +281,34 @@ namespace diploma5_csharp
             _appState.SetOutputImage(result);
             this.DisplayImageInPictureBox(pictureBox3, result.Bitmap);
         }
+
+
+        //
+        //SHADOW EDGE PROCESSING
+        //
+        private void buttonImpaintShadowEdges_Click(object sender, EventArgs e)
+        {
+            var result = _appState.Shadow.InpaintShadowEdges(_appState.OutputImageBgr, _appState.ShadowMaskImageGray);
+            _appState.SetOutputImage(result);
+            this.DisplayImageInPictureBox(pictureBox3, result.Bitmap);
+        }
+
+        private void buttonSmoothShadowEdgesUsingGaussianFilter_Click(object sender, EventArgs e)
+        {
+            var result = _appState.Shadow.SmoothShadowEdgesUsingGaussianFilter(_appState.OutputImageBgr, _appState.ShadowMaskImageGray);
+            _appState.SetOutputImage(result);
+            this.DisplayImageInPictureBox(pictureBox3, result.Bitmap);
+        }
+
+        private void buttonSmoothShadowEdgesUsingMedianFilter_Click(object sender, EventArgs e)
+        {
+            var result = _appState.Shadow.SmoothShadowEdgesUsingMedianFilter(_appState.OutputImageBgr, _appState.ShadowMaskImageGray);
+            _appState.SetOutputImage(result);
+            this.DisplayImageInPictureBox(pictureBox3, result.Bitmap);
+        }
+
+        
+
+
     }
-    }
+}

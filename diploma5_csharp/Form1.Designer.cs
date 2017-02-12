@@ -47,6 +47,12 @@
             this.buttonShadowRemovalLabMethod = new System.Windows.Forms.Button();
             this.buttonShadowRemovalCombinedMethod = new System.Windows.Forms.Button();
             this.buttonShadowRemovalBasicLightModelMethod = new System.Windows.Forms.Button();
+            this.label1 = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
+            this.label3 = new System.Windows.Forms.Label();
+            this.buttonImpaintShadowEdges = new System.Windows.Forms.Button();
+            this.buttonSmoothShadowEdgesUsingGaussianFilter = new System.Windows.Forms.Button();
+            this.buttonSmoothShadowEdgesUsingMedianFilter = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).BeginInit();
@@ -256,11 +262,74 @@
             this.buttonShadowRemovalBasicLightModelMethod.UseVisualStyleBackColor = true;
             this.buttonShadowRemovalBasicLightModelMethod.Click += new System.EventHandler(this.buttonShadowRemovalBasicLightModelMethod_Click);
             // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(113, 417);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(93, 13);
+            this.label1.TabIndex = 20;
+            this.label1.Text = "Shadow detection";
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(496, 417);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(86, 13);
+            this.label2.TabIndex = 21;
+            this.label2.Text = "Shadow removal";
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(636, 417);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(91, 13);
+            this.label3.TabIndex = 22;
+            this.label3.Text = "Edges processing";
+            // 
+            // buttonImpaintShadowEdges
+            // 
+            this.buttonImpaintShadowEdges.Location = new System.Drawing.Point(721, 440);
+            this.buttonImpaintShadowEdges.Name = "buttonImpaintShadowEdges";
+            this.buttonImpaintShadowEdges.Size = new System.Drawing.Size(97, 27);
+            this.buttonImpaintShadowEdges.TabIndex = 23;
+            this.buttonImpaintShadowEdges.Text = "Inpaint";
+            this.buttonImpaintShadowEdges.UseVisualStyleBackColor = true;
+            this.buttonImpaintShadowEdges.Click += new System.EventHandler(this.buttonImpaintShadowEdges_Click);
+            // 
+            // buttonSmoothShadowEdgesUsingGaussianFilter
+            // 
+            this.buttonSmoothShadowEdgesUsingGaussianFilter.Location = new System.Drawing.Point(721, 470);
+            this.buttonSmoothShadowEdgesUsingGaussianFilter.Name = "buttonSmoothShadowEdgesUsingGaussianFilter";
+            this.buttonSmoothShadowEdgesUsingGaussianFilter.Size = new System.Drawing.Size(97, 27);
+            this.buttonSmoothShadowEdgesUsingGaussianFilter.TabIndex = 24;
+            this.buttonSmoothShadowEdgesUsingGaussianFilter.Text = "Gaussian filter";
+            this.buttonSmoothShadowEdgesUsingGaussianFilter.UseVisualStyleBackColor = true;
+            this.buttonSmoothShadowEdgesUsingGaussianFilter.Click += new System.EventHandler(this.buttonSmoothShadowEdgesUsingGaussianFilter_Click);
+            // 
+            // buttonSmoothShadowEdgesUsingMedianFilter
+            // 
+            this.buttonSmoothShadowEdgesUsingMedianFilter.Location = new System.Drawing.Point(721, 503);
+            this.buttonSmoothShadowEdgesUsingMedianFilter.Name = "buttonSmoothShadowEdgesUsingMedianFilter";
+            this.buttonSmoothShadowEdgesUsingMedianFilter.Size = new System.Drawing.Size(97, 27);
+            this.buttonSmoothShadowEdgesUsingMedianFilter.TabIndex = 25;
+            this.buttonSmoothShadowEdgesUsingMedianFilter.Text = "Median filter";
+            this.buttonSmoothShadowEdgesUsingMedianFilter.UseVisualStyleBackColor = true;
+            this.buttonSmoothShadowEdgesUsingMedianFilter.Click += new System.EventHandler(this.buttonSmoothShadowEdgesUsingMedianFilter_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1235, 578);
+            this.Controls.Add(this.buttonSmoothShadowEdgesUsingMedianFilter);
+            this.Controls.Add(this.buttonSmoothShadowEdgesUsingGaussianFilter);
+            this.Controls.Add(this.buttonImpaintShadowEdges);
+            this.Controls.Add(this.label3);
+            this.Controls.Add(this.label2);
+            this.Controls.Add(this.label1);
             this.Controls.Add(this.buttonShadowRemovalBasicLightModelMethod);
             this.Controls.Add(this.buttonShadowRemovalCombinedMethod);
             this.Controls.Add(this.buttonShadowRemovalLabMethod);
@@ -312,6 +381,12 @@
         private System.Windows.Forms.Button buttonShadowRemovalLabMethod;
         private System.Windows.Forms.Button buttonShadowRemovalCombinedMethod;
         private System.Windows.Forms.Button buttonShadowRemovalBasicLightModelMethod;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Button buttonImpaintShadowEdges;
+        private System.Windows.Forms.Button buttonSmoothShadowEdgesUsingGaussianFilter;
+        private System.Windows.Forms.Button buttonSmoothShadowEdgesUsingMedianFilter;
     }
 }
 
