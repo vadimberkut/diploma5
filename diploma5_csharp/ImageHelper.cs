@@ -193,6 +193,15 @@ namespace diploma5_csharp
 
             return result;
         }
+
+        public static MCvScalar GenerateRandomColor()
+        {
+            Random rnd = new Random();
+            int min = 0;
+            int max = 255;
+            MCvScalar color = new MCvScalar(rnd.Next(min, max), rnd.Next(min, max), rnd.Next(min, max));
+            return color;
+        }
     }
 
 

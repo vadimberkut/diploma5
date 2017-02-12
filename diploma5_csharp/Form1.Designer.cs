@@ -224,6 +224,7 @@
             this.buttonShadowRemovalConstantMethod.TabIndex = 16;
             this.buttonShadowRemovalConstantMethod.Text = "Constan";
             this.buttonShadowRemovalConstantMethod.UseVisualStyleBackColor = true;
+            this.buttonShadowRemovalConstantMethod.Click += new System.EventHandler(this.buttonShadowRemovalConstantMethod_Click);
             // 
             // buttonShadowRemovalLabMethod
             // 
