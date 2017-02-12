@@ -53,6 +53,8 @@
             this.buttonImpaintShadowEdges = new System.Windows.Forms.Button();
             this.buttonSmoothShadowEdgesUsingGaussianFilter = new System.Windows.Forms.Button();
             this.buttonSmoothShadowEdgesUsingMedianFilter = new System.Windows.Forms.Button();
+            this.label4 = new System.Windows.Forms.Label();
+            this.buttonRemoveFogUsingDarkChannelMethod = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).BeginInit();
@@ -319,11 +321,32 @@
             this.buttonSmoothShadowEdgesUsingMedianFilter.UseVisualStyleBackColor = true;
             this.buttonSmoothShadowEdgesUsingMedianFilter.Click += new System.EventHandler(this.buttonSmoothShadowEdgesUsingMedianFilter_Click);
             // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(879, 420);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(65, 13);
+            this.label4.TabIndex = 26;
+            this.label4.Text = "Fog removal";
+            // 
+            // buttonRemoveFogUsingDarkChannelMethod
+            // 
+            this.buttonRemoveFogUsingDarkChannelMethod.Location = new System.Drawing.Point(882, 444);
+            this.buttonRemoveFogUsingDarkChannelMethod.Name = "buttonRemoveFogUsingDarkChannelMethod";
+            this.buttonRemoveFogUsingDarkChannelMethod.Size = new System.Drawing.Size(97, 27);
+            this.buttonRemoveFogUsingDarkChannelMethod.TabIndex = 27;
+            this.buttonRemoveFogUsingDarkChannelMethod.Text = "Dark channel";
+            this.buttonRemoveFogUsingDarkChannelMethod.UseVisualStyleBackColor = true;
+            this.buttonRemoveFogUsingDarkChannelMethod.Click += new System.EventHandler(this.buttonRemoveFogUsingDarkChannelMethod_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1235, 578);
+            this.Controls.Add(this.buttonRemoveFogUsingDarkChannelMethod);
+            this.Controls.Add(this.label4);
             this.Controls.Add(this.buttonSmoothShadowEdgesUsingMedianFilter);
             this.Controls.Add(this.buttonSmoothShadowEdgesUsingGaussianFilter);
             this.Controls.Add(this.buttonImpaintShadowEdges);
@@ -387,6 +410,8 @@
         private System.Windows.Forms.Button buttonImpaintShadowEdges;
         private System.Windows.Forms.Button buttonSmoothShadowEdgesUsingGaussianFilter;
         private System.Windows.Forms.Button buttonSmoothShadowEdgesUsingMedianFilter;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Button buttonRemoveFogUsingDarkChannelMethod;
     }
 }
 

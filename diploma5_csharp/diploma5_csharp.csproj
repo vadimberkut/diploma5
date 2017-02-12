@@ -113,6 +113,7 @@
     <Compile Include="CustomFormElements\Prompt.cs" />
     <Compile Include="CustomFormElements\SaveImagePrompt.cs" />
     <Compile Include="EmguCvWindowManager.cs" />
+    <Compile Include="Fog.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>

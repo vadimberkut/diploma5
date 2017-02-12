@@ -307,8 +307,14 @@ namespace diploma5_csharp
             this.DisplayImageInPictureBox(pictureBox3, result.Bitmap);
         }
 
-        
-
-
+        //
+        //FOG REMOVAL
+        //
+        private void buttonRemoveFogUsingDarkChannelMethod_Click(object sender, EventArgs e)
+        {
+            var result = _appState.Fog.RemoveFogUsingDarkChannelPrior(_appState.InputImageBgr);
+            _appState.SetOutputImage(result);
+            this.DisplayImageInPictureBox(pictureBox3, result.Bitmap);
+        }
     }
 }

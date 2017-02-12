@@ -8,6 +8,7 @@ namespace diploma5_csharp
         public Form1 Form1;
 
         public Shadow Shadow;
+        public Fog Fog;
 
         public Image<Bgr, byte> InputImageBgr;
         public Image<Lab, byte> InputImageLab;
@@ -18,6 +19,7 @@ namespace diploma5_csharp
         {
             Form1 = form1;
             Shadow = new Shadow();
+            Fog = new Fog();
         }
 
         public void SetInputImage(Image<Bgr, byte> inputImage)
