@@ -167,7 +167,11 @@ namespace diploma5_csharp
             int aasd = 0;
         }
 
-        private void buttonOpenFile_Click(object sender, EventArgs e)
+        //TOP MENU
+        #region TOP MENU
+
+        //Open
+        private void openToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Bitmap image2 = new Bitmap("D:\\Google Drive\\Diploma5\\images_converted\\8_2.png");
             _appState.SetInputImage(new Image<Bgr, Byte>(image2));
@@ -192,7 +196,8 @@ namespace diploma5_csharp
             }
         }
 
-        private void buttonSaveInFile_Click(object sender, EventArgs e)
+        //Save
+        private void saveToolStripMenuItem_Click(object sender, EventArgs e)
         {
             //Select what to save
             SaveImagePrompt.ShowDialog("sd", "sd");
@@ -210,14 +215,23 @@ namespace diploma5_csharp
             }
         }
 
-        private void buttonExit_Click(object sender, EventArgs e)
+        //Exit
+        private void exitToolStripMenuItem_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
-        private void buttonCloseAllWindows_Click(object sender, EventArgs e)
+        //Close all windows
+        private void closeAllToolStripMenuItem_Click(object sender, EventArgs e)
         {
             EmguCvWindowManager.CloseAll();
+        }
+
+        #endregion
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+
         }
 
         #endregion
@@ -237,12 +251,6 @@ namespace diploma5_csharp
             var result = _appState.Shadow.DetectUsingMSMethod(_appState.InputImageBgr, _params);
             _appState.SetShadowMaskImage(result);
             this.DisplayImageInPictureBox(pictureBox2, result.Bitmap);
-        }
-
-
-        private void Form1_Load(object sender, EventArgs e)
-        {
-
         }
 
 
@@ -316,5 +324,7 @@ namespace diploma5_csharp
             _appState.SetOutputImage(result);
             this.DisplayImageInPictureBox(pictureBox3, result.Bitmap);
         }
+
+        
     }
 }
