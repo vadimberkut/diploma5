@@ -110,6 +110,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AppState.cs" />
+    <Compile Include="ColorDifference\CIE76.cs" />
     <Compile Include="CustomFormElements\Prompt.cs" />
     <Compile Include="CustomFormElements\SaveImagePrompt.cs" />
     <Compile Include="EmguCvWindowManager.cs" />
