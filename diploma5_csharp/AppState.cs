@@ -13,9 +13,14 @@ namespace diploma5_csharp
 
         public Image<Bgr, byte> InputImageBgr;
         public Image<Lab, byte> InputImageLab;
+
+        public Image<Gray, byte> ShadowMaskImageGray;
+
         public Image<Bgr, byte> OutputImageBgr;
         public Image<Bgr, byte> OutputImageBgrOrigin;
-        public Image<Gray, byte> ShadowMaskImageGray;
+
+        //CONSTANTS
+        public int FORM_DISPLAY_DOUBLE_PRECISION = 2;
 
         public AppState(Form1 form1)
         {

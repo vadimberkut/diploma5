@@ -80,6 +80,11 @@ namespace diploma5_csharp
             return result;
         }
 
+        private void SetTextBoxValue(TextBox textBox, string value)
+        {
+            textBox.Text = value;
+        }
+
         private bool GetCheckBoxValue(CheckBox checkBox)
         {
             return checkBox.Checked;
@@ -242,6 +247,9 @@ namespace diploma5_csharp
             var result = _appState.Shadow.DetectUsingLabMethod(_appState.InputImageLab, _params);
             _appState.SetShadowMaskImage(result);
             this.DisplayImageInPictureBox(pictureBox2, result.Bitmap);
+
+            //Set params from method
+            SetTextBoxValue(this.textBoxShadowDetectionLabThreshold, Math.Round((double)_params.Threshold, _appState.FORM_DISPLAY_DOUBLE_PRECISION).ToString());
         }
 
         private void buttonShadowDetectionMS_Click(object sender, EventArgs e)
@@ -250,6 +258,9 @@ namespace diploma5_csharp
             var result = _appState.Shadow.DetectUsingMSMethod(_appState.InputImageBgr, _params);
             _appState.SetShadowMaskImage(result);
             this.DisplayImageInPictureBox(pictureBox2, result.Bitmap);
+
+            //Set params from method
+            SetTextBoxValue(this.textBoxShadowDetectionLMSThreshold, Math.Round((double)_params.Threshold, _appState.FORM_DISPLAY_DOUBLE_PRECISION).ToString());
         }
 
 
@@ -324,9 +335,10 @@ namespace diploma5_csharp
         //
         private void buttonRemoveFogUsingDarkChannelMethod_Click(object sender, EventArgs e)
         {
-            var result = _appState.Fog.RemoveFogUsingDarkChannelPrior(_appState.InputImageBgr);
+            var result = _appState.Fog.RemoveFogUsingDarkChannelPrior(_appState.InputImageBgr, out _appState.ShadowMaskImageGray, new FogRemovalParams() { ShowWindows = GetCheckBoxValue(checkBoxShowOptionalWindows) });
             _appState.SetOutputImage(result);
             this.DisplayImageInPictureBox(pictureBox3, result.Bitmap);
+            this.DisplayImageInPictureBox(pictureBox2, _appState.ShadowMaskImageGray.Bitmap);
         }
 
 

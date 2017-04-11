@@ -32,6 +32,10 @@ namespace diploma5_csharp
             var channels = ImageHelper.GetLabChannels(image);
             double stdDevL = StatisticsHelper.StandartDeviation(channels.L);
 
+            //Check params
+            if (_params.Threshold == null)
+                _params.Threshold = 250;
+
             double L;
             double A;
             double B;
@@ -89,20 +93,26 @@ namespace diploma5_csharp
             //Convert BGR to Gray
             imgMeanShiftGray = ImageHelper.TotGray(imgMeanShift);
 
-            //AVG
-            double avg = StatisticsHelper.Average(ImageHelper.GetGrayChannel(imgMeanShiftGray).Intensity);
-
-            //STD DEV
-            double stdDev = StatisticsHelper.StandartDeviation(ImageHelper.GetGrayChannel(imgMeanShiftGray).Intensity);
-
-            //Fixed Threshold
-            double thresh = avg - stdDev / 3.0;
-            //double thresh = avg;
+            //Set threshold from params or calc it
+            double thresh;
             double maxValue = 255;
 
-            double? customThreshold = _params.Threshold;
-            if (customThreshold != null)
-                thresh = (double)customThreshold;
+            if (_params.Threshold != null)
+            {
+                thresh = (double)_params.Threshold;
+            }
+            else
+            {
+                //AVG
+                double avg = StatisticsHelper.Average(ImageHelper.GetGrayChannel(imgMeanShiftGray).Intensity);
+
+                //STD DEV
+                double stdDev = StatisticsHelper.StandartDeviation(ImageHelper.GetGrayChannel(imgMeanShiftGray).Intensity);
+
+                //Fixed Threshold
+                thresh = avg - stdDev / 3.0;
+            }
+            _params.Threshold = thresh;
 
             //Apply global binarization
             CvInvoke.Threshold(imgMeanShiftGray, shadowMask, thresh, maxValue, ThresholdType.BinaryInv);

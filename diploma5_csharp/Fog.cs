@@ -4,12 +4,13 @@ using System.Drawing;
 using Emgu.CV;
 using Emgu.CV.CvEnum;
 using Emgu.CV.Structure;
+using diploma5_csharp.Models;
 
 namespace diploma5_csharp
 {
     public class Fog
     {
-        public Image<Emgu.CV.Structure.Bgr, Byte> RemoveFogUsingDarkChannelPrior(Image<Bgr, Byte> image)
+        public Image<Emgu.CV.Structure.Bgr, Byte> RemoveFogUsingDarkChannelPrior(Image<Bgr, Byte> image, out Image<Gray, Byte> transmission, FogRemovalParams _params)
         {
             Image<Bgr, Byte> result = image.Clone();
             Image<Bgr, Byte> imgFog = image.Clone();
@@ -26,7 +27,10 @@ namespace diploma5_csharp
             T = EstimateTransmission(imgDarkChannel, Airlight);
             fogfree = RemoveFog(imgFog, T, Airlight);
 
-            if (true)
+            //Return out params
+            transmission = T;
+
+            if (_params.ShowWindows)
             {
                 EmguCvWindowManager.Display(imgDarkChannel, "1 imgDarkChannel darkChannel MDCP");
                 EmguCvWindowManager.Display(T, "2 estimateTransmission");
