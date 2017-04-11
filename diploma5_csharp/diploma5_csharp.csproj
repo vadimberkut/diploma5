@@ -113,6 +113,7 @@
     <Compile Include="ColorDifference\CIE76.cs" />
     <Compile Include="CustomFormElements\Prompt.cs" />
     <Compile Include="CustomFormElements\SaveImagePrompt.cs" />
+    <Compile Include="Dust.cs" />
     <Compile Include="EmguCvWindowManager.cs" />
     <Compile Include="Fog.cs" />
     <Compile Include="Form1.cs">
@@ -126,6 +127,7 @@
     <Compile Include="Models\LabChannelAverageResult.cs" />
     <Compile Include="Models\ShadowDetectionLabParams.cs" />
     <Compile Include="Models\ShadowDetectionMSParams.cs" />
+    <Compile Include="Models\ShadowRemovalParams.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Shadow.cs" />

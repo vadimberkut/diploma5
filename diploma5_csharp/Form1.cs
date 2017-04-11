@@ -173,10 +173,10 @@ namespace diploma5_csharp
         //Open
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Bitmap image2 = new Bitmap("D:\\Google Drive\\Diploma5\\images_converted\\8_2.png");
-            _appState.SetInputImage(new Image<Bgr, Byte>(image2));
-            this.DisplayImageInPictureBox(pictureBox1, image2);
-            return;
+            //Bitmap image2 = new Bitmap("D:\\Google Drive\\Diploma5\\images_converted\\8_2.png");
+            //_appState.SetInputImage(new Image<Bgr, Byte>(image2));
+            //this.DisplayImageInPictureBox(pictureBox1, image2);
+            //return;
 
             // Displays an OpenFileDialog so the user can select a Cursor.
             OpenFileDialog openFileDialog1 = new OpenFileDialog();
@@ -200,18 +200,17 @@ namespace diploma5_csharp
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
         {
             //Select what to save
-            SaveImagePrompt.ShowDialog("sd", "sd");
+            //SaveImagePrompt.ShowDialog("sd", "sd");
 
             //save this in file
             SaveFileDialog saveFileDialog1 = new SaveFileDialog();
+            saveFileDialog1.Filter = "Image Files (*.png; *.jpg; *.jpeg; *.bmp)|*.png; *.jpg; *.jpeg; *.bmp"; // "Файлы Excel (*.xls; *.xlsx) | *.xls; *.xlsx";
             saveFileDialog1.InitialDirectory = "<путь к папке>";
             saveFileDialog1.Title = "Save Image in File";
 
             if (saveFileDialog1.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
-                System.IO.StreamWriter sr = new System.IO.StreamWriter(saveFileDialog1.FileName);
-                //sr.Write();
-                sr.Close();
+                _appState.OutputImageBgr.Save(saveFileDialog1.FileName);
             }
         }
 
@@ -239,7 +238,7 @@ namespace diploma5_csharp
         //SHADOW DETECTION
         private void buttonShadowDetectionLab_Click(object sender, EventArgs e)
         {
-            ShadowDetectionLabParams _params = new ShadowDetectionLabParams() { Threshold = GetTextBoxValue<double>(textBoxShadowDetectionLabThreshold), ShowWindows = GetCheckBoxValue(checkBoxShadowDetectionLabShowWindows) };
+            ShadowDetectionLabParams _params = new ShadowDetectionLabParams() { Threshold = GetTextBoxValue<double>(textBoxShadowDetectionLabThreshold), ShowWindows = GetCheckBoxValue(checkBoxShowOptionalWindows) };
             var result = _appState.Shadow.DetectUsingLabMethod(_appState.InputImageLab, _params);
             _appState.SetShadowMaskImage(result);
             this.DisplayImageInPictureBox(pictureBox2, result.Bitmap);
@@ -247,7 +246,7 @@ namespace diploma5_csharp
 
         private void buttonShadowDetectionMS_Click(object sender, EventArgs e)
         {
-            ShadowDetectionMSParams _params = new ShadowDetectionMSParams() {Threshold = GetTextBoxValue<double>(textBoxShadowDetectionLMSThreshold), ShowWindows = GetCheckBoxValue(checkBoxShadowDetectionLMSShowWindows) };
+            ShadowDetectionMSParams _params = new ShadowDetectionMSParams() {Threshold = GetTextBoxValue<double>(textBoxShadowDetectionLMSThreshold), ShowWindows = GetCheckBoxValue(checkBoxShowOptionalWindows) };
             var result = _appState.Shadow.DetectUsingMSMethod(_appState.InputImageBgr, _params);
             _appState.SetShadowMaskImage(result);
             this.DisplayImageInPictureBox(pictureBox2, result.Bitmap);
@@ -257,36 +256,41 @@ namespace diploma5_csharp
         //SHADOW REMOVAL
         private void buttonShadowRemovalAditiveMethod_Click(object sender, EventArgs e)
         {
-            var result = _appState.Shadow.RemoveUsingAditiveMethod(_appState.InputImageBgr, _appState.ShadowMaskImageGray);
+            var result = _appState.Shadow.RemoveUsingAditiveMethod(_appState.InputImageBgr, _appState.ShadowMaskImageGray, new ShadowRemovalParams() { ShowWindows = GetCheckBoxValue(checkBoxShowOptionalWindows) } );
             _appState.SetOutputImage(result);
+            _appState.SetOutputImageOrigin(result);
             this.DisplayImageInPictureBox(pictureBox3, result.Bitmap);
         }
 
         private void buttonShadowRemovalBasicLightModelMethod_Click(object sender, EventArgs e)
         {
-            var result = _appState.Shadow.RemoveUsingBasicLightModelMethod(_appState.InputImageBgr, _appState.ShadowMaskImageGray);
+            var result = _appState.Shadow.RemoveUsingBasicLightModelMethod(_appState.InputImageBgr, _appState.ShadowMaskImageGray, new ShadowRemovalParams() { ShowWindows = GetCheckBoxValue(checkBoxShowOptionalWindows) });
             _appState.SetOutputImage(result);
+            _appState.SetOutputImageOrigin(result);
             this.DisplayImageInPictureBox(pictureBox3, result.Bitmap);
         }
 
         private void buttonShadowRemovalCombinedMethod_Click(object sender, EventArgs e)
         {
-            var result = _appState.Shadow.RemoveUsingCombinedMethod(_appState.InputImageBgr, _appState.ShadowMaskImageGray);
+            var result = _appState.Shadow.RemoveUsingCombinedMethod(_appState.InputImageBgr, _appState.ShadowMaskImageGray, new ShadowRemovalParams() { ShowWindows = GetCheckBoxValue(checkBoxShowOptionalWindows) });
             _appState.SetOutputImage(result);
+            _appState.SetOutputImageOrigin(result);
             this.DisplayImageInPictureBox(pictureBox3, result.Bitmap);
         }
 
         private void buttonShadowRemovalLabMethod_Click(object sender, EventArgs e)
         {
-            var result = _appState.Shadow.RemoveUsingLabMethod(_appState.InputImageBgr, _appState.ShadowMaskImageGray);
+            var result = _appState.Shadow.RemoveUsingLabMethod(_appState.InputImageBgr, _appState.ShadowMaskImageGray, new ShadowRemovalParams() { ShowWindows = GetCheckBoxValue(checkBoxShowOptionalWindows) });
             _appState.SetOutputImage(result);
+            _appState.SetOutputImageOrigin(result);
             this.DisplayImageInPictureBox(pictureBox3, result.Bitmap);
         }
 
         private void buttonShadowRemovalConstantMethod_Click(object sender, EventArgs e)
         {
-            var result = _appState.Shadow.RemoveUsingConstantMethod(_appState.InputImageBgr, _appState.ShadowMaskImageGray);
+            var result = _appState.Shadow.RemoveUsingConstantMethod(_appState.InputImageBgr, _appState.ShadowMaskImageGray, new ShadowRemovalParams() { ShowWindows = GetCheckBoxValue(checkBoxShowOptionalWindows) });
             _appState.SetOutputImage(result);
+            _appState.SetOutputImageOrigin(result);
             this.DisplayImageInPictureBox(pictureBox3, result.Bitmap);
         }
 
@@ -325,6 +329,22 @@ namespace diploma5_csharp
             this.DisplayImageInPictureBox(pictureBox3, result.Bitmap);
         }
 
-        
+
+        //
+        //VISIBILITY ENHANCEMENT
+        //
+        private void buttonVisibilityEnhancementUsingTunedTriThresholdFuzzyIntensificationOperatorsMethod_Click(object sender, EventArgs e)
+        {
+            var result = _appState.Dust.VisibilityEnhancementUsingTunedTriThresholdFuzzyIntensificationOperatorsMethod(_appState.InputImageBgr);
+            _appState.SetOutputImage(result);
+            this.DisplayImageInPictureBox(pictureBox3, result.Bitmap);
+        }
+
+        //RESTORE RESULT IMAGE
+        private void restoreToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            _appState.RestoreOutputImage();
+            this.DisplayImageInPictureBox(pictureBox3, _appState.OutputImageBgr.Bitmap);
+        }
     }
 }

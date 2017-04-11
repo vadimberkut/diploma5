@@ -36,8 +36,6 @@
             this.textBoxShadowDetectionLabThreshold = new System.Windows.Forms.TextBox();
             this.buttonShadowDetectionMS = new System.Windows.Forms.Button();
             this.textBoxShadowDetectionLMSThreshold = new System.Windows.Forms.TextBox();
-            this.checkBoxShadowDetectionLMSShowWindows = new System.Windows.Forms.CheckBox();
-            this.checkBoxShadowDetectionLabShowWindows = new System.Windows.Forms.CheckBox();
             this.buttonShadowRemovalAditiveMethod = new System.Windows.Forms.Button();
             this.buttonShadowRemovalConstantMethod = new System.Windows.Forms.Button();
             this.buttonShadowRemovalLabMethod = new System.Windows.Forms.Button();
@@ -58,6 +56,11 @@
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.windowsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.closeAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.checkBoxShowOptionalWindows = new System.Windows.Forms.CheckBox();
+            this.buttonVisibilityEnhancementUsingTunedTriThresholdFuzzyIntensificationOperatorsMethod = new System.Windows.Forms.Button();
+            this.label5 = new System.Windows.Forms.Label();
+            this.imageToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.restoreToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).BeginInit();
@@ -106,7 +109,7 @@
             // 
             // buttonShadowDetectionLab
             // 
-            this.buttonShadowDetectionLab.Location = new System.Drawing.Point(116, 448);
+            this.buttonShadowDetectionLab.Location = new System.Drawing.Point(223, 448);
             this.buttonShadowDetectionLab.Name = "buttonShadowDetectionLab";
             this.buttonShadowDetectionLab.Size = new System.Drawing.Size(75, 27);
             this.buttonShadowDetectionLab.TabIndex = 8;
@@ -116,14 +119,14 @@
             // 
             // textBoxShadowDetectionLabThreshold
             // 
-            this.textBoxShadowDetectionLabThreshold.Location = new System.Drawing.Point(197, 455);
+            this.textBoxShadowDetectionLabThreshold.Location = new System.Drawing.Point(304, 455);
             this.textBoxShadowDetectionLabThreshold.Name = "textBoxShadowDetectionLabThreshold";
             this.textBoxShadowDetectionLabThreshold.Size = new System.Drawing.Size(85, 20);
             this.textBoxShadowDetectionLabThreshold.TabIndex = 9;
             // 
             // buttonShadowDetectionMS
             // 
-            this.buttonShadowDetectionMS.Location = new System.Drawing.Point(116, 481);
+            this.buttonShadowDetectionMS.Location = new System.Drawing.Point(223, 481);
             this.buttonShadowDetectionMS.Name = "buttonShadowDetectionMS";
             this.buttonShadowDetectionMS.Size = new System.Drawing.Size(75, 27);
             this.buttonShadowDetectionMS.TabIndex = 10;
@@ -133,30 +136,10 @@
             // 
             // textBoxShadowDetectionLMSThreshold
             // 
-            this.textBoxShadowDetectionLMSThreshold.Location = new System.Drawing.Point(197, 488);
+            this.textBoxShadowDetectionLMSThreshold.Location = new System.Drawing.Point(304, 488);
             this.textBoxShadowDetectionLMSThreshold.Name = "textBoxShadowDetectionLMSThreshold";
             this.textBoxShadowDetectionLMSThreshold.Size = new System.Drawing.Size(85, 20);
             this.textBoxShadowDetectionLMSThreshold.TabIndex = 11;
-            // 
-            // checkBoxShadowDetectionLMSShowWindows
-            // 
-            this.checkBoxShadowDetectionLMSShowWindows.AutoSize = true;
-            this.checkBoxShadowDetectionLMSShowWindows.Location = new System.Drawing.Point(288, 491);
-            this.checkBoxShadowDetectionLMSShowWindows.Name = "checkBoxShadowDetectionLMSShowWindows";
-            this.checkBoxShadowDetectionLMSShowWindows.Size = new System.Drawing.Size(76, 17);
-            this.checkBoxShadowDetectionLMSShowWindows.TabIndex = 12;
-            this.checkBoxShadowDetectionLMSShowWindows.Text = "Windows?";
-            this.checkBoxShadowDetectionLMSShowWindows.UseVisualStyleBackColor = true;
-            // 
-            // checkBoxShadowDetectionLabShowWindows
-            // 
-            this.checkBoxShadowDetectionLabShowWindows.AutoSize = true;
-            this.checkBoxShadowDetectionLabShowWindows.Location = new System.Drawing.Point(288, 457);
-            this.checkBoxShadowDetectionLabShowWindows.Name = "checkBoxShadowDetectionLabShowWindows";
-            this.checkBoxShadowDetectionLabShowWindows.Size = new System.Drawing.Size(76, 17);
-            this.checkBoxShadowDetectionLabShowWindows.TabIndex = 13;
-            this.checkBoxShadowDetectionLabShowWindows.Text = "Windows?";
-            this.checkBoxShadowDetectionLabShowWindows.UseVisualStyleBackColor = true;
             // 
             // buttonShadowRemovalAditiveMethod
             // 
@@ -211,7 +194,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(113, 428);
+            this.label1.Location = new System.Drawing.Point(220, 428);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(93, 13);
             this.label1.TabIndex = 20;
@@ -288,7 +271,8 @@
             // 
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem,
-            this.windowsToolStripMenuItem});
+            this.windowsToolStripMenuItem,
+            this.imageToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Size = new System.Drawing.Size(1235, 24);
@@ -308,21 +292,21 @@
             // openToolStripMenuItem
             // 
             this.openToolStripMenuItem.Name = "openToolStripMenuItem";
-            this.openToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.openToolStripMenuItem.Size = new System.Drawing.Size(103, 22);
             this.openToolStripMenuItem.Text = "Open";
             this.openToolStripMenuItem.Click += new System.EventHandler(this.openToolStripMenuItem_Click);
             // 
             // saveToolStripMenuItem
             // 
             this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            this.saveToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.saveToolStripMenuItem.Size = new System.Drawing.Size(103, 22);
             this.saveToolStripMenuItem.Text = "Save";
             this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click);
             // 
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(103, 22);
             this.exitToolStripMenuItem.Text = "Exit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
@@ -337,15 +321,63 @@
             // closeAllToolStripMenuItem
             // 
             this.closeAllToolStripMenuItem.Name = "closeAllToolStripMenuItem";
-            this.closeAllToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.closeAllToolStripMenuItem.Size = new System.Drawing.Size(118, 22);
             this.closeAllToolStripMenuItem.Text = "Close all";
             this.closeAllToolStripMenuItem.Click += new System.EventHandler(this.closeAllToolStripMenuItem_Click);
+            // 
+            // checkBoxShowOptionalWindows
+            // 
+            this.checkBoxShowOptionalWindows.AutoSize = true;
+            this.checkBoxShowOptionalWindows.Location = new System.Drawing.Point(6, 457);
+            this.checkBoxShowOptionalWindows.Name = "checkBoxShowOptionalWindows";
+            this.checkBoxShowOptionalWindows.Size = new System.Drawing.Size(148, 17);
+            this.checkBoxShowOptionalWindows.TabIndex = 29;
+            this.checkBoxShowOptionalWindows.Text = "Show Optional Windows?";
+            this.checkBoxShowOptionalWindows.UseVisualStyleBackColor = true;
+            // 
+            // buttonVisibilityEnhancementUsingTunedTriThresholdFuzzyIntensificationOperatorsMethod
+            // 
+            this.buttonVisibilityEnhancementUsingTunedTriThresholdFuzzyIntensificationOperatorsMethod.Location = new System.Drawing.Point(997, 455);
+            this.buttonVisibilityEnhancementUsingTunedTriThresholdFuzzyIntensificationOperatorsMethod.Name = "buttonVisibilityEnhancementUsingTunedTriThresholdFuzzyIntensificationOperatorsMet" +
+    "hod";
+            this.buttonVisibilityEnhancementUsingTunedTriThresholdFuzzyIntensificationOperatorsMethod.Size = new System.Drawing.Size(97, 27);
+            this.buttonVisibilityEnhancementUsingTunedTriThresholdFuzzyIntensificationOperatorsMethod.TabIndex = 31;
+            this.buttonVisibilityEnhancementUsingTunedTriThresholdFuzzyIntensificationOperatorsMethod.Text = "Dust";
+            this.buttonVisibilityEnhancementUsingTunedTriThresholdFuzzyIntensificationOperatorsMethod.UseVisualStyleBackColor = true;
+            this.buttonVisibilityEnhancementUsingTunedTriThresholdFuzzyIntensificationOperatorsMethod.Click += new System.EventHandler(this.buttonVisibilityEnhancementUsingTunedTriThresholdFuzzyIntensificationOperatorsMethod_Click);
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(994, 431);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(65, 13);
+            this.label5.TabIndex = 30;
+            this.label5.Text = "Fog removal";
+            // 
+            // imageToolStripMenuItem
+            // 
+            this.imageToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.restoreToolStripMenuItem});
+            this.imageToolStripMenuItem.Name = "imageToolStripMenuItem";
+            this.imageToolStripMenuItem.Size = new System.Drawing.Size(52, 20);
+            this.imageToolStripMenuItem.Text = "Image";
+            // 
+            // restoreToolStripMenuItem
+            // 
+            this.restoreToolStripMenuItem.Name = "restoreToolStripMenuItem";
+            this.restoreToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.restoreToolStripMenuItem.Text = "Restore";
+            this.restoreToolStripMenuItem.Click += new System.EventHandler(this.restoreToolStripMenuItem_Click);
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1235, 595);
+            this.Controls.Add(this.buttonVisibilityEnhancementUsingTunedTriThresholdFuzzyIntensificationOperatorsMethod);
+            this.Controls.Add(this.label5);
+            this.Controls.Add(this.checkBoxShowOptionalWindows);
             this.Controls.Add(this.buttonRemoveFogUsingDarkChannelMethod);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.buttonSmoothShadowEdgesUsingMedianFilter);
@@ -359,8 +391,6 @@
             this.Controls.Add(this.buttonShadowRemovalLabMethod);
             this.Controls.Add(this.buttonShadowRemovalConstantMethod);
             this.Controls.Add(this.buttonShadowRemovalAditiveMethod);
-            this.Controls.Add(this.checkBoxShadowDetectionLabShowWindows);
-            this.Controls.Add(this.checkBoxShadowDetectionLMSShowWindows);
             this.Controls.Add(this.textBoxShadowDetectionLMSThreshold);
             this.Controls.Add(this.buttonShadowDetectionMS);
             this.Controls.Add(this.textBoxShadowDetectionLabThreshold);
@@ -394,8 +424,6 @@
         private System.Windows.Forms.TextBox textBoxShadowDetectionLabThreshold;
         private System.Windows.Forms.Button buttonShadowDetectionMS;
         private System.Windows.Forms.TextBox textBoxShadowDetectionLMSThreshold;
-        private System.Windows.Forms.CheckBox checkBoxShadowDetectionLMSShowWindows;
-        private System.Windows.Forms.CheckBox checkBoxShadowDetectionLabShowWindows;
         private System.Windows.Forms.Button buttonShadowRemovalAditiveMethod;
         private System.Windows.Forms.Button buttonShadowRemovalConstantMethod;
         private System.Windows.Forms.Button buttonShadowRemovalLabMethod;
@@ -416,6 +444,11 @@
         private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem windowsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem closeAllToolStripMenuItem;
+        private System.Windows.Forms.CheckBox checkBoxShowOptionalWindows;
+        private System.Windows.Forms.Button buttonVisibilityEnhancementUsingTunedTriThresholdFuzzyIntensificationOperatorsMethod;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.ToolStripMenuItem imageToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem restoreToolStripMenuItem;
     }
 }
 

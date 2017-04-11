@@ -9,10 +9,12 @@ namespace diploma5_csharp
 
         public Shadow Shadow;
         public Fog Fog;
+        public Dust Dust;
 
         public Image<Bgr, byte> InputImageBgr;
         public Image<Lab, byte> InputImageLab;
         public Image<Bgr, byte> OutputImageBgr;
+        public Image<Bgr, byte> OutputImageBgrOrigin;
         public Image<Gray, byte> ShadowMaskImageGray;
 
         public AppState(Form1 form1)
@@ -20,6 +22,7 @@ namespace diploma5_csharp
             Form1 = form1;
             Shadow = new Shadow();
             Fog = new Fog();
+            Dust = new Dust();
         }
 
         public void SetInputImage(Image<Bgr, byte> inputImage)
@@ -34,6 +37,15 @@ namespace diploma5_csharp
         public void SetOutputImage(Image<Bgr, byte> image)
         {
             this.OutputImageBgr = image;
+        }
+        public void SetOutputImageOrigin(Image<Bgr, byte> image)
+        {
+            this.OutputImageBgrOrigin = image;
+        }
+        public void RestoreOutputImage()
+        {
+            if (this.OutputImageBgrOrigin != null && this.OutputImageBgr != null)
+                this.OutputImageBgr = this.OutputImageBgrOrigin;
         }
     }
 }

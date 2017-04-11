@@ -24,6 +24,7 @@ namespace diploma5_csharp
             
         }
 
+        //DETECTION
         public Image<Emgu.CV.Structure.Gray, Byte> DetectUsingLabMethod(Image<Lab, Byte> image, ShadowDetectionLabParams _params)
         {
             Image<Gray, Byte> shadowMask = new Image<Gray, byte>(new Size(image.Width, image.Height));
@@ -118,7 +119,9 @@ namespace diploma5_csharp
 
         }
 
-        public Image<Emgu.CV.Structure.Bgr, Byte> RemoveUsingAditiveMethod(Image<Bgr, Byte> image, Image<Gray, Byte> shadowMask)
+
+        //REMOVAL
+        public Image<Emgu.CV.Structure.Bgr, Byte> RemoveUsingAditiveMethod(Image<Bgr, Byte> image, Image<Gray, Byte> shadowMask, ShadowRemovalParams _params)
         {
             //Image<Bgr, Byte> result = new Image<Bgr, byte>(image.Size);
             Image<Bgr, Byte> result = image.Clone();
@@ -147,7 +150,7 @@ namespace diploma5_csharp
             return result;
         }
 
-        public Image<Emgu.CV.Structure.Bgr, Byte> RemoveUsingBasicLightModelMethod(Image<Bgr, Byte> image, Image<Gray, Byte> shadowMask)
+        public Image<Emgu.CV.Structure.Bgr, Byte> RemoveUsingBasicLightModelMethod(Image<Bgr, Byte> image, Image<Gray, Byte> shadowMask, ShadowRemovalParams _params)
         {
             Image<Bgr, Byte> result = image.Clone();
 
@@ -190,7 +193,7 @@ namespace diploma5_csharp
             return result;
         }
 
-        public Image<Emgu.CV.Structure.Bgr, Byte> RemoveUsingCombinedMethod(Image<Bgr, Byte> image, Image<Gray, Byte> shadowMask)
+        public Image<Emgu.CV.Structure.Bgr, Byte> RemoveUsingCombinedMethod(Image<Bgr, Byte> image, Image<Gray, Byte> shadowMask, ShadowRemovalParams _params)
         {
             Image<Bgr, Byte> result = image.Clone();
             Image<Ycc, Byte> YCrCbImage = ImageHelper.ToYCrCb(image);
@@ -238,7 +241,7 @@ namespace diploma5_csharp
             return result;
         }
 
-        public Image<Emgu.CV.Structure.Bgr, Byte> RemoveUsingLabMethod(Image<Bgr, Byte> image, Image<Gray, Byte> shadowMask)
+        public Image<Emgu.CV.Structure.Bgr, Byte> RemoveUsingLabMethod(Image<Bgr, Byte> image, Image<Gray, Byte> shadowMask, ShadowRemovalParams _params)
         {
             Image<Bgr, Byte> result = image.Clone();
             Image<Lab, Byte> labImage = ImageHelper.ToLab(image);
@@ -364,7 +367,8 @@ namespace diploma5_csharp
             Bitmap result2;
             arrayToImage.Convert(pixels, out result2);
             msResult = new Image<Bgr, byte>(result2);
-            EmguCvWindowManager.Display(msResult, "1_msResult");
+            if (_params.ShowWindows)
+                EmguCvWindowManager.Display(msResult, "1_msResult");
             //////
 
             //determine regions contain both shadow and non-shadow pixels
@@ -472,7 +476,8 @@ namespace diploma5_csharp
                     imgSegmentationResNew[i, j] = new Bgr(B, G, R);
                 }
             }
-            EmguCvWindowManager.Display(imgSegmentationResNew, "2_imgSegmentationResNew");
+            if (_params.ShowWindows)
+                EmguCvWindowManager.Display(imgSegmentationResNew, "2_imgSegmentationResNew");
 
 
             //Count pixels for each region and determine shadow regions
@@ -812,7 +817,7 @@ namespace diploma5_csharp
                         }
                     }
                 }
-                if (true)
+                if (_params.ShowWindows)
                 {
 //                    char integer_string[32];
 //                    int integer = currentRegion;
@@ -826,6 +831,7 @@ namespace diploma5_csharp
 //                    windowName += (spliter);
 //                    windowName += (integer_string2);
 //                    cv::imshow(windowName, imgAdjacentRegions);
+
 
                     EmguCvWindowManager.Display(imgAdjacentRegions, $"{currentRegion}-${adjacentRegionForAlign}");
                 }
@@ -889,7 +895,7 @@ namespace diploma5_csharp
             return result;
         }
 
-        public Image<Emgu.CV.Structure.Bgr, Byte> RemoveUsingConstantMethod(Image<Bgr, Byte> image, Image<Gray, Byte> shadowMask)
+        public Image<Emgu.CV.Structure.Bgr, Byte> RemoveUsingConstantMethod(Image<Bgr, Byte> image, Image<Gray, Byte> shadowMask, ShadowRemovalParams _params)
         {
             Image<Bgr, Byte> result = image.Clone();
             Image<Gray, Byte> shadowMaskEdge = shadowMask.Clone();
@@ -929,7 +935,7 @@ namespace diploma5_csharp
 //                MCvScalar color =new MCvScalar(100, 150, 250);
                 CvInvoke.DrawContours(outputContour, contours, i, color, thickness, lineType, hierachy, maxLevel);
             }
-            if (true)
+            if (_params.ShowWindows)
             {
                 EmguCvWindowManager.Display(outputContour, "3 outputContour");
             }
@@ -1323,7 +1329,7 @@ namespace diploma5_csharp
                 #endregion
             }
 
-            if (true)
+            if (_params.ShowWindows)
             {
                 EmguCvWindowManager.Display(shadowMaskEdge, "1 shadowMaskEdge");
                 EmguCvWindowManager.Display(shadowMaskEdgeDilated, "2 shadowMaskEdgeDilated");
@@ -1513,11 +1519,11 @@ namespace diploma5_csharp
             CvInvoke.GaussianBlur(imgBGRResSource, imgEdgeGaussianWhole, new Size(kernelSize, kernelSize), 0);
             imgEdgeGaussianWhole.Copy(imgEdgeGaussianEdgeOnly, imgEdgeDilated);
 
-            if ( true)
-            {
-                EmguCvWindowManager.Display(imgEdgeGaussianWhole, "1 imgEdgeGaussianWhole");
-                EmguCvWindowManager.Display(imgEdgeGaussianEdgeOnly, "2 imgEdgeGaussianEdgeOnly");
-            }
+            //if ( true)
+            //{
+            //    EmguCvWindowManager.Display(imgEdgeGaussianWhole, "1 imgEdgeGaussianWhole");
+            //    EmguCvWindowManager.Display(imgEdgeGaussianEdgeOnly, "2 imgEdgeGaussianEdgeOnly");
+            //}
 
             return imgEdgeGaussianEdgeOnly;
         }
@@ -1545,11 +1551,11 @@ namespace diploma5_csharp
             CvInvoke.MedianBlur(image, imgMedianWhole, kernelSize);
             imgMedianWhole.Copy(imgMedianEdgeOnly, imgEdgeDilated);
 
-            if (true)
-            {
-                EmguCvWindowManager.Display(imgMedianWhole, "1 imgMedianWhole");
-                EmguCvWindowManager.Display(imgMedianEdgeOnly, "2 imgMedianEdgeOnly");
-            }
+            //if (true)
+            //{
+            //    EmguCvWindowManager.Display(imgMedianWhole, "1 imgMedianWhole");
+            //    EmguCvWindowManager.Display(imgMedianEdgeOnly, "2 imgMedianEdgeOnly");
+            //}
 
             return imgMedianEdgeOnly;
         }
