@@ -291,7 +291,15 @@ namespace diploma5_csharp
 
         private void buttonShadowRemovalLabMethod_Click(object sender, EventArgs e)
         {
-            var result = _appState.Shadow.RemoveUsingLabMethod(_appState.InputImageBgr, _appState.ShadowMaskImageGray, new ShadowRemovalParams() { ShowWindows = GetCheckBoxValue(checkBoxShowOptionalWindows) });
+            var result = _appState.Shadow.RemoveUsingLabMethod2(_appState.InputImageBgr, _appState.ShadowMaskImageGray, new ShadowRemovalParams() { ShowWindows = GetCheckBoxValue(checkBoxShowOptionalWindows) });
+            _appState.SetOutputImage(result);
+            _appState.SetOutputImageOrigin(result);
+            this.DisplayImageInPictureBox(pictureBox3, result.Bitmap);
+        }
+
+        private void buttonShadowRemovalLabMethod2_Click(object sender, EventArgs e)
+        {
+            var result = _appState.Shadow.RemoveUsingLabMethod2(_appState.InputImageBgr, _appState.ShadowMaskImageGray, new ShadowRemovalParams() { ShowWindows = GetCheckBoxValue(checkBoxShowOptionalWindows) });
             _appState.SetOutputImage(result);
             _appState.SetOutputImageOrigin(result);
             this.DisplayImageInPictureBox(pictureBox3, result.Bitmap);
@@ -358,5 +366,7 @@ namespace diploma5_csharp
             _appState.RestoreOutputImage();
             this.DisplayImageInPictureBox(pictureBox3, _appState.OutputImageBgr.Bitmap);
         }
+
+        
     }
 }

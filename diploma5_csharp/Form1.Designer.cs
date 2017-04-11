@@ -61,6 +61,7 @@
             this.label5 = new System.Windows.Forms.Label();
             this.imageToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.restoreToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.buttonShadowRemovalLabMethod2 = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).BeginInit();
@@ -346,6 +347,7 @@
             this.buttonVisibilityEnhancementUsingTunedTriThresholdFuzzyIntensificationOperatorsMethod.TabIndex = 31;
             this.buttonVisibilityEnhancementUsingTunedTriThresholdFuzzyIntensificationOperatorsMethod.Text = "Dust";
             this.buttonVisibilityEnhancementUsingTunedTriThresholdFuzzyIntensificationOperatorsMethod.UseVisualStyleBackColor = true;
+            this.buttonVisibilityEnhancementUsingTunedTriThresholdFuzzyIntensificationOperatorsMethod.Visible = false;
             this.buttonVisibilityEnhancementUsingTunedTriThresholdFuzzyIntensificationOperatorsMethod.Click += new System.EventHandler(this.buttonVisibilityEnhancementUsingTunedTriThresholdFuzzyIntensificationOperatorsMethod_Click);
             // 
             // label5
@@ -356,6 +358,7 @@
             this.label5.Size = new System.Drawing.Size(69, 13);
             this.label5.TabIndex = 30;
             this.label5.Text = "Dust removal";
+            this.label5.Visible = false;
             // 
             // imageToolStripMenuItem
             // 
@@ -372,11 +375,23 @@
             this.restoreToolStripMenuItem.Text = "Restore";
             this.restoreToolStripMenuItem.Click += new System.EventHandler(this.restoreToolStripMenuItem_Click);
             // 
+            // buttonShadowRemovalLabMethod2
+            // 
+            this.buttonShadowRemovalLabMethod2.Location = new System.Drawing.Point(12, 523);
+            this.buttonShadowRemovalLabMethod2.Name = "buttonShadowRemovalLabMethod2";
+            this.buttonShadowRemovalLabMethod2.Size = new System.Drawing.Size(75, 27);
+            this.buttonShadowRemovalLabMethod2.TabIndex = 32;
+            this.buttonShadowRemovalLabMethod2.Text = "LAB2";
+            this.buttonShadowRemovalLabMethod2.UseVisualStyleBackColor = true;
+            this.buttonShadowRemovalLabMethod2.Visible = false;
+            this.buttonShadowRemovalLabMethod2.Click += new System.EventHandler(this.buttonShadowRemovalLabMethod2_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1235, 595);
+            this.Controls.Add(this.buttonShadowRemovalLabMethod2);
             this.Controls.Add(this.buttonVisibilityEnhancementUsingTunedTriThresholdFuzzyIntensificationOperatorsMethod);
             this.Controls.Add(this.label5);
             this.Controls.Add(this.checkBoxShowOptionalWindows);
@@ -451,6 +466,7 @@
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.ToolStripMenuItem imageToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem restoreToolStripMenuItem;
+        private System.Windows.Forms.Button buttonShadowRemovalLabMethod2;
     }
 }
 

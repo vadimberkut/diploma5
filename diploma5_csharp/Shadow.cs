@@ -905,6 +905,665 @@ namespace diploma5_csharp
             return result;
         }
 
+        public Image<Emgu.CV.Structure.Bgr, Byte> RemoveUsingLabMethod2(Image<Bgr, Byte> image, Image<Gray, Byte> shadowMask, ShadowRemovalParams _params)
+        {
+            Image<Bgr, Byte> result = image.Clone();
+            Image<Lab, Byte> labImage = ImageHelper.ToLab(image);
+            Image<Bgr, Byte> msResult = image.Clone();
+            Image<Lab, Byte> imgResLAB = ImageHelper.ToLab(image);
+
+            Image<Gray, Byte> lightMask = shadowMask.ThresholdBinaryInv(new Gray(254), new Gray(255));
+
+            Lab avgLight = labImage.GetAverage(lightMask);
+            Lab avgShadow = labImage.GetAverage(shadowMask);
+
+
+            //Apply Mean shift
+            // Use a fixed seed for reproducibility
+            // Accord.Math.Random.Generator.Seed = 0;
+
+            // Declare some data to be clustered
+            //            double[][] input =
+            //            {
+            //                new double[] { -5, -2, -4 },
+            //                new double[] { -5, -5, -6 },
+            //                new double[] {  2,  1,  1 },
+            //                new double[] {  1,  1,  2 },
+            //                new double[] {  1,  2,  2 },
+            //                new double[] {  3,  1,  2 },
+            //                new double[] { 11,  5,  4 },
+            //                new double[] { 15,  5,  6 },
+            //                new double[] { 10,  5,  6 },
+            //            };
+
+            //var arr = labImage.ManagedArray;
+            //var data = labImage.Data;
+            //var bytes = labImage.Bytes;
+
+            //int length = labImage.Rows*labImage.Cols;
+            //double[][] input = new double[length][];
+
+            //for (int i = 0; i < labImage.Rows; i += 1)
+            //{
+            //    for (int j = 0; j < labImage.Cols; j += 1)
+            //    {
+            //        int index = labImage.Width * i + j;
+            //        input[index] = new double[labImage.NumberOfChannels];
+
+            //        for (int k = 0; k < labImage.NumberOfChannels; k += 1)
+            //        {
+            //            input[index][k] = data[i, j, k];
+            //        }
+            //    }
+            //}
+
+            //// Create a uniform kernel density function
+            //UniformKernel kernel = new UniformKernel();
+
+            //// Create a new Mean-Shift algorithm for 3 dimensional samples
+            //MeanShift meanShift = new MeanShift(dimension: 3, kernel: kernel, bandwidth: 2);
+
+            //// Learn a data partitioning using the Mean Shift algorithm
+            //MeanShiftClusterCollection clustering = meanShift.Learn(input);
+
+            //// Predict group labels for each point
+            //int[] labels = clustering.Decide(input);
+
+            ////Display Result
+            //Dictionary<int,Bgr> labelColors = new Dictionary<int, Bgr>();
+            //for (int i = 0; i < labImage.Rows; i += 1)
+            //{
+            //    for (int j = 0; j < labImage.Cols; j += 1)
+            //    {
+            //        int index = labImage.Width * i + j;
+            //        int label = labels[index];
+
+            //        //add color for label
+            //        if (!labelColors.ContainsKey(label))
+            //        {
+            //            Random rand = new Random();
+            //            labelColors.Add(label, new Bgr(rand.Next(256), rand.Next(256), rand.Next(256)));
+            //        }
+            //        Bgr labelColor = labelColors[label];
+
+            //        msResult[i, j] = labelColor;
+
+            //    }
+            //}
+            //EmguCvWindowManager.Display(msResult, "1_msResult");
+
+            ///////////
+            //int pixelSize = 3;   // RGB color pixel
+            //int kernel = 3;
+            //double sigma = 0.06; // kernel bandwidth
+            int pixelSize = 3;   // RGB color pixel
+            int kernel = 7; 
+            double sigma = 0.11; // kernel bandwidth
+
+            // Load a test image (shown below)
+            Bitmap image2 = labImage.Bitmap;
+
+            // Create converters
+            ImageToArray imageToArray = new ImageToArray(min: -1, max: +1);
+            ArrayToImage arrayToImage = new ArrayToImage(image2.Width, image2.Height, min: -1, max: +1);
+
+            // Transform the image into an array of pixel values
+            double[][] pixels;
+            imageToArray.Convert(image2, out pixels);
+
+            // Create a MeanShift algorithm using given bandwidth
+            //   and a Gaussian density kernel as kernel function.
+            MeanShift meanShift = new MeanShift(pixelSize, new GaussianKernel(kernel), sigma);
+
+            // We will compute the mean-shift algorithm until the means
+            // change less than 0.5 between two iterations of the algorithm
+            meanShift.Tolerance = 0.05;
+            meanShift.MaxIterations = 10;
+
+            // Learn the clusters in the data
+            var clustering = meanShift.Learn(pixels);
+
+            // Use clusters to decide class labels
+            int[] labels = clustering.Decide(pixels);
+            int regionCount = labels.DistinctCount();
+
+            // Replace every pixel with its corresponding centroid
+            pixels.ApplyInPlace((x, i) => meanShift.Clusters.Modes[labels[i]]);
+
+            // Retrieve the resulting image in a picture box
+            Bitmap result2;
+            arrayToImage.Convert(pixels, out result2);
+            msResult = new Image<Bgr, byte>(result2);
+            if (_params.ShowWindows)
+                EmguCvWindowManager.Display(msResult, "1_msResult");
+            //////
+
+            //return image;
+
+            //start count labels from 0
+            //labels = labels.Select(l => l - 1).ToArray<int>();
+
+
+            //determine regions contain both shadow and non-shadow pixels
+            List<int> regions_to_separate = new List<int>();
+            for (int r = 0; r < regionCount; r++)
+            {
+                int CURRENT_LABEL = r;
+                bool is_non_shadow_region = false;
+                bool is_shadow_region = false;
+                for (int i = 0; i < shadowMask.Rows; i++)
+                {
+                    bool break_ = false;
+                    for (int j = 0; j < shadowMask.Cols; j++)
+                    {
+
+                        //Handle current region
+                        //int cl = ilabels[i][j];
+                        int index = labImage.Width * i + j;
+                        int label = labels[index];
+                        if (label != CURRENT_LABEL)
+                        {
+                            continue;
+                        }
+
+                        //Handle shadow region
+                        Gray shadowPixelMask = shadowMask[i, j];
+                        if (shadowPixelMask.Intensity == 255)
+                        {
+                            is_non_shadow_region = true;
+                        }
+                        else
+                        {
+                            is_shadow_region = true;
+                        }
+
+                        if (is_non_shadow_region && is_shadow_region)
+                        {
+                            regions_to_separate.Add(CURRENT_LABEL);
+                            break_ = true;
+                            break;
+                        }
+                    }
+                    if (break_) break;
+                }
+            }
+
+            var asdsd = labels.Distinct();
+
+            //separate such regions on two (old label - non shadow, new label - shadow region)
+            for (int r = 0; r != regions_to_separate.Count; r++)
+            {
+                int CURRENT_LABEL = regions_to_separate[r];
+                for (int i = 0; i < shadowMask.Rows; i++)
+                {
+                    for (int j = 0; j < shadowMask.Cols; j++)
+                    {
+                        //Handle current region
+                        //                        int cl = ilabels[i][j];
+                        int index = labImage.Width * i + j;
+                        int label = labels[index];
+                        if (label != CURRENT_LABEL)
+                        {
+                            continue;
+                        }
+
+                        Gray shadowPixelMask = shadowMask[i, j];
+                        //Assign new label for shadow pixels AND Leave old label for non shadow pixels
+                        int newRegionNumber = regionCount; //regions start counting from 1. e.g. - 52 regions = from 1 to 52
+                        if (shadowPixelMask.Intensity == 255)
+                        {
+                            //                            ilabels[i][j] = regionCount;
+                            labels[index] = newRegionNumber;
+                        }
+                    }
+                }
+                regionCount += 1;
+            }
+
+            var asd = labels.Distinct();
+
+
+
+            //// Draw random color for new segmentaion
+            List<int> color = new List<int>();
+            Random rnd = new Random();
+            for (int i = 0; i < regionCount; i++)
+            {
+                color.Add(rnd.Next(0, 255));
+            }
+
+            Image<Bgr, Byte> imgSegmentationResNew = image.Clone();
+            for (int i = 0; i < imgSegmentationResNew.Rows; i++)
+            {
+                for (int j = 0; j < imgSegmentationResNew.Cols; j++)
+                {
+                    Bgr pixel = imgSegmentationResNew[i, j];
+
+                    //                    int cl = ilabels[i][j];
+                    int index = labImage.Width * i + j;
+                    int label = labels[index];
+
+                    double B = (color[label]) & 255;
+                    double G = (color[label] >> 2) & 255;
+                    double R = (color[label] << 2) & 255;
+
+                    imgSegmentationResNew[i, j] = new Bgr(B, G, R);
+                }
+            }
+            if (_params.ShowWindows)
+                EmguCvWindowManager.Display(imgSegmentationResNew, "2_imgSegmentationResNew");
+
+
+            /////////////////////////////////////////////////////////////////////////////
+            //// Replace every pixel with its corresponding centroid
+            //pixels.ApplyInPlace((x, i) => meanShift.Clusters.Modes[labels[i]]);
+
+            //// Retrieve the resulting image in a picture box
+            //Bitmap result3;
+            //arrayToImage.Convert(pixels, out result3);
+            //msResult = new Image<Bgr, byte>(result3);
+            //if (_params.ShowWindows)
+            //    EmguCvWindowManager.Display(msResult, "2_imgSegmentationResNew");
+
+            //////////////////////////////////////////////////////////////////////////
+
+
+
+            //Count pixels for each region and determine shadow regions
+            int[] labelsCount = new int[regionCount];
+            bool[] isShadowRegion = new bool[regionCount];
+            for (int r = 0; r < regionCount; r++)
+            {
+                labelsCount[r] = 0;
+                isShadowRegion[r] = false;
+            }
+            for (int r = 0; r < regionCount; r++)
+            {
+                int CURRENT_LABEL = r;
+                for (int i = 0; i < labImage.Rows; i++)
+                {
+                    for (int j = 0; j < labImage.Cols; j++)
+                    {
+                        //Handle current region
+                        int index = labImage.Width * i + j;
+                        int label = labels[index];
+                        if (label != CURRENT_LABEL)
+                        {
+                            continue;
+                        }
+                        labelsCount[r] += 1; //Count pixels
+                        if (shadowMask[i, j].Intensity == 255) //is shadow region?
+                            isShadowRegion[r] = true;
+                    }
+                }
+            }
+
+
+            //Define adjacent regions matrix
+            bool[,] adjacentRegionsMatrix = new bool[regionCount, regionCount];
+            for (int i = 0; i < regionCount; i++)
+            {
+                for (int j = 0; j < regionCount; j++)
+                {
+                    adjacentRegionsMatrix[i, j] = false;
+                }
+            }
+            int minDev = 5;
+            int maxDev = 10;
+            for (int dev = minDev; dev <= maxDev; dev++)
+            {
+                for (int r = 0; r < regionCount; r++)
+                {
+                    int CURRENT_LABEL = r;
+                    for (int i = 0; i < labImage.Rows; i++)
+                    {
+                        for (int j = 0; j < labImage.Cols; j++)
+                        {
+                            //Handle current region
+                            int index = labImage.Width * i + j;
+                            int label = labels[index];
+                            if (label != CURRENT_LABEL)
+                            {
+                                continue;
+                            }
+
+                            //Look for adjacent region's pixels
+
+                            //Go 1px to 4 base direction - up,down,left,right
+                            int ANOTHER_LABEL;
+                            index = labImage.Width * (i + dev) + j;
+                            if (i + dev < labImage.Rows && labels[index] != CURRENT_LABEL)
+                            {
+                                ANOTHER_LABEL = labels[index];
+                                adjacentRegionsMatrix[CURRENT_LABEL, ANOTHER_LABEL] = true;
+                            }
+
+                            index = labImage.Width * (i - dev) + j;
+                            if (i - dev >= 0 && labels[index] != CURRENT_LABEL)
+                            {
+                                ANOTHER_LABEL = labels[index];
+                                adjacentRegionsMatrix[CURRENT_LABEL, ANOTHER_LABEL] = true;
+                            }
+
+                            index = labImage.Width * i + j + dev;
+                            if (j + dev < labImage.Cols && labels[index] != CURRENT_LABEL)
+                            {
+                                ANOTHER_LABEL = labels[index];
+                                adjacentRegionsMatrix[CURRENT_LABEL, ANOTHER_LABEL] = true;
+                            }
+
+                            index = labImage.Width * i + j - dev;
+                            if (j - dev >= 0 && labels[index] != CURRENT_LABEL)
+                            {
+                                ANOTHER_LABEL = labels[index];
+                                adjacentRegionsMatrix[CURRENT_LABEL, ANOTHER_LABEL] = true;
+                            }
+                        }
+                    }
+                }
+            }
+
+
+
+            //define small regions near shadow border to exclude from regions for align
+            Image<Gray, Byte> imgShadowMaskDilated = shadowMask.Clone();
+            int inpaintDilationKernelSize = 23;
+            Mat elementD = CvInvoke.GetStructuringElement(Emgu.CV.CvEnum.ElementShape.Rectangle, new Size(inpaintDilationKernelSize, inpaintDilationKernelSize), new Point(-1, -1));
+            CvInvoke.Dilate(shadowMask, imgShadowMaskDilated, elementD, new Point(-1, -1), 1, BorderType.Default, new MCvScalar());
+
+            bool[] regionsNotForAlign = new bool[regionCount];
+            for (int region = 0; region < regionCount; region++)
+            {
+                if (isShadowRegion[region] == true)
+                    regionsNotForAlign[region] = true;
+                else
+                    regionsNotForAlign[region] = false;
+            }
+
+            for (int currentRegion = 0; currentRegion < regionCount; currentRegion++)
+            {
+                //skip shadow regions - take non-shadow region
+                if (isShadowRegion[currentRegion] == true)
+                    continue;
+
+                //Count shadow pixels using Dilated Mask
+                int countAllPixels = 0;
+                int countShadowPixels = 0;
+                int countNonShadowPixels = 0;
+
+                for (int i = 0; i < imgShadowMaskDilated.Rows; i++)
+                {
+                    for (int j = 0; j < imgShadowMaskDilated.Cols; j++)
+                    {
+
+                        //Handle current region
+                        //                        int cl = ilabels[i][j];
+                        int index = labImage.Width * i + j;
+                        int label = labels[index];
+                        if (label != currentRegion)
+                        {
+                            continue;
+                        }
+
+                        Gray dilatedShadowMaskPixel = imgShadowMaskDilated[i, j];
+                        //is shadow region?
+                        if (dilatedShadowMaskPixel.Intensity == 255)
+                            countShadowPixels += 1;
+                        else
+                            countNonShadowPixels += 1;
+                    }
+                }
+                countAllPixels = countShadowPixels + countNonShadowPixels;
+
+                //
+                if (countShadowPixels > countNonShadowPixels)
+                {
+                    regionsNotForAlign[currentRegion] = true;
+                }
+            }
+
+            bool[] shadowRegionsUsedForAlign = new bool[regionCount]; //handled shadow regions that can be used to align remaining shadow regions
+            bool[] shadowRegionsWithNoLighAdjacentRegions = new bool[regionCount]; //
+            for (int i = 0; i < regionCount; i++)
+            {
+                shadowRegionsUsedForAlign[i] = false;
+                shadowRegionsWithNoLighAdjacentRegions[i] = false;
+            }
+
+            //define shadow regions for relight
+            List<int> shadowRegionsForRelight = new List<int>();
+            for (int currentRegion = 0; currentRegion < regionCount; currentRegion++)
+            {
+                //skip non-shadow regions - take shadow region
+                if (isShadowRegion[currentRegion] == false)
+                    continue;
+
+                shadowRegionsForRelight.Add(currentRegion);
+            }
+
+            //loop through shadow regions and find adjacent non-shadow
+            int MAX_ITERATIONS = 1000;
+            //for (int currentRegion = 0; currentRegion < regionCount; currentRegion++)
+            for (int iteration = 0; shadowRegionsForRelight.Count > 0; iteration++)
+            {
+                if (iteration >= MAX_ITERATIONS)
+                    break;
+
+                //int currentRegion = shadowRegionsForRelight[0];
+                //                int currentRegion = *(shadowRegionsForRelight.begin());
+                int currentRegion = shadowRegionsForRelight[0];
+                //int currentRegion = shadowRegionsForRelight[iteration];
+
+                //find non-shadow adjacent regions or aligned shadow regions
+                List<int> adjacentNonShadowRegions = new List<int>();
+                for (int k = 0; k < regionCount; k++)
+                {
+                    bool isAdjacentRegion = adjacentRegionsMatrix[currentRegion, k];
+                    bool isRegionNotForAlign = regionsNotForAlign[k];
+                    bool isShadowRegion___ = isShadowRegion[k];
+                    bool isShadowRegionForAlign = shadowRegionsUsedForAlign[k];
+                    if (isAdjacentRegion == true && isRegionNotForAlign == false && (isShadowRegion___ == false || (isShadowRegionForAlign == true && shadowRegionsWithNoLighAdjacentRegions[currentRegion])))
+                    {
+                        adjacentNonShadowRegions.Add(k);
+                    }
+                }
+
+                //Calc avg values for current shadow region
+                double L_shadow_avg = 0;
+                double A_shadow_avg = 0;
+                double B_shadow_avg = 0;
+                int currentRegionCount = labelsCount[currentRegion];
+
+                double L_non_shadow_avg = 0;
+                double A_non_shadow_avg = 0;
+                double B_non_shadow_avg = 0;
+                int adjacentRegionCount = 0;
+
+                int adjacentRegionForAlign = -1;
+
+                for (int i = 0; i < imgResLAB.Rows; i++)
+                {
+                    for (int j = 0; j < imgResLAB.Cols; j++)
+                    {
+
+                        //Handle current region
+                        //                        int cl = ilabels[i][j];
+                        int index = labImage.Width * i + j;
+                        int label = labels[index];
+                        if (label != currentRegion)
+                        {
+                            continue;
+                        }
+
+                        Lab pixel = imgResLAB[i, j];
+
+                        L_shadow_avg += pixel.X;
+                        A_shadow_avg += pixel.Y;
+                        B_shadow_avg += pixel.Z;
+                    }
+                }
+                L_shadow_avg /= currentRegionCount;
+                A_shadow_avg /= currentRegionCount;
+                B_shadow_avg /= currentRegionCount;
+
+                //Find adjacent region that closest in chromatacity
+                double chromaDeltaEMetric = 1000000000000;
+                double luminanceAndChromaDeltaEMetric = 1000000000000;
+                //double MaxDeltaEMetric = 12; // if more - only relight
+                for (int r2 = 0; r2 != adjacentNonShadowRegions.Count; r2++)
+                {
+                    int adjacentNonShadowRegion = adjacentNonShadowRegions[r2];
+                    adjacentRegionCount = labelsCount[adjacentNonShadowRegion];
+
+                    //Calc avg values for adjacent non-shadow region
+                    double L_non_shadow_avg_ = 0;
+                    double A_non_shadow_avg_ = 0;
+                    double B_non_shadow_avg_ = 0;
+
+                    for (int i = 0; i < imgResLAB.Rows; i++)
+                    {
+                        for (int j = 0; j < imgResLAB.Cols; j++)
+                        {
+
+                            //Handle adjacent region
+                            //                            int cl = ilabels[i][j];
+                            int index = labImage.Width * i + j;
+                            int label = labels[index];
+                            if (label != adjacentNonShadowRegion)
+                            {
+                                continue;
+                            }
+
+                            //cv::Vec3b & pixel = imgResLAB.at<cv::Vec3b>(i, j);
+                            Lab pixel = imgResLAB[i, j];
+
+                            L_non_shadow_avg_ += pixel.X;
+                            A_non_shadow_avg_ += pixel.Y;
+                            B_non_shadow_avg_ += pixel.Z;
+                        }
+                    }
+                    L_non_shadow_avg_ /= adjacentRegionCount;
+                    A_non_shadow_avg_ /= adjacentRegionCount;
+                    B_non_shadow_avg_ /= adjacentRegionCount;
+
+                    //Compare chrom values to define minimum diff region
+                    double currentChromaDeltaEMetric = ColorDifference.CIE76.GetMetric(new double[2] { A_shadow_avg, B_shadow_avg }, new double[2] { A_non_shadow_avg_, B_non_shadow_avg_ }, 2);
+                    double currentLuminanceAndChromaDeltaEMetric = ColorDifference.CIE76.GetMetric(new double[3] { L_shadow_avg, A_shadow_avg, B_shadow_avg }, new double[3] { L_non_shadow_avg_, A_non_shadow_avg_, B_non_shadow_avg_ }, 3);
+                    if (currentChromaDeltaEMetric < chromaDeltaEMetric)
+                    {
+                        chromaDeltaEMetric = currentChromaDeltaEMetric;
+                        adjacentRegionForAlign = adjacentNonShadowRegion;
+
+                        L_non_shadow_avg = L_non_shadow_avg_;
+                        A_non_shadow_avg = A_non_shadow_avg_;
+                        B_non_shadow_avg = B_non_shadow_avg_;
+                    }
+                }
+
+                //if adjacent region not found, mark current shadow region as "handle in the end" 
+                if (adjacentRegionForAlign == -1)
+                {
+                    //replace current(first) item with other
+                    //                    shadowRegionsForRelight.erase(shadowRegionsForRelight.begin());
+                    shadowRegionsForRelight.RemoveAt(0);
+                    //shadowRegionsForRelight.push_back(currentRegion);
+                    shadowRegionsForRelight.Add(currentRegion);
+
+                    shadowRegionsWithNoLighAdjacentRegions[currentRegion] = true;
+
+                    continue;
+                }
+
+                //Visualize current regions
+                //                cv::Mat imgAdjacentRegions(imgForMeanShiftCluster);
+                Image<Bgr, Byte> imgAdjacentRegions = image.Clone();
+                for (int i = 0; i < imgAdjacentRegions.Rows; i++)
+                {
+                    for (int j = 0; j < imgAdjacentRegions.Cols; j++)
+                    {
+                        Bgr pixel = imgAdjacentRegions[i, j];
+
+                        int index = labImage.Width * i + j;
+                        int label = labels[index];
+                        if (label == currentRegion || label == adjacentRegionForAlign)
+                        {
+
+                            double B = (color[label]) & 255;
+                            double G = (color[label] >> 2) & 255;
+                            double R = (color[label] << 2) & 255;
+
+                            imgAdjacentRegions[i, j] = new Bgr(B, G, R);
+                        }
+                        else
+                        {
+                            imgAdjacentRegions[i, j] = new Bgr(0, 0, 0);
+                        }
+                    }
+                }
+                if (_params.ShowWindows)
+                {
+                    //EmguCvWindowManager.Display(imgAdjacentRegions, $"{currentRegion}-${adjacentRegionForAlign}");
+                }
+
+                //Find values
+                double L_diff_ = L_non_shadow_avg - L_shadow_avg;
+                double A_diff_ = A_non_shadow_avg - A_shadow_avg;
+                double B_diff_ = B_non_shadow_avg - B_shadow_avg;
+
+                double L_ratio = L_non_shadow_avg / L_shadow_avg;
+                double A_ratio = A_non_shadow_avg / A_shadow_avg;
+                double B_ratio = B_non_shadow_avg / B_shadow_avg;
+
+                //mark current shadow regions as relighted
+                shadowRegionsUsedForAlign[currentRegion] = true;
+                regionsNotForAlign[currentRegion] = false;
+                //shadowRegionsForRelight.erase(shadowRegionsForRelight.begin()); //delete  first
+                shadowRegionsForRelight.RemoveAt(0); //delete  first
+
+                //Perform COLOR ALIGNMENT 
+                for (int i = 0; i < imgResLAB.Rows; i++)
+                {
+                    for (int j = 0; j < imgResLAB.Cols; j++)
+                    {
+
+                        //Handle current region
+                        //int cl = ilabels[i][j];
+                        int index = labImage.Width * i + j;
+                        int label = labels[index];
+                        if (label != currentRegion)
+                        {
+                            continue;
+                        }
+
+                        Lab pixel = imgResLAB[i, j];
+
+                        double L = pixel.X;
+                        double A = pixel.Y;
+                        double B = pixel.Z;
+
+                        L += L_diff_;
+                        A *= A_ratio;
+                        B *= B_ratio;
+
+                        L = (L > 255 ? 255 : (L < 0 ? 0 : L));
+                        A = (A > 255 ? 255 : (A < 0 ? 0 : A));
+                        B = (B > 255 ? 255 : (B < 0 ? 0 : B));
+
+                        //                        pixel.val[0] = L;
+                        //                        pixel.val[1] = A;
+                        //                        pixel.val[2] = B;
+
+                        imgResLAB[i, j] = new Lab(L, A, B);
+                    }
+                }
+            }
+
+            //            cv::cvtColor(imgResLAB, imgBGRRes, CV_Lab2BGR);
+            CvInvoke.CvtColor(imgResLAB, result, ColorConversion.Lab2Bgr);
+
+            return result;
+        }
+
         public Image<Emgu.CV.Structure.Bgr, Byte> RemoveUsingConstantMethod(Image<Bgr, Byte> image, Image<Gray, Byte> shadowMask, ShadowRemovalParams _params)
         {
             Image<Bgr, Byte> result = image.Clone();
