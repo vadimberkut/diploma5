@@ -198,6 +198,10 @@ namespace diploma5_csharp
                 Bitmap image = new Bitmap(fileName);
                 _appState.SetInputImage(new Image<Bgr, Byte>(image));
                 this.DisplayImageInPictureBox(pictureBox1, image);
+
+                //Reset textBox params
+                SetTextBoxValue(textBoxShadowDetectionLabThreshold, "");
+                SetTextBoxValue(textBoxShadowDetectionLMSThreshold, "");
             }
         }
 
