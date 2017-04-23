@@ -1,4 +1,5 @@
-﻿using Emgu.CV;
+﻿using diploma5_csharp.Models;
+using Emgu.CV;
 using Emgu.CV.Structure;
 using System;
 using System.Collections.Generic;
@@ -14,6 +15,8 @@ namespace diploma5_csharp
 
         public Image<Emgu.CV.Structure.Bgr, Byte> VisibilityEnhancementUsingTunedTriThresholdFuzzyIntensificationOperatorsMethod(Image<Bgr, Byte> image)
         {
+            //Resourse: http://www.mecs-press.org/ijisa/ijisa-v8-n8/IJISA-V8-N8-2.pdf
+
             //Image<Bgr, Byte> result = image.Clone();
             Image<Bgr, Byte> result = new Image<Bgr, byte>(image.Size);
 
@@ -89,5 +92,83 @@ namespace diploma5_csharp
             }
         }
 
-    }
+        //Universal method for dust, mist, fog
+        public Image<Emgu.CV.Structure.Bgr, Byte> RecoveringOfWeatherDegradedImagesBasedOnRGBResponseRatioConstancyMethod(Image<Bgr, Byte> image)
+        {
+            //Resourse: http://colorimaginglab.ugr.es/pages/pdfs/ao_2015_B222/!
+
+            //Image<Bgr, Byte> result = image.Clone();
+            Image<Bgr, Byte> result = new Image<Bgr, byte>(image.Size);
+
+            //for test try to aply formula to all image (not clusters)
+            //ToDO - implement full logic according to article
+
+
+            //Find min and max values for each channel
+            //double[] minValues;
+            //double[] maxValues;
+            //Point[] minLocations;
+            //Point[] maxLocations;
+            //image.MinMax(out minValues, out maxValues, out minLocations, out maxLocations);
+
+            //Apply mean shift clustering
+            MeanShiftClusteringAcordParams msParams = new MeanShiftClusteringAcordParams()
+            {
+                Kernel = 5,
+                Sigma = 0.13
+            };
+            var msResult = Clustering.MeanShiftAccord(image, msParams);
+            var labels = msResult.Labels.Distinct().ToArray(); //regions numbers
+
+            //Find regions pixels coordinates
+            var regionPixelsCoordinates = Clustering.GetRegionsPixelsCoordinates(msResult);
+
+            //Loop through regions
+            for (int region = 0; region < msResult.RegionCount; region++)
+            {
+                //Find min and max values for each channel
+                var regionPixels = regionPixelsCoordinates[region].Select(coordinates => image[coordinates.X, coordinates.Y]).ToArray();
+
+                var regionBValues = regionPixels.Select(p => p.Blue).ToArray();
+                var regionGValues = regionPixels.Select(p => p.Green).ToArray();
+                var regionRValues = regionPixels.Select(p => p.Red).ToArray();
+
+                double[] minValues = new double[3] { regionBValues.Min(), regionGValues.Min(), regionRValues.Min() };
+                double[] maxValues = new double[3] { regionBValues.Max(), regionGValues.Max(), regionRValues.Max() };
+
+
+                int pixelsCountInRegion = regionPixelsCoordinates[region].Count;
+                
+                //Apply formula
+                for (int i = 0; i < pixelsCountInRegion; i++)
+                {
+                    var pixelCoordinates = regionPixelsCoordinates[region][i];
+                    Bgr pixel = image[pixelCoordinates.X, pixelCoordinates.Y];
+
+                    double B = (pixel.Blue - minValues[0]) * (maxValues[0] / (maxValues[0] - minValues[0]));
+                    double G = (pixel.Green - minValues[1]) * (maxValues[1] / (maxValues[1] - minValues[1]));
+                    double R = (pixel.Red - minValues[2]) * (maxValues[2] / (maxValues[2] - minValues[2]));
+
+                    result[pixelCoordinates.X, pixelCoordinates.Y] = new Bgr(B, G, R);
+                }
+            }
+
+            //for (int m = 0; m < image.Rows; m++)
+            //{
+            //    for (int n = 0; n < image.Cols; n++)
+            //    {
+            //        Bgr pixel = image[m, n];
+
+            //        double B = (pixel.Blue - minValues[0]) * (maxValues[0] / (maxValues[0] - minValues[0]));
+            //        double G = (pixel.Green - minValues[1]) * (maxValues[1] / (maxValues[1] - minValues[1]));
+            //        double R = (pixel.Red - minValues[2]) * (maxValues[2] / (maxValues[2] - minValues[2]));
+
+            //        result[m, n] = new Bgr(B, G, R);
+            //    }
+            //}
+
+            return result;
+        }
+
+        }
 }

@@ -16,6 +16,8 @@ using Emgu.CV;
 using Emgu.CV.CvEnum;
 using Emgu.CV.Structure;
 using Emgu.CV.UI;
+using Accord.Imaging.Converters;
+using Accord.Math;
 
 namespace diploma5_csharp
 {
@@ -110,66 +112,93 @@ namespace diploma5_csharp
 
         private void button1_Click(object sender, EventArgs e)
         {
-            String win1 = "Test Window"; //The name of the window
-            CvInvoke.NamedWindow(win1); //Create the window using the specific name
+            //            String win1 = "Test Window"; //The name of the window
+            //            CvInvoke.NamedWindow(win1); //Create the window using the specific name
 
-            Mat img = new Mat(200, 400, DepthType.Cv8U, 3); //Create a 3 channel image of 400x200
-            img.SetTo(new Bgr(255, 0, 0).MCvScalar); // set it to Blue color
+            //            Mat img = new Mat(200, 400, DepthType.Cv8U, 3); //Create a 3 channel image of 400x200
+            //            img.SetTo(new Bgr(255, 0, 0).MCvScalar); // set it to Blue color
 
-            //Draw "Hello, world." on the image using the specific font
-            CvInvoke.PutText(
-               img,
-               "Hello, world",
-               new System.Drawing.Point(10, 80),
-               FontFace.HersheyComplex,
-               1.0,
-               new Bgr(0, 255, 0).MCvScalar);
-
-
-//            CvInvoke.Imshow(win1, img); //Show the image
-//            CvInvoke.WaitKey(0);  //Wait for the key pressing event
-//            CvInvoke.DestroyWindow(win1); //Destroy the window if key is pressed
-
-            Image<Bgr, Byte> imgeOrigenal = img.ToImage<Bgr, Byte>();
-            Mat im2 = imgeOrigenal.Mat;
-//            pictureBox1.Image = imgeOrigenal.Bitmap;
-            this.DisplayImageInPictureBox(pictureBox1, imgeOrigenal.Bitmap);
+            //            //Draw "Hello, world." on the image using the specific font
+            //            CvInvoke.PutText(
+            //               img,
+            //               "Hello, world",
+            //               new System.Drawing.Point(10, 80),
+            //               FontFace.HersheyComplex,
+            //               1.0,
+            //               new Bgr(0, 255, 0).MCvScalar);
 
 
-            //////////////////MEAN SHIFT
-            // Use a fixed seed for reproducibility
-            Accord.Math.Random.Generator.Seed = 0;
+            ////            CvInvoke.Imshow(win1, img); //Show the image
+            ////            CvInvoke.WaitKey(0);  //Wait for the key pressing event
+            ////            CvInvoke.DestroyWindow(win1); //Destroy the window if key is pressed
 
-            // Declare some data to be clustered
-            double[][] input =
-            {
-                new double[] { -5, -2, -4 },
-                new double[] { -5, -5, -6 },
-                new double[] {  2,  1,  1 },
-                new double[] {  1,  1,  2 },
-                new double[] {  1,  2,  2 },
-                new double[] {  3,  1,  2 },
-                new double[] { 11,  5,  4 },
-                new double[] { 15,  5,  6 },
-                new double[] { 10,  5,  6 },
+            //            Image<Bgr, Byte> imgeOrigenal = img.ToImage<Bgr, Byte>();
+            //            Mat im2 = imgeOrigenal.Mat;
+            ////            pictureBox1.Image = imgeOrigenal.Bitmap;
+            //            this.DisplayImageInPictureBox(pictureBox1, imgeOrigenal.Bitmap);
+
+
+            //            //////////////////MEAN SHIFT
+            //            // Use a fixed seed for reproducibility
+            //            Accord.Math.Random.Generator.Seed = 0;
+
+            //            // Declare some data to be clustered
+            //            double[][] input =
+            //            {
+            //                new double[] { -5, -2, -4 },
+            //                new double[] { -5, -5, -6 },
+            //                new double[] {  2,  1,  1 },
+            //                new double[] {  1,  1,  2 },
+            //                new double[] {  1,  2,  2 },
+            //                new double[] {  3,  1,  2 },
+            //                new double[] { 11,  5,  4 },
+            //                new double[] { 15,  5,  6 },
+            //                new double[] { 10,  5,  6 },
+            //            };
+
+            //            // Create a uniform kernel density function
+            //            UniformKernel kernel = new UniformKernel();
+
+            //            // Create a new Mean-Shift algorithm for 3 dimensional samples
+            //            MeanShift meanShift = new MeanShift(dimension: 3, kernel: kernel, bandwidth: 2);
+
+            //            // Learn a data partitioning using the Mean Shift algorithm
+            //            MeanShiftClusterCollection clustering = meanShift.Learn(input);
+
+            //            // Predict group labels for each point
+            //            int[] labels = clustering.Decide(input);
+
+            //            // As a result, the first two observations should belong to the
+            //            //  same cluster (thus having the same label). The same should
+            //            //  happen to the next four observations and to the last three.
+            //            int aasd = 0;
+
+            
+        }
+
+        private void buttonMSTest_Click(object sender, EventArgs e)
+        {
+            ////////////////////MEAN SHIFT FOR IMAGE
+            var msParams = new MeanShiftClusteringAcordParams() {
+                Kernel = Convert.ToInt32(this.textBoxTestMsKernel.Text),
+                Sigma = Convert.ToDouble(this.textBoxTestMsSigma.Text)
             };
+            var msResult = Clustering.MeanShiftAccord(_appState.InputImageBgr, msParams);
+            EmguCvWindowManager.Display(msResult.Image, "msResult");
+        }
 
-            // Create a uniform kernel density function
-            UniformKernel kernel = new UniformKernel();
-
-            // Create a new Mean-Shift algorithm for 3 dimensional samples
-            MeanShift meanShift = new MeanShift(dimension: 3, kernel: kernel, bandwidth: 2);
-
-            // Learn a data partitioning using the Mean Shift algorithm
-            MeanShiftClusterCollection clustering = meanShift.Learn(input);
-
-            // Predict group labels for each point
-            int[] labels = clustering.Decide(input);
-
-            // As a result, the first two observations should belong to the
-            //  same cluster (thus having the same label). The same should
-            //  happen to the next four observations and to the last three.
-            int aasd = 0;
+        private void buttonTestEmguCVCudaMeanShift_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                var result = Clustering.MeanShiftEmguCVCuda(_appState.InputImageBgr);
+                _appState.SetOutputImage(result);
+                this.DisplayImageInPictureBox(pictureBox3, result.Bitmap);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
 
         //TOP MENU
@@ -360,6 +389,12 @@ namespace diploma5_csharp
         private void buttonVisibilityEnhancementUsingTunedTriThresholdFuzzyIntensificationOperatorsMethod_Click(object sender, EventArgs e)
         {
             var result = _appState.Dust.VisibilityEnhancementUsingTunedTriThresholdFuzzyIntensificationOperatorsMethod(_appState.InputImageBgr);
+            _appState.SetOutputImage(result);
+            this.DisplayImageInPictureBox(pictureBox3, result.Bitmap);
+        }
+        private void buttonRecoveringOfWeatherDegradedImagesBasedOnRGBResponseRatioConstancyMethod_Click(object sender, EventArgs e)
+        {
+            var result = _appState.Dust.RecoveringOfWeatherDegradedImagesBasedOnRGBResponseRatioConstancyMethod(_appState.InputImageBgr);
             _appState.SetOutputImage(result);
             this.DisplayImageInPictureBox(pictureBox3, result.Bitmap);
         }

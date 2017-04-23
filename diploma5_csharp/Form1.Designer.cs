@@ -62,6 +62,11 @@
             this.buttonVisibilityEnhancementUsingTunedTriThresholdFuzzyIntensificationOperatorsMethod = new System.Windows.Forms.Button();
             this.label5 = new System.Windows.Forms.Label();
             this.buttonShadowRemovalLabMethod2 = new System.Windows.Forms.Button();
+            this.buttonRecoveringOfWeatherDegradedImagesBasedOnRGBResponseRatioConstancyMethod = new System.Windows.Forms.Button();
+            this.buttonTestEmguCVCudaMeanShift = new System.Windows.Forms.Button();
+            this.buttonMSTest = new System.Windows.Forms.Button();
+            this.textBoxTestMsKernel = new System.Windows.Forms.TextBox();
+            this.textBoxTestMsSigma = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).BeginInit();
@@ -76,7 +81,6 @@
             this.button1.TabIndex = 0;
             this.button1.Text = "Test";
             this.button1.UseVisualStyleBackColor = true;
-            this.button1.Visible = false;
             this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // pictureBox1
@@ -155,7 +159,7 @@
             // 
             // buttonShadowRemovalConstantMethod
             // 
-            this.buttonShadowRemovalConstantMethod.Location = new System.Drawing.Point(415, 547);
+            this.buttonShadowRemovalConstantMethod.Location = new System.Drawing.Point(415, 577);
             this.buttonShadowRemovalConstantMethod.Name = "buttonShadowRemovalConstantMethod";
             this.buttonShadowRemovalConstantMethod.Size = new System.Drawing.Size(75, 27);
             this.buttonShadowRemovalConstantMethod.TabIndex = 16;
@@ -165,7 +169,7 @@
             // 
             // buttonShadowRemovalLabMethod
             // 
-            this.buttonShadowRemovalLabMethod.Location = new System.Drawing.Point(415, 514);
+            this.buttonShadowRemovalLabMethod.Location = new System.Drawing.Point(415, 544);
             this.buttonShadowRemovalLabMethod.Name = "buttonShadowRemovalLabMethod";
             this.buttonShadowRemovalLabMethod.Size = new System.Drawing.Size(75, 27);
             this.buttonShadowRemovalLabMethod.TabIndex = 17;
@@ -175,13 +179,12 @@
             // 
             // buttonShadowRemovalCombinedMethod
             // 
-            this.buttonShadowRemovalCombinedMethod.Location = new System.Drawing.Point(12, 490);
+            this.buttonShadowRemovalCombinedMethod.Location = new System.Drawing.Point(415, 511);
             this.buttonShadowRemovalCombinedMethod.Name = "buttonShadowRemovalCombinedMethod";
             this.buttonShadowRemovalCombinedMethod.Size = new System.Drawing.Size(75, 27);
             this.buttonShadowRemovalCombinedMethod.TabIndex = 18;
             this.buttonShadowRemovalCombinedMethod.Text = "Combined";
             this.buttonShadowRemovalCombinedMethod.UseVisualStyleBackColor = true;
-            this.buttonShadowRemovalCombinedMethod.Visible = false;
             this.buttonShadowRemovalCombinedMethod.Click += new System.EventHandler(this.buttonShadowRemovalCombinedMethod_Click);
             // 
             // buttonShadowRemovalBasicLightModelMethod
@@ -358,7 +361,7 @@
             this.buttonVisibilityEnhancementUsingTunedTriThresholdFuzzyIntensificationOperatorsMethod.Location = new System.Drawing.Point(787, 451);
             this.buttonVisibilityEnhancementUsingTunedTriThresholdFuzzyIntensificationOperatorsMethod.Name = "buttonVisibilityEnhancementUsingTunedTriThresholdFuzzyIntensificationOperatorsMet" +
     "hod";
-            this.buttonVisibilityEnhancementUsingTunedTriThresholdFuzzyIntensificationOperatorsMethod.Size = new System.Drawing.Size(97, 27);
+            this.buttonVisibilityEnhancementUsingTunedTriThresholdFuzzyIntensificationOperatorsMethod.Size = new System.Drawing.Size(157, 27);
             this.buttonVisibilityEnhancementUsingTunedTriThresholdFuzzyIntensificationOperatorsMethod.TabIndex = 31;
             this.buttonVisibilityEnhancementUsingTunedTriThresholdFuzzyIntensificationOperatorsMethod.Text = "Dust";
             this.buttonVisibilityEnhancementUsingTunedTriThresholdFuzzyIntensificationOperatorsMethod.UseVisualStyleBackColor = true;
@@ -375,7 +378,7 @@
             // 
             // buttonShadowRemovalLabMethod2
             // 
-            this.buttonShadowRemovalLabMethod2.Location = new System.Drawing.Point(12, 523);
+            this.buttonShadowRemovalLabMethod2.Location = new System.Drawing.Point(6, 568);
             this.buttonShadowRemovalLabMethod2.Name = "buttonShadowRemovalLabMethod2";
             this.buttonShadowRemovalLabMethod2.Size = new System.Drawing.Size(75, 27);
             this.buttonShadowRemovalLabMethod2.TabIndex = 32;
@@ -384,11 +387,60 @@
             this.buttonShadowRemovalLabMethod2.Visible = false;
             this.buttonShadowRemovalLabMethod2.Click += new System.EventHandler(this.buttonShadowRemovalLabMethod2_Click);
             // 
+            // buttonRecoveringOfWeatherDegradedImagesBasedOnRGBResponseRatioConstancyMethod
+            // 
+            this.buttonRecoveringOfWeatherDegradedImagesBasedOnRGBResponseRatioConstancyMethod.Location = new System.Drawing.Point(787, 481);
+            this.buttonRecoveringOfWeatherDegradedImagesBasedOnRGBResponseRatioConstancyMethod.Name = "buttonRecoveringOfWeatherDegradedImagesBasedOnRGBResponseRatioConstancyMethod";
+            this.buttonRecoveringOfWeatherDegradedImagesBasedOnRGBResponseRatioConstancyMethod.Size = new System.Drawing.Size(157, 27);
+            this.buttonRecoveringOfWeatherDegradedImagesBasedOnRGBResponseRatioConstancyMethod.TabIndex = 33;
+            this.buttonRecoveringOfWeatherDegradedImagesBasedOnRGBResponseRatioConstancyMethod.Text = "Dust (ratio constansy method)";
+            this.buttonRecoveringOfWeatherDegradedImagesBasedOnRGBResponseRatioConstancyMethod.UseVisualStyleBackColor = true;
+            this.buttonRecoveringOfWeatherDegradedImagesBasedOnRGBResponseRatioConstancyMethod.Click += new System.EventHandler(this.buttonRecoveringOfWeatherDegradedImagesBasedOnRGBResponseRatioConstancyMethod_Click);
+            // 
+            // buttonTestEmguCVCudaMeanShift
+            // 
+            this.buttonTestEmguCVCudaMeanShift.Location = new System.Drawing.Point(12, 519);
+            this.buttonTestEmguCVCudaMeanShift.Name = "buttonTestEmguCVCudaMeanShift";
+            this.buttonTestEmguCVCudaMeanShift.Size = new System.Drawing.Size(157, 27);
+            this.buttonTestEmguCVCudaMeanShift.TabIndex = 34;
+            this.buttonTestEmguCVCudaMeanShift.Text = "TestEmguCVCudaMeanShift";
+            this.buttonTestEmguCVCudaMeanShift.UseVisualStyleBackColor = true;
+            this.buttonTestEmguCVCudaMeanShift.Click += new System.EventHandler(this.buttonTestEmguCVCudaMeanShift_Click);
+            // 
+            // buttonMSTest
+            // 
+            this.buttonMSTest.Location = new System.Drawing.Point(12, 490);
+            this.buttonMSTest.Name = "buttonMSTest";
+            this.buttonMSTest.Size = new System.Drawing.Size(75, 23);
+            this.buttonMSTest.TabIndex = 35;
+            this.buttonMSTest.Text = "TestMS";
+            this.buttonMSTest.UseVisualStyleBackColor = true;
+            this.buttonMSTest.Click += new System.EventHandler(this.buttonMSTest_Click);
+            // 
+            // textBoxTestMsKernel
+            // 
+            this.textBoxTestMsKernel.Location = new System.Drawing.Point(93, 492);
+            this.textBoxTestMsKernel.Name = "textBoxTestMsKernel";
+            this.textBoxTestMsKernel.Size = new System.Drawing.Size(28, 20);
+            this.textBoxTestMsKernel.TabIndex = 36;
+            // 
+            // textBoxTestMsSigma
+            // 
+            this.textBoxTestMsSigma.Location = new System.Drawing.Point(127, 493);
+            this.textBoxTestMsSigma.Name = "textBoxTestMsSigma";
+            this.textBoxTestMsSigma.Size = new System.Drawing.Size(28, 20);
+            this.textBoxTestMsSigma.TabIndex = 37;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1235, 595);
+            this.ClientSize = new System.Drawing.Size(1235, 616);
+            this.Controls.Add(this.textBoxTestMsSigma);
+            this.Controls.Add(this.textBoxTestMsKernel);
+            this.Controls.Add(this.buttonMSTest);
+            this.Controls.Add(this.buttonTestEmguCVCudaMeanShift);
+            this.Controls.Add(this.buttonRecoveringOfWeatherDegradedImagesBasedOnRGBResponseRatioConstancyMethod);
             this.Controls.Add(this.buttonShadowRemovalLabMethod2);
             this.Controls.Add(this.buttonVisibilityEnhancementUsingTunedTriThresholdFuzzyIntensificationOperatorsMethod);
             this.Controls.Add(this.label5);
@@ -465,6 +517,11 @@
         private System.Windows.Forms.ToolStripMenuItem imageToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem restoreToolStripMenuItem;
         private System.Windows.Forms.Button buttonShadowRemovalLabMethod2;
+        private System.Windows.Forms.Button buttonRecoveringOfWeatherDegradedImagesBasedOnRGBResponseRatioConstancyMethod;
+        private System.Windows.Forms.Button buttonTestEmguCVCudaMeanShift;
+        private System.Windows.Forms.Button buttonMSTest;
+        private System.Windows.Forms.TextBox textBoxTestMsKernel;
+        private System.Windows.Forms.TextBox textBoxTestMsSigma;
     }
 }
 

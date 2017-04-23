@@ -110,6 +110,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AppState.cs" />
+    <Compile Include="Clustering.cs" />
     <Compile Include="ColorDifference\CIE76.cs" />
     <Compile Include="CustomFormElements\Prompt.cs" />
     <Compile Include="CustomFormElements\SaveImagePrompt.cs" />
@@ -126,6 +127,9 @@
     <Compile Include="Models\BgrChannelAverageResult.cs" />
     <Compile Include="Models\FogRemovalParams.cs" />
     <Compile Include="Models\LabChannelAverageResult.cs" />
+    <Compile Include="Models\MeanShiftClusteringAcordParams.cs" />
+    <Compile Include="Models\MeanShiftClusteringResult.cs" />
+    <Compile Include="Models\PixelCoordinates.cs" />
     <Compile Include="Models\ShadowDetectionLabParams.cs" />
     <Compile Include="Models\ShadowDetectionMSParams.cs" />
     <Compile Include="Models\ShadowRemovalParams.cs" />

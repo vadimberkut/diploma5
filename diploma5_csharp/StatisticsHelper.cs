@@ -6,6 +6,23 @@ namespace diploma5_csharp
 {
     public static class StatisticsHelper
     {
+        public static double Min(double[] data)
+        {
+            if (data.Length == 0)
+                throw new ArgumentException("Array must contain elements");
+
+            double min = data.Min();
+            return min;
+        }
+        public static double Max(double[] data)
+        {
+            if (data.Length == 0)
+                throw new ArgumentException("Array must contain elements");
+
+            double max = data.Max();
+            return max;
+        }
+
         public static double Average(double[] data)
         {
             double average = 0;
