@@ -59,7 +59,12 @@ namespace diploma5_csharp
                     double G = u_G * (maxValues[1] - minValues[1]) + minValues[1];
                     double R = u_R * (maxValues[2] - minValues[2]) + minValues[2];
 
-                    result[m, n] = new Bgr(B, G, R);
+                    double B2 = u_B * 255;
+                    double G2 = u_G * 255;
+                    double R2 = u_R * 255;
+
+                    //result[m, n] = new Bgr(B, G, R);
+                    result[m, n] = new Bgr(B2, G2, R2);
                 }
             }
 
