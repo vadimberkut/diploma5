@@ -93,29 +93,21 @@ namespace diploma5_csharp
         }
 
         //Universal method for dust, mist, fog
-        public Image<Emgu.CV.Structure.Bgr, Byte> RecoveringOfWeatherDegradedImagesBasedOnRGBResponseRatioConstancyMethod(Image<Bgr, Byte> image)
+        public Image<Emgu.CV.Structure.Bgr, Byte> RecoveringOfWeatherDegradedImagesBasedOnRGBResponseRatioConstancyMethod(Image<Bgr, Byte> image, RGBResponseRatioConstancyMethodParams _params)
         {
             //Resourse: http://colorimaginglab.ugr.es/pages/pdfs/ao_2015_B222/!
 
             //Image<Bgr, Byte> result = image.Clone();
             Image<Bgr, Byte> result = new Image<Bgr, byte>(image.Size);
+            Image<Bgr, Byte> resultToAll = new Image<Bgr, byte>(image.Size);
 
-            //for test try to aply formula to all image (not clusters)
-            //ToDO - implement full logic according to article
-
-
-            //Find min and max values for each channel
-            //double[] minValues;
-            //double[] maxValues;
-            //Point[] minLocations;
-            //Point[] maxLocations;
-            //image.MinMax(out minValues, out maxValues, out minLocations, out maxLocations);
+            ////Apply algorithm to clustred image
 
             //Apply mean shift clustering
             MeanShiftClusteringAcordParams msParams = new MeanShiftClusteringAcordParams()
             {
-                Kernel = 5,
-                Sigma = 0.13
+                Kernel = _params?.MeanShiftParams?.Kernel ?? 5,
+                Sigma = _params?.MeanShiftParams?.Sigma ?? 0.13
             };
             var msResult = Clustering.MeanShiftAccord(image, msParams);
             var labels = msResult.Labels.Distinct().ToArray(); //regions numbers
@@ -153,19 +145,38 @@ namespace diploma5_csharp
                 }
             }
 
-            //for (int m = 0; m < image.Rows; m++)
-            //{
-            //    for (int n = 0; n < image.Cols; n++)
-            //    {
-            //        Bgr pixel = image[m, n];
+            //apply for all image
 
-            //        double B = (pixel.Blue - minValues[0]) * (maxValues[0] / (maxValues[0] - minValues[0]));
-            //        double G = (pixel.Green - minValues[1]) * (maxValues[1] / (maxValues[1] - minValues[1]));
-            //        double R = (pixel.Red - minValues[2]) * (maxValues[2] / (maxValues[2] - minValues[2]));
+            //for test try to aply formula to all image (not clusters)
+            //ToDO - implement full logic according to article
 
-            //        result[m, n] = new Bgr(B, G, R);
-            //    }
-            //}
+            //Find min and max values for each channel
+            double[] minValues2;
+            double[] maxValues2;
+            Point[] minLocations2;
+            Point[] maxLocations2;
+            image.MinMax(out minValues2, out maxValues2, out minLocations2, out maxLocations2);
+            for (int m = 0; m < image.Rows; m++)
+            {
+                for (int n = 0; n < image.Cols; n++)
+                {
+                    Bgr pixel = image[m, n];
+
+                    double B = (pixel.Blue - minValues2[0]) * (maxValues2[0] / (maxValues2[0] - minValues2[0]));
+                    double G = (pixel.Green - minValues2[1]) * (maxValues2[1] / (maxValues2[1] - minValues2[1]));
+                    double R = (pixel.Red - minValues2[2]) * (maxValues2[2] / (maxValues2[2] - minValues2[2]));
+
+                    resultToAll[m, n] = new Bgr(B, G, R);
+                }
+            }
+
+            if (true)
+            {
+                EmguCvWindowManager.Display(image, "1. image");
+                EmguCvWindowManager.Display(msResult.Image, "2. MS");
+                EmguCvWindowManager.Display(resultToAll, "3. resultToAll");
+                EmguCvWindowManager.Display(result, "4. result");
+            }
 
             return result;
         }

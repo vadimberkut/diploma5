@@ -2135,6 +2135,109 @@ namespace diploma5_csharp
         }
 
 
+        //Shadow Detection and Compensation in Aerial Images using MATLAB
+        //http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.695.1720&rep=rep1&type=pdf
+        public Image<Emgu.CV.Structure.Gray, Byte> DetectUsingModifiedRatioOfHueOverIntensityMethod(Image<Bgr, Byte> image)
+        {
+            Image<Gray, Byte> shadowMask = new Image<Gray, byte>(new Size(image.Width, image.Height));
+
+            //Check params
+            //if (_params.Threshold == null)
+            //    _params.Threshold = 250;
+
+
+            //To HSI
+            //Todo - не уверен что HSI и HLS одно и то же
+            Image<Hls, Byte> HsiImage = ImageHelper.ToHLS(image);
+
+            //I_e [0, 255]
+            //H_e [0, 255]
+            Image<Gray, Byte> I_e = new Image<Gray, byte>(new Size(image.Width, image.Height)); ;
+            Image<Gray, Byte> H_e = new Image<Gray, byte>(new Size(image.Width, image.Height)); ;
+
+            for (int i = 0; i < image.Rows; i += 1)
+            {
+                for (int j = 0; j < image.Cols; j += 1)
+                {
+                    var RgbImagePixel = image[i, j];
+                    double B = RgbImagePixel.Blue;
+                    double G = RgbImagePixel.Green;
+                    double R = RgbImagePixel.Red;
+
+                    var HsiImagePixel = HsiImage[i, j];
+                    double I = HsiImagePixel.MCvScalar.V0;
+                    double V1 = HsiImagePixel.MCvScalar.V1;
+                    double V2 = HsiImagePixel.MCvScalar.V2;
+
+                    double I_e_ = (1.0 / 3.0) * B + (1.0 / 3.0) * G + (1.0 / 3.0) * R;
+                    double H_e_ = (Math.Pow(Math.Tan(V1 / V2), -1) + Math.PI) * 255 / (2 * Math.PI);
+
+                    I_e[i, j] = new Gray(I_e_);
+                    H_e[i, j] = new Gray(H_e_);
+                }
+            }
+
+            //Calc R1, B1, B3
+            Image<Gray, Byte> R1 = new Image<Gray, byte>(new Size(image.Width, image.Height));
+            Image<Gray, Byte> B1 = new Image<Gray, byte>(new Size(image.Width, image.Height));
+            Image<Gray, Byte> B2 = new Image<Gray, byte>(new Size(image.Width, image.Height));
+            for (int i = 0; i < image.Rows; i += 1)
+            {
+                for (int j = 0; j < image.Cols; j += 1)
+                {
+                    var RgbImagePixel = image[i, j];
+                    double B = RgbImagePixel.Blue;
+                    double G = RgbImagePixel.Green;
+                    double R = RgbImagePixel.Red;
+
+                    var HsiImagePixel = HsiImage[i, j];
+                    double I = HsiImagePixel.MCvScalar.V0;
+                    double V1 = HsiImagePixel.MCvScalar.V1;
+                    double V2 = HsiImagePixel.MCvScalar.V2;
+
+                    var I_e_pixel = I_e[i, j];
+                    var H_e_pixel = H_e[i, j];
+
+                    double R1_ = (double)(H_e_pixel.Intensity + 1.0) / (double)(I_e_pixel.Intensity + 0.1);
+                    double B1_ = Math.Pow(0.5, R1_);
+                    double B2_ = Math.Pow(0.7, R1_);
+
+                    R1[i, j] = new Gray(R1_); // * 255
+                    B1[i, j] = new Gray(B1_);
+                    B2[i, j] = new Gray(B2_);
+                }
+            }
+
+            //Merge R1, B1, B3 in RGB image
+            Image<Bgr, Byte> mergedBgr = new Image<Bgr, byte>(new Size(image.Width, image.Height));
+            for (int i = 0; i < image.Rows; i += 1)
+            {
+                for (int j = 0; j < image.Cols; j += 1)
+                {
+                    double R1_ = R1[i,j].Intensity;
+                    double B1_ = B1[i,j].Intensity;
+                    double B2_ = B2[i,j].Intensity;
+
+                    mergedBgr[i, j] = new Bgr(B2_, B1_, R1_);
+                }
+            }
+
+            //if (_params.ShowWindows)
+            //{
+            //}
+
+            EmguCvWindowManager.Display(HsiImage, "HsiImage");
+            EmguCvWindowManager.Display(I_e, "I_e");
+            EmguCvWindowManager.Display(H_e, "H_e");
+            EmguCvWindowManager.Display(R1, "R1");
+            EmguCvWindowManager.Display(B1, "B1");
+            EmguCvWindowManager.Display(B2, "B2");
+            EmguCvWindowManager.Display(mergedBgr, "mergedBgr");
+
+            return shadowMask;
+        }
+
+
 
         public Image<Emgu.CV.Structure.Bgr, Byte> InpaintShadowEdges(Image<Bgr, Byte> image, Image<Gray, Byte> shadowMask)
         {

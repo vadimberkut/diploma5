@@ -67,6 +67,13 @@
             this.buttonMSTest = new System.Windows.Forms.Button();
             this.textBoxTestMsKernel = new System.Windows.Forms.TextBox();
             this.textBoxTestMsSigma = new System.Windows.Forms.TextBox();
+            this.buttonDetectUsingModifiedRatioOfHueOverIntensityMethod = new System.Windows.Forms.Button();
+            this.label6 = new System.Windows.Forms.Label();
+            this.label7 = new System.Windows.Forms.Label();
+            this.label8 = new System.Windows.Forms.Label();
+            this.label9 = new System.Windows.Forms.Label();
+            this.textBox_RatioConstancyMethod_sigma = new System.Windows.Forms.TextBox();
+            this.textBox_RatioConstancyMethod_kernel = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).BeginInit();
@@ -391,7 +398,7 @@
             // 
             this.buttonRecoveringOfWeatherDegradedImagesBasedOnRGBResponseRatioConstancyMethod.Location = new System.Drawing.Point(787, 481);
             this.buttonRecoveringOfWeatherDegradedImagesBasedOnRGBResponseRatioConstancyMethod.Name = "buttonRecoveringOfWeatherDegradedImagesBasedOnRGBResponseRatioConstancyMethod";
-            this.buttonRecoveringOfWeatherDegradedImagesBasedOnRGBResponseRatioConstancyMethod.Size = new System.Drawing.Size(157, 27);
+            this.buttonRecoveringOfWeatherDegradedImagesBasedOnRGBResponseRatioConstancyMethod.Size = new System.Drawing.Size(157, 38);
             this.buttonRecoveringOfWeatherDegradedImagesBasedOnRGBResponseRatioConstancyMethod.TabIndex = 33;
             this.buttonRecoveringOfWeatherDegradedImagesBasedOnRGBResponseRatioConstancyMethod.Text = "Dust (ratio constansy method)";
             this.buttonRecoveringOfWeatherDegradedImagesBasedOnRGBResponseRatioConstancyMethod.UseVisualStyleBackColor = true;
@@ -431,11 +438,78 @@
             this.textBoxTestMsSigma.Size = new System.Drawing.Size(28, 20);
             this.textBoxTestMsSigma.TabIndex = 37;
             // 
+            // buttonDetectUsingModifiedRatioOfHueOverIntensityMethod
+            // 
+            this.buttonDetectUsingModifiedRatioOfHueOverIntensityMethod.Location = new System.Drawing.Point(223, 514);
+            this.buttonDetectUsingModifiedRatioOfHueOverIntensityMethod.Name = "buttonDetectUsingModifiedRatioOfHueOverIntensityMethod";
+            this.buttonDetectUsingModifiedRatioOfHueOverIntensityMethod.Size = new System.Drawing.Size(75, 27);
+            this.buttonDetectUsingModifiedRatioOfHueOverIntensityMethod.TabIndex = 38;
+            this.buttonDetectUsingModifiedRatioOfHueOverIntensityMethod.Text = "STS";
+            this.buttonDetectUsingModifiedRatioOfHueOverIntensityMethod.UseVisualStyleBackColor = true;
+            this.buttonDetectUsingModifiedRatioOfHueOverIntensityMethod.Click += new System.EventHandler(this.buttonDetectUsingModifiedRatioOfHueOverIntensityMethod_Click);
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(90, 476);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(36, 13);
+            this.label6.TabIndex = 39;
+            this.label6.Text = "kernel";
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(124, 477);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(34, 13);
+            this.label7.TabIndex = 40;
+            this.label7.Text = "sigma";
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(981, 483);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(34, 13);
+            this.label8.TabIndex = 44;
+            this.label8.Text = "sigma";
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(947, 483);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(36, 13);
+            this.label9.TabIndex = 43;
+            this.label9.Text = "kernel";
+            // 
+            // textBox_RatioConstancyMethod_sigma
+            // 
+            this.textBox_RatioConstancyMethod_sigma.Location = new System.Drawing.Point(984, 499);
+            this.textBox_RatioConstancyMethod_sigma.Name = "textBox_RatioConstancyMethod_sigma";
+            this.textBox_RatioConstancyMethod_sigma.Size = new System.Drawing.Size(28, 20);
+            this.textBox_RatioConstancyMethod_sigma.TabIndex = 42;
+            // 
+            // textBox_RatioConstancyMethod_kernel
+            // 
+            this.textBox_RatioConstancyMethod_kernel.Location = new System.Drawing.Point(950, 499);
+            this.textBox_RatioConstancyMethod_kernel.Name = "textBox_RatioConstancyMethod_kernel";
+            this.textBox_RatioConstancyMethod_kernel.Size = new System.Drawing.Size(28, 20);
+            this.textBox_RatioConstancyMethod_kernel.TabIndex = 41;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1235, 616);
+            this.Controls.Add(this.label8);
+            this.Controls.Add(this.label9);
+            this.Controls.Add(this.textBox_RatioConstancyMethod_sigma);
+            this.Controls.Add(this.textBox_RatioConstancyMethod_kernel);
+            this.Controls.Add(this.label7);
+            this.Controls.Add(this.label6);
+            this.Controls.Add(this.buttonDetectUsingModifiedRatioOfHueOverIntensityMethod);
             this.Controls.Add(this.textBoxTestMsSigma);
             this.Controls.Add(this.textBoxTestMsKernel);
             this.Controls.Add(this.buttonMSTest);
@@ -522,6 +596,13 @@
         private System.Windows.Forms.Button buttonMSTest;
         private System.Windows.Forms.TextBox textBoxTestMsKernel;
         private System.Windows.Forms.TextBox textBoxTestMsSigma;
+        private System.Windows.Forms.Button buttonDetectUsingModifiedRatioOfHueOverIntensityMethod;
+        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.TextBox textBox_RatioConstancyMethod_sigma;
+        private System.Windows.Forms.TextBox textBox_RatioConstancyMethod_kernel;
     }
 }
 

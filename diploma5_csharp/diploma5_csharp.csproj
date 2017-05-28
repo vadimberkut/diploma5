@@ -130,6 +130,7 @@
     <Compile Include="Models\MeanShiftClusteringAcordParams.cs" />
     <Compile Include="Models\MeanShiftClusteringResult.cs" />
     <Compile Include="Models\PixelCoordinates.cs" />
+    <Compile Include="Models\RGBResponseRatioConstancyMethodParams.cs" />
     <Compile Include="Models\ShadowDetectionLabParams.cs" />
     <Compile Include="Models\ShadowDetectionMSParams.cs" />
     <Compile Include="Models\ShadowRemovalParams.cs" />

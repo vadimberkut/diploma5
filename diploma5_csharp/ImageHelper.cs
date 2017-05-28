@@ -31,6 +31,20 @@ namespace diploma5_csharp
             return result;
         }
 
+        public static Image<Hls, Byte> ToHLS(Image<Bgr, Byte> image)
+        {
+            Image<Hls, Byte> result = new Image<Hls, byte>(image.Size);
+            CvInvoke.CvtColor(image, result, ColorConversion.Bgr2Hls);
+            return result;
+        }
+
+        public static Image<Hls, Byte> ToHSICustom(Image<Bgr, Byte> image)
+        {
+            Image<Hls, Byte> result = new Image<Hls, byte>(image.Size);
+            CvInvoke.CvtColor(image, result, ColorConversion.Bgr2Hls);
+            return result;
+        }
+
         public static BgrChannelAverageResult CalcBgrChannelAverage(Image<Bgr, Byte> image)
         {
             BgrChannels channels = GetBgrChannels(image);

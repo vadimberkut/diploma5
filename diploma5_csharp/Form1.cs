@@ -297,6 +297,15 @@ namespace diploma5_csharp
         }
 
 
+        //Modified Ratio Of Hue Over Intensity Method
+        private void buttonDetectUsingModifiedRatioOfHueOverIntensityMethod_Click(object sender, EventArgs e)
+        {
+            var result = _appState.Shadow.DetectUsingModifiedRatioOfHueOverIntensityMethod(_appState.InputImageBgr);
+            _appState.SetShadowMaskImage(result);
+            this.DisplayImageInPictureBox(pictureBox2, result.Bitmap);
+        }
+
+
         //SHADOW REMOVAL
         private void buttonShadowRemovalAditiveMethod_Click(object sender, EventArgs e)
         {
@@ -394,7 +403,21 @@ namespace diploma5_csharp
         }
         private void buttonRecoveringOfWeatherDegradedImagesBasedOnRGBResponseRatioConstancyMethod_Click(object sender, EventArgs e)
         {
-            var result = _appState.Dust.RecoveringOfWeatherDegradedImagesBasedOnRGBResponseRatioConstancyMethod(_appState.InputImageBgr);
+            string kernel = textBox_RatioConstancyMethod_kernel.Text;
+            string sigma = textBox_RatioConstancyMethod_sigma.Text;
+
+            var _params = new RGBResponseRatioConstancyMethodParams();
+
+            if(!String.IsNullOrEmpty(kernel) && !String.IsNullOrEmpty(sigma))
+            {
+                _params.MeanShiftParams = new MeanShiftClusteringAcordParams()
+                {
+                    Kernel = int.Parse(kernel),
+                    Sigma = double.Parse(sigma)
+                };
+            }
+
+            var result = _appState.Dust.RecoveringOfWeatherDegradedImagesBasedOnRGBResponseRatioConstancyMethod(_appState.InputImageBgr, _params);
             _appState.SetOutputImage(result);
             this.DisplayImageInPictureBox(pictureBox3, result.Bitmap);
         }

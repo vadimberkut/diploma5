@@ -98,7 +98,7 @@ namespace diploma5_csharp
         /// <param name="msResult"></param>
         public static Dictionary<int, List<PixelCoordinates>> GetRegionsPixelsCoordinates(MeanShiftClusteringResult msResult)
         {
-            //key - region nuber
+            //key - region number
             //value - region pixels coordinates
             Dictionary<int, List<PixelCoordinates>> result = new Dictionary<int, List<PixelCoordinates>>();
 
