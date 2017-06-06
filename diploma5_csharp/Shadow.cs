@@ -25,7 +25,7 @@ namespace diploma5_csharp
         }
 
         //DETECTION
-        public Image<Emgu.CV.Structure.Gray, Byte> DetectUsingLabMethod(Image<Lab, Byte> image, ShadowDetectionLabParams _params)
+        public Image<Gray, Byte> DetectUsingLabMethod(Image<Lab, Byte> image, ShadowDetectionLabParams _params)
         {
             Image<Gray, Byte> shadowMask = new Image<Gray, byte>(new Size(image.Width, image.Height));
             var channelAverage = ImageHelper.CalcLabChannelAverage(image);
@@ -74,7 +74,7 @@ namespace diploma5_csharp
             return shadowMask;
         }
 
-        public Image<Emgu.CV.Structure.Gray, Byte> DetectUsingMSMethod(Image<Bgr, Byte> image, ShadowDetectionMSParams _params)
+        public Image<Gray, Byte> DetectUsingMSMethod(Image<Bgr, Byte> image, ShadowDetectionMSParams _params)
         {
             Image<Gray, Byte> shadowMask = new Image<Gray, byte>(new Size(image.Width, image.Height));
             Image<Bgr, Byte> imgGaussian = new Image<Bgr, byte>(new Size(image.Width, image.Height));
@@ -131,7 +131,7 @@ namespace diploma5_csharp
 
 
         //REMOVAL
-        public Image<Emgu.CV.Structure.Bgr, Byte> RemoveUsingAditiveMethod(Image<Bgr, Byte> image, Image<Gray, Byte> shadowMask, ShadowRemovalParams _params)
+        public Image<Bgr, Byte> RemoveUsingAditiveMethod(Image<Bgr, Byte> image, Image<Gray, Byte> shadowMask, ShadowRemovalParams _params)
         {
             //Image<Bgr, Byte> result = new Image<Bgr, byte>(image.Size);
             Image<Bgr, Byte> result = image.Clone();
@@ -160,7 +160,7 @@ namespace diploma5_csharp
             return result;
         }
 
-        public Image<Emgu.CV.Structure.Bgr, Byte> RemoveUsingBasicLightModelMethod(Image<Bgr, Byte> image, Image<Gray, Byte> shadowMask, ShadowRemovalParams _params)
+        public Image<Bgr, Byte> RemoveUsingBasicLightModelMethod(Image<Bgr, Byte> image, Image<Gray, Byte> shadowMask, ShadowRemovalParams _params)
         {
             Image<Bgr, Byte> result = image.Clone();
 
@@ -203,7 +203,7 @@ namespace diploma5_csharp
             return result;
         }
 
-        public Image<Emgu.CV.Structure.Bgr, Byte> RemoveUsingCombinedMethod(Image<Bgr, Byte> image, Image<Gray, Byte> shadowMask, ShadowRemovalParams _params)
+        public Image<Bgr, Byte> RemoveUsingCombinedMethod(Image<Bgr, Byte> image, Image<Gray, Byte> shadowMask, ShadowRemovalParams _params)
         {
             Image<Bgr, Byte> result = image.Clone();
             Image<Ycc, Byte> YCrCbImage = ImageHelper.ToYCrCb(image);
@@ -251,7 +251,7 @@ namespace diploma5_csharp
             return result;
         }
 
-        public Image<Emgu.CV.Structure.Bgr, Byte> RemoveUsingLabMethod(Image<Bgr, Byte> image, Image<Gray, Byte> shadowMask, ShadowRemovalParams _params)
+        public Image<Bgr, Byte> RemoveUsingLabMethod(Image<Bgr, Byte> image, Image<Gray, Byte> shadowMask, ShadowRemovalParams _params)
         {
             Image<Bgr, Byte> result = image.Clone();
             Image<Lab, Byte> labImage = ImageHelper.ToLab(image);
@@ -905,7 +905,7 @@ namespace diploma5_csharp
             return result;
         }
 
-        public Image<Emgu.CV.Structure.Bgr, Byte> RemoveUsingLabMethod2(Image<Bgr, Byte> image, Image<Gray, Byte> shadowMask, ShadowRemovalParams _params)
+        public Image<Bgr, Byte> RemoveUsingLabMethod2(Image<Bgr, Byte> image, Image<Gray, Byte> shadowMask, ShadowRemovalParams _params)
         {
             Image<Bgr, Byte> result = image.Clone();
             Image<Lab, Byte> labImage = ImageHelper.ToLab(image);
@@ -1564,7 +1564,7 @@ namespace diploma5_csharp
             return result;
         }
 
-        public Image<Emgu.CV.Structure.Bgr, Byte> RemoveUsingConstantMethod(Image<Bgr, Byte> image, Image<Gray, Byte> shadowMask, ShadowRemovalParams _params)
+        public Image<Bgr, Byte> RemoveUsingConstantMethod(Image<Bgr, Byte> image, Image<Gray, Byte> shadowMask, ShadowRemovalParams _params)
         {
             Image<Bgr, Byte> result = image.Clone();
             Image<Gray, Byte> shadowMaskEdge = shadowMask.Clone();

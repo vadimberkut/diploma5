@@ -397,7 +397,11 @@ namespace diploma5_csharp
         //
         private void buttonVisibilityEnhancementUsingTunedTriThresholdFuzzyIntensificationOperatorsMethod_Click(object sender, EventArgs e)
         {
-            var result = _appState.Dust.VisibilityEnhancementUsingTunedTriThresholdFuzzyIntensificationOperatorsMethod(_appState.InputImageBgr);
+            var _params = new TriThresholdFuzzyIntensificationOperatorsMethodParams();
+            if (!String.IsNullOrEmpty(textBoxTriThresholdFuzzyIntensificationOperatorsMethod_Dzeta.Text))
+                _params.Dzeta = double.Parse(textBoxTriThresholdFuzzyIntensificationOperatorsMethod_Dzeta.Text);
+
+            var result = _appState.Dust.VisibilityEnhancementUsingTunedTriThresholdFuzzyIntensificationOperatorsMethod(_appState.InputImageBgr, _params);
             _appState.SetOutputImage(result);
             this.DisplayImageInPictureBox(pictureBox3, result.Bitmap);
         }

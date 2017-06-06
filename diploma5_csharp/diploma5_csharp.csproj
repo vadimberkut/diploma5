@@ -134,6 +134,7 @@
     <Compile Include="Models\ShadowDetectionLabParams.cs" />
     <Compile Include="Models\ShadowDetectionMSParams.cs" />
     <Compile Include="Models\ShadowRemovalParams.cs" />
+    <Compile Include="Models\TriThresholdFuzzyIntensificationOperatorsMethodParams.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Shadow.cs" />

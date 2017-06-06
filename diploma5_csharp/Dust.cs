@@ -13,7 +13,7 @@ namespace diploma5_csharp
    public  class Dust
     {
 
-        public Image<Emgu.CV.Structure.Bgr, Byte> VisibilityEnhancementUsingTunedTriThresholdFuzzyIntensificationOperatorsMethod(Image<Bgr, Byte> image)
+        public Image<Emgu.CV.Structure.Bgr, Byte> VisibilityEnhancementUsingTunedTriThresholdFuzzyIntensificationOperatorsMethod(Image<Bgr, Byte> image, TriThresholdFuzzyIntensificationOperatorsMethodParams _params)
         {
             //Resourse: http://www.mecs-press.org/ijisa/ijisa-v8-n8/IJISA-V8-N8-2.pdf
 
@@ -21,7 +21,7 @@ namespace diploma5_csharp
             Image<Bgr, Byte> result = new Image<Bgr, byte>(image.Size);
 
             //zeta (ζ), which is a tuning parameter that is used to control colors fidelity of the processed image
-            double zeta = 0.5;
+            double zeta = _params.Dzeta ?? 0.5;
 
             // tau (τ) - represents the thresholding limits of the operators
             double tao_R = 0.5;
@@ -74,7 +74,6 @@ namespace diploma5_csharp
 
             return result;
         }
-
         private double MembershipFunction(double C, double minC, double maxC)
         {
             double f_C = (C - minC) / (maxC - minC);
