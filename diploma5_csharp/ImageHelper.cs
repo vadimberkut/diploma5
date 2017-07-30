@@ -38,6 +38,118 @@ namespace diploma5_csharp
             return result;
         }
 
+        //converts to Hsi but saves in Bgr (no Hsi in EmguCv)
+        public static Image<Bgr, Byte> ToHSI(Image<Bgr, Byte> image)
+        {
+            Image<Bgr, Byte> input = image.Clone();
+            Image<Bgr, Byte> result = new Image<Bgr, byte>(image.Size);
+
+            //Algorithm from http://angeljohnsy.blogspot.com/2013/05/converting-rgb-image-to-hsi.html
+
+            //Normalize RGB to [0,1]
+            //for (int m = 0; m < input.Rows; m++)
+            //{
+            //    for (int n = 0; n < input.Cols; n++)
+            //    {
+            //        Bgr pixel = input[m, n];
+
+            //        double B = pixel.Blue / 255;
+            //        double G = pixel.Green / 255;
+            //        double R = pixel.Red / 255;
+
+            //        input[m, n] = new Bgr(B, G, R);
+            //    }
+            //}
+
+            //Find HSI components
+            for (int m = 0; m < input.Rows; m++)
+            {
+                for (int n = 0; n < input.Cols; n++)
+                {
+                    Bgr pixel = input[m, n];
+
+                    ////Normalize RGB to [0,1]
+                    double B = pixel.Blue / 255;
+                    double G = pixel.Green / 255;
+                    double R = pixel.Red / 255;
+
+                    //Hue
+                    double nominator = (1.0 / 2.0) * ((R - G) + (R - B));
+                    double denominator = Math.Pow((Math.Pow((R - G), 2) + (R - B) * (G - B)) , 1.0 / 2.0); //!!
+
+                    //To avoid divide by zero exception add a small number in the denominator
+                    double theta = Math.Pow(Math.Cos(nominator / (denominator + 0.000001)), -1); //!!
+
+                    //If B>G then H= 360-Theta
+                    double H = 0;
+                    if (B <= G)
+                        H = theta;
+                    if (B > G)
+                        H = 360 - theta;
+
+                    //Normalize to the range [0 1]
+                    H = H / 360.0;
+
+                    //Saturation
+                    double min = StatisticsHelper.Min(new double[] { R, G, B });
+                    double S = 1 - (3.0 / (R + G + B)) * min;
+
+                    //Intensity
+                    double I = (1.0 / 3.0) * (R + G + B);
+
+                    H = H * 255;
+                    S = S * 255;
+                    I = I * 255;
+
+                    //HSI
+                    result[m, n] = new Bgr(H, S, I);
+                }
+            }
+
+            return result;
+        }
+
+        //2 variant from github 
+        //https://gist.github.com/rzhukov/9129585
+        public static Image<Bgr, Byte> ToHSIGitHub(Image<Bgr, Byte> image)
+        {
+            Image<Bgr, Byte> input = image.Clone();
+            Image<Bgr, Byte> result = new Image<Bgr, byte>(image.Size);
+
+            //Find HSI components
+            for (int m = 0; m < input.Rows; m++)
+            {
+                for (int n = 0; n < input.Cols; n++)
+                {
+                    Bgr pixel = input[m, n];
+
+                    ////Normalize RGB to [0,1]
+                    double B = pixel.Blue;
+                    double G = pixel.Green;
+                    double R = pixel.Red;
+
+                    double I = (R + G + B) / 3.0;
+
+                    double rn = R / (R + G + B);
+                    double gn = G / (R + G + B);
+                    double bn = B / (R + G + B);
+
+                    double H = Math.Acos((0.5 * ((rn - gn) + (rn - bn))) / (Math.Sqrt((rn - gn) * (rn - gn) + (rn - bn) * (gn - bn))));
+                    if (B > G)
+                    {
+                        H = 2 * Math.PI - H;
+                    }
+
+                    double S = 1 - 3 * Math.Min(rn, Math.Min(gn, bn));
+
+                    //HSI
+                    result[m, n] = new Bgr(H, S, I);
+                }
+            }
+
+            return result;
+        }
+
         public static Image<Hls, Byte> ToHSICustom(Image<Bgr, Byte> image)
         {
             Image<Hls, Byte> result = new Image<Hls, byte>(image.Size);

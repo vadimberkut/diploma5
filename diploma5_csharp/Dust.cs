@@ -92,10 +92,10 @@ namespace diploma5_csharp
         }
 
         //Universal method for dust, mist, fog
+        //Resourse: http://colorimaginglab.ugr.es/pages/pdfs/ao_2015_B222/!
+
         public Image<Emgu.CV.Structure.Bgr, Byte> RecoveringOfWeatherDegradedImagesBasedOnRGBResponseRatioConstancyMethod(Image<Bgr, Byte> image, RGBResponseRatioConstancyMethodParams _params)
         {
-            //Resourse: http://colorimaginglab.ugr.es/pages/pdfs/ao_2015_B222/!
-
             //Image<Bgr, Byte> result = image.Clone();
             Image<Bgr, Byte> result = new Image<Bgr, byte>(image.Size);
             Image<Bgr, Byte> resultToAll = new Image<Bgr, byte>(image.Size);

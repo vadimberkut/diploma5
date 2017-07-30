@@ -2149,6 +2149,9 @@ namespace diploma5_csharp
             //To HSI
             //Todo - не уверен что HSI и HLS одно и то же
             Image<Hls, Byte> HsiImage = ImageHelper.ToHLS(image);
+            Image<Bgr, Byte> HsiImage2 = ImageHelper.ToHSI(image);
+            Image<Bgr, Byte> HsiImage3 = ImageHelper.ToHSIGitHub(image); //HsiImageGithub
+
 
             //I_e [0, 255]
             //H_e [0, 255]
@@ -2202,6 +2205,10 @@ namespace diploma5_csharp
                     double B1_ = Math.Pow(0.5, R1_);
                     double B2_ = Math.Pow(0.7, R1_);
 
+                    R1_ = (R1_ * 255) % 255;
+                    B1_ = (B1_ * 255) % 255;
+                    B2_ = (B2_ * 255) % 255;
+
                     R1[i, j] = new Gray(R1_); // * 255
                     B1[i, j] = new Gray(B1_);
                     B2[i, j] = new Gray(B2_);
@@ -2227,6 +2234,8 @@ namespace diploma5_csharp
             //}
 
             EmguCvWindowManager.Display(HsiImage, "HsiImage");
+            EmguCvWindowManager.Display(HsiImage2, "HsiImage2");
+            EmguCvWindowManager.Display(HsiImage3, "HsiImageGithub");
             EmguCvWindowManager.Display(I_e, "I_e");
             EmguCvWindowManager.Display(H_e, "H_e");
             EmguCvWindowManager.Display(R1, "R1");

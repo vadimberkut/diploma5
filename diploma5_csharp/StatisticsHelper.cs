@@ -14,6 +14,12 @@ namespace diploma5_csharp
             double min = data.Min();
             return min;
         }
+        //public static double Min(params double[] values)
+        //{
+        //    double min = values.Aggregate((x, y) => x < y ? x : y);
+        //    return min;
+        //}
+
         public static double Max(double[] data)
         {
             if (data.Length == 0)
@@ -52,5 +58,7 @@ namespace diploma5_csharp
             stdDevL = Math.Sqrt(stdDevL);
             return stdDevL;
         }    
+
+        
     }
 }

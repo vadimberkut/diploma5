@@ -116,6 +116,7 @@
     <Compile Include="CustomFormElements\SaveImagePrompt.cs" />
     <Compile Include="Dust.cs" />
     <Compile Include="EmguCvWindowManager.cs" />
+    <Compile Include="Extensions\Hsi.cs" />
     <Compile Include="Fog.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
