@@ -78,6 +78,8 @@
             this.textBoxTriThresholdFuzzyIntensificationOperatorsMethod_Dzeta = new System.Windows.Forms.TextBox();
             this.label11 = new System.Windows.Forms.Label();
             this.label12 = new System.Windows.Forms.Label();
+            this.buttonRobbyTanFogRemovalMethod = new System.Windows.Forms.Button();
+            this.buttonRemoveFogUsingMedianChannelPrior = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).BeginInit();
@@ -562,11 +564,35 @@
             this.label12.TabIndex = 48;
             this.label12.Text = "threshold";
             // 
+            // buttonRobbyTanFogRemovalMethod
+            // 
+            this.buttonRobbyTanFogRemovalMethod.BackColor = System.Drawing.SystemColors.Control;
+            this.buttonRobbyTanFogRemovalMethod.Location = new System.Drawing.Point(721, 489);
+            this.buttonRobbyTanFogRemovalMethod.Name = "buttonRobbyTanFogRemovalMethod";
+            this.buttonRobbyTanFogRemovalMethod.Size = new System.Drawing.Size(97, 32);
+            this.buttonRobbyTanFogRemovalMethod.TabIndex = 49;
+            this.buttonRobbyTanFogRemovalMethod.Text = "RobbyTan";
+            this.buttonRobbyTanFogRemovalMethod.UseVisualStyleBackColor = false;
+            this.buttonRobbyTanFogRemovalMethod.Click += new System.EventHandler(this.buttonRobbyTanFogRemovalMethod_Click);
+            // 
+            // buttonRemoveFogUsingMedianChannelPrior
+            // 
+            this.buttonRemoveFogUsingMedianChannelPrior.BackColor = System.Drawing.SystemColors.Control;
+            this.buttonRemoveFogUsingMedianChannelPrior.Location = new System.Drawing.Point(721, 527);
+            this.buttonRemoveFogUsingMedianChannelPrior.Name = "buttonRemoveFogUsingMedianChannelPrior";
+            this.buttonRemoveFogUsingMedianChannelPrior.Size = new System.Drawing.Size(97, 32);
+            this.buttonRemoveFogUsingMedianChannelPrior.TabIndex = 50;
+            this.buttonRemoveFogUsingMedianChannelPrior.Text = "MedianChannelPrior";
+            this.buttonRemoveFogUsingMedianChannelPrior.UseVisualStyleBackColor = false;
+            this.buttonRemoveFogUsingMedianChannelPrior.Click += new System.EventHandler(this.buttonRemoveFogUsingMedianChannelPrior_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1235, 616);
+            this.Controls.Add(this.buttonRemoveFogUsingMedianChannelPrior);
+            this.Controls.Add(this.buttonRobbyTanFogRemovalMethod);
             this.Controls.Add(this.label12);
             this.Controls.Add(this.label11);
             this.Controls.Add(this.label10);
@@ -675,6 +701,8 @@
         private System.Windows.Forms.TextBox textBoxTriThresholdFuzzyIntensificationOperatorsMethod_Dzeta;
         private System.Windows.Forms.Label label11;
         private System.Windows.Forms.Label label12;
+        private System.Windows.Forms.Button buttonRobbyTanFogRemovalMethod;
+        private System.Windows.Forms.Button buttonRemoveFogUsingMedianChannelPrior;
     }
 }
 
