@@ -17,6 +17,27 @@ namespace diploma5_csharp
             return result;
         }
 
+        public static Image<Bgr, Byte> ToBgr(Image<Lab, Byte> image)
+        {
+            Image<Bgr, Byte> result = new Image<Bgr, byte>(image.Size);
+            CvInvoke.CvtColor(image, result, ColorConversion.Lab2Bgr);
+            return result;
+        }
+
+        public static Image<Hsv, Byte> ToHsv(Image<Bgr, Byte> image)
+        {
+            Image<Hsv, Byte> result = new Image<Hsv, byte>(image.Size);
+            CvInvoke.CvtColor(image, result, ColorConversion.Bgr2Hsv);
+            return result;
+        }
+
+        public static Image<Bgr, Byte> ToBgr(Image<Hsv, Byte> image)
+        {
+            Image<Bgr, Byte> result = new Image<Bgr, byte>(image.Size);
+            CvInvoke.CvtColor(image, result, ColorConversion.Hsv2Bgr);
+            return result;
+        }
+
         public static Image<Gray, Byte> TotGray(Image<Bgr, Byte> image)
         {
             Image<Gray, Byte> result = new Image<Gray, byte>(image.Size);
@@ -328,6 +349,56 @@ namespace diploma5_csharp
             MCvScalar color = new MCvScalar(rnd.Next(min, max), rnd.Next(min, max), rnd.Next(min, max));
             return color;
         }
+
+        #region IMAGE NORMALIZATION
+
+        public static Image<Gray, double> NormalizeImage(Image<Gray, Byte> image)
+        {
+            Image<Gray, double> result = new Image<Gray, double>(image.Size);
+            for (int m = 0; m < image.Rows; m++)
+            {
+                for (int n = 0; n < image.Cols; n++)
+                {
+                    Gray pixel = image[m, n];
+                    result[m, n] = new Gray(pixel.Intensity / 255);
+                }
+            }
+            return result;
+        }
+
+        public static Image<Gray, Byte> DeNormalizeImage(Image<Gray, double> image)
+        {
+            Image<Gray, Byte> result = new Image<Gray, Byte>(image.Size);
+            for (int m = 0; m < image.Rows; m++)
+            {
+                for (int n = 0; n < image.Cols; n++)
+                {
+                    Gray pixel = image[m, n];
+                    result[m, n] = new Gray(pixel.Intensity * 255);
+                }
+            }
+            return result;
+        }
+
+        #endregion
+
+        #region GET IMAGE PIXELS
+
+        public static double[] GetImagePixels(Image<Gray, double> image)
+        {
+            double[] result = new double[image.Rows * image.Cols];
+            for (int m = 0; m < image.Rows; m++)
+            {
+                for (int n = 0; n < image.Cols; n++)
+                {
+                    Gray pixel = image[m, n];
+                    result[m * n + n] = pixel.Intensity;
+                }
+            }
+            return result;
+        }
+
+        #endregion
     }
 
 

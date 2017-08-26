@@ -80,6 +80,8 @@
             this.label12 = new System.Windows.Forms.Label();
             this.buttonRobbyTanFogRemovalMethod = new System.Windows.Forms.Button();
             this.buttonRemoveFogUsingMedianChannelPrior = new System.Windows.Forms.Button();
+            this.buttonRemoveFogUsingIdcpWithClahe = new System.Windows.Forms.Button();
+            this.buttonApplyAGC = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).BeginInit();
@@ -294,9 +296,9 @@
             // buttonRemoveFogUsingDarkChannelMethod
             // 
             this.buttonRemoveFogUsingDarkChannelMethod.BackColor = System.Drawing.SystemColors.Control;
-            this.buttonRemoveFogUsingDarkChannelMethod.Location = new System.Drawing.Point(721, 451);
+            this.buttonRemoveFogUsingDarkChannelMethod.Location = new System.Drawing.Point(710, 451);
             this.buttonRemoveFogUsingDarkChannelMethod.Name = "buttonRemoveFogUsingDarkChannelMethod";
-            this.buttonRemoveFogUsingDarkChannelMethod.Size = new System.Drawing.Size(97, 32);
+            this.buttonRemoveFogUsingDarkChannelMethod.Size = new System.Drawing.Size(121, 32);
             this.buttonRemoveFogUsingDarkChannelMethod.TabIndex = 27;
             this.buttonRemoveFogUsingDarkChannelMethod.Text = "Dark channel";
             this.buttonRemoveFogUsingDarkChannelMethod.UseVisualStyleBackColor = false;
@@ -567,9 +569,9 @@
             // buttonRobbyTanFogRemovalMethod
             // 
             this.buttonRobbyTanFogRemovalMethod.BackColor = System.Drawing.SystemColors.Control;
-            this.buttonRobbyTanFogRemovalMethod.Location = new System.Drawing.Point(721, 489);
+            this.buttonRobbyTanFogRemovalMethod.Location = new System.Drawing.Point(710, 489);
             this.buttonRobbyTanFogRemovalMethod.Name = "buttonRobbyTanFogRemovalMethod";
-            this.buttonRobbyTanFogRemovalMethod.Size = new System.Drawing.Size(97, 32);
+            this.buttonRobbyTanFogRemovalMethod.Size = new System.Drawing.Size(121, 32);
             this.buttonRobbyTanFogRemovalMethod.TabIndex = 49;
             this.buttonRobbyTanFogRemovalMethod.Text = "RobbyTan";
             this.buttonRobbyTanFogRemovalMethod.UseVisualStyleBackColor = false;
@@ -578,19 +580,43 @@
             // buttonRemoveFogUsingMedianChannelPrior
             // 
             this.buttonRemoveFogUsingMedianChannelPrior.BackColor = System.Drawing.SystemColors.Control;
-            this.buttonRemoveFogUsingMedianChannelPrior.Location = new System.Drawing.Point(721, 527);
+            this.buttonRemoveFogUsingMedianChannelPrior.Location = new System.Drawing.Point(710, 527);
             this.buttonRemoveFogUsingMedianChannelPrior.Name = "buttonRemoveFogUsingMedianChannelPrior";
-            this.buttonRemoveFogUsingMedianChannelPrior.Size = new System.Drawing.Size(97, 32);
+            this.buttonRemoveFogUsingMedianChannelPrior.Size = new System.Drawing.Size(121, 32);
             this.buttonRemoveFogUsingMedianChannelPrior.TabIndex = 50;
             this.buttonRemoveFogUsingMedianChannelPrior.Text = "MedianChannelPrior";
             this.buttonRemoveFogUsingMedianChannelPrior.UseVisualStyleBackColor = false;
             this.buttonRemoveFogUsingMedianChannelPrior.Click += new System.EventHandler(this.buttonRemoveFogUsingMedianChannelPrior_Click);
+            // 
+            // buttonRemoveFogUsingIdcpWithClahe
+            // 
+            this.buttonRemoveFogUsingIdcpWithClahe.BackColor = System.Drawing.SystemColors.Control;
+            this.buttonRemoveFogUsingIdcpWithClahe.Location = new System.Drawing.Point(710, 563);
+            this.buttonRemoveFogUsingIdcpWithClahe.Name = "buttonRemoveFogUsingIdcpWithClahe";
+            this.buttonRemoveFogUsingIdcpWithClahe.Size = new System.Drawing.Size(121, 32);
+            this.buttonRemoveFogUsingIdcpWithClahe.TabIndex = 51;
+            this.buttonRemoveFogUsingIdcpWithClahe.Text = "IDCP with CLAHE";
+            this.buttonRemoveFogUsingIdcpWithClahe.UseVisualStyleBackColor = false;
+            this.buttonRemoveFogUsingIdcpWithClahe.Click += new System.EventHandler(this.buttonRemoveFogUsingIdcpWithClahe_Click);
+            // 
+            // buttonApplyAGC
+            // 
+            this.buttonApplyAGC.BackColor = System.Drawing.SystemColors.Control;
+            this.buttonApplyAGC.Location = new System.Drawing.Point(1096, 450);
+            this.buttonApplyAGC.Name = "buttonApplyAGC";
+            this.buttonApplyAGC.Size = new System.Drawing.Size(97, 34);
+            this.buttonApplyAGC.TabIndex = 52;
+            this.buttonApplyAGC.Text = "AGC";
+            this.buttonApplyAGC.UseVisualStyleBackColor = false;
+            this.buttonApplyAGC.Click += new System.EventHandler(this.buttonApplyAGC_Click);
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1235, 616);
+            this.Controls.Add(this.buttonApplyAGC);
+            this.Controls.Add(this.buttonRemoveFogUsingIdcpWithClahe);
             this.Controls.Add(this.buttonRemoveFogUsingMedianChannelPrior);
             this.Controls.Add(this.buttonRobbyTanFogRemovalMethod);
             this.Controls.Add(this.label12);
@@ -703,6 +729,8 @@
         private System.Windows.Forms.Label label12;
         private System.Windows.Forms.Button buttonRobbyTanFogRemovalMethod;
         private System.Windows.Forms.Button buttonRemoveFogUsingMedianChannelPrior;
+        private System.Windows.Forms.Button buttonRemoveFogUsingIdcpWithClahe;
+        private System.Windows.Forms.Button buttonApplyAGC;
     }
 }
 

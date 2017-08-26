@@ -124,7 +124,9 @@
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
+    <Compile Include="GammaCorrection.cs" />
     <Compile Include="ImageHelper.cs" />
+    <Compile Include="MathHelper.cs" />
     <Compile Include="Models\BgrChannelAverageResult.cs" />
     <Compile Include="Models\FogRemovalParams.cs" />
     <Compile Include="Models\LabChannelAverageResult.cs" />
@@ -169,6 +171,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="License-LGPL.txt" />
+    <Content Include="Methods.html" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

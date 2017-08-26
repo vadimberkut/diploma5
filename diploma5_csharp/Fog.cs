@@ -463,6 +463,55 @@ namespace diploma5_csharp
         }
 
         #endregion
+
+        #region NEW INTEGRATED FOG REMOVAL ALGORITHM IDCP WITH CLAHE
+
+        // Source - http://iraj.in/journal/journal_file/journal_pdf/4-54-140014656845-51.pdf
+        public Image<Emgu.CV.Structure.Bgr, Byte> RemoveFogUsingIdcpWithClahe(Image<Bgr, Byte> image, out Image<Gray, Byte> transmission, FogRemovalParams _params)
+        {
+            Image<Lab, Byte> lab;
+            Image<Bgr, Byte> clahe = new Image<Bgr, byte>(image.Size);
+            Image<Gray, Byte> estimatedTransmissionDCP = new Image<Gray, byte>(image.Size);
+            Image<Bgr, Byte> resultDCP;
+            Image<Bgr, Byte> resultGamma;
+            Image<Bgr, Byte> result = new Image<Bgr, byte>(image.Size);
+
+            // 1 - apply CLAHE
+            lab = ImageHelper.ToLab(image); // convert to LAB
+            Image <Gray, Byte>[] parts = lab.Split(); // split channels
+            Image<Gray, Byte> LChannel = parts[0]; // get L channel
+            Image<Gray, Byte> claheLChannel = new Image<Gray, byte>(image.Size); // CLAHE result
+            CvInvoke.CLAHE(src: LChannel, clipLimit: 2, tileGridSize: new Size(8, 8), dst: claheLChannel);
+            parts[0] = claheLChannel; // replace L with CLAHE
+            lab = new Image<Lab, Byte>(parts); // save image
+            clahe = ImageHelper.ToBgr(lab);
+
+            // 2 - apply DCP
+            resultDCP = RemoveFogUsingDarkChannelPrior(clahe, out estimatedTransmissionDCP, new FogRemovalParams() { ShowWindows = false });
+            transmission = estimatedTransmissionDCP;
+
+            // 3 - apply adaptive gamma correction
+            // TODO
+            resultGamma = resultDCP.Clone();
+            //resultGamma._GammaCorrect(1.9);
+            resultGamma._EqualizeHist();
+
+
+            result = resultGamma;
+
+            if (_params.ShowWindows)
+            {
+                EmguCvWindowManager.Display(image, "1 image");
+                EmguCvWindowManager.Display(clahe, "2 clahe");
+                EmguCvWindowManager.Display(resultDCP, "3 resultDCP");
+                EmguCvWindowManager.Display(resultGamma, "5 resultGamma");
+                EmguCvWindowManager.Display(result, "5 result");
+            }
+
+            return result;
+        }
+
+        #endregion
     }
 
     class RobbyTanPixelPhi
