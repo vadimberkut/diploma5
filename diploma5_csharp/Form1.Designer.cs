@@ -82,6 +82,7 @@
             this.buttonRemoveFogUsingMedianChannelPrior = new System.Windows.Forms.Button();
             this.buttonRemoveFogUsingIdcpWithClahe = new System.Windows.Forms.Button();
             this.buttonApplyAGC = new System.Windows.Forms.Button();
+            this.buttonTestFilters = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).BeginInit();
@@ -610,11 +611,22 @@
             this.buttonApplyAGC.UseVisualStyleBackColor = false;
             this.buttonApplyAGC.Click += new System.EventHandler(this.buttonApplyAGC_Click);
             // 
+            // buttonTestFilters
+            // 
+            this.buttonTestFilters.Location = new System.Drawing.Point(94, 450);
+            this.buttonTestFilters.Name = "buttonTestFilters";
+            this.buttonTestFilters.Size = new System.Drawing.Size(75, 23);
+            this.buttonTestFilters.TabIndex = 53;
+            this.buttonTestFilters.Text = "Test filters";
+            this.buttonTestFilters.UseVisualStyleBackColor = true;
+            this.buttonTestFilters.Click += new System.EventHandler(this.buttonTestFilters_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1235, 616);
+            this.Controls.Add(this.buttonTestFilters);
             this.Controls.Add(this.buttonApplyAGC);
             this.Controls.Add(this.buttonRemoveFogUsingIdcpWithClahe);
             this.Controls.Add(this.buttonRemoveFogUsingMedianChannelPrior);
@@ -731,6 +743,7 @@
         private System.Windows.Forms.Button buttonRemoveFogUsingMedianChannelPrior;
         private System.Windows.Forms.Button buttonRemoveFogUsingIdcpWithClahe;
         private System.Windows.Forms.Button buttonApplyAGC;
+        private System.Windows.Forms.Button buttonTestFilters;
     }
 }
 

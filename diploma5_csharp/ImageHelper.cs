@@ -24,6 +24,7 @@ namespace diploma5_csharp
             return result;
         }
 
+
         public static Image<Hsv, Byte> ToHsv(Image<Bgr, Byte> image)
         {
             Image<Hsv, Byte> result = new Image<Hsv, byte>(image.Size);
@@ -38,12 +39,14 @@ namespace diploma5_csharp
             return result;
         }
 
+
         public static Image<Gray, Byte> TotGray(Image<Bgr, Byte> image)
         {
             Image<Gray, Byte> result = new Image<Gray, byte>(image.Size);
             CvInvoke.CvtColor(image, result, ColorConversion.Bgr2Gray);
             return result;
         }
+
 
         public static Image<Ycc, Byte> ToYCrCb(Image<Bgr, Byte> image)
         {
@@ -52,12 +55,79 @@ namespace diploma5_csharp
             return result;
         }
 
+        public static Image<Bgr, Byte> ToBgr(Image<Ycc, Byte> image)
+        {
+            Image<Bgr, Byte> result = new Image<Bgr, byte>(image.Size);
+            CvInvoke.CvtColor(image, result, ColorConversion.YCrCb2Bgr);
+            return result;
+        }
+
+        // To YCbCr using formula
+        public static Image<Bgr, Byte> ToYCrCbUsingFormula(Image<Bgr, Byte> image)
+        {
+            Image<Bgr, Byte> result = new Image<Bgr, byte>(image.Size);
+            double R, G, B;
+            double Y, Cb, Cr;
+            for (int m = 0; m < image.Rows; m++)
+            {
+                for (int n = 0; n < image.Cols; n++)
+                {
+                    Bgr pixel = image[m, n];
+
+                    B = pixel.Blue;
+                    G = pixel.Green;
+                    R = pixel.Red;
+
+                    Y = 0.299 * R + 0.587 * G + 0.114 * B;
+                    Cb = -0.299 * R - 0.587 * G + 0.886 * B; // = B - Y
+                    Cr = 0.701 * R - 0.587 * G - 0.114 * B; // = R - Y
+
+                    result[m, n] = new Bgr(Y, Cb, Cr);
+                }
+            }
+            return result;
+        }
+
+        public static Image<Bgr, Byte> ToBgrFromYCrCbUsingFormula(Image<Bgr, Byte> image)
+        {
+            Image<Bgr, Byte> result = new Image<Bgr, byte>(image.Size);
+            double R, G, B;
+            double Y, Cb, Cr;
+            for (int m = 0; m < image.Rows; m++)
+            {
+                for (int n = 0; n < image.Cols; n++)
+                {
+                    Bgr pixel = image[m, n];
+
+                    Y = pixel.Blue;
+                    Cb = pixel.Green;
+                    Cr = pixel.Red;
+
+                    R = Y + Cr;
+                    G = Y - 0.194 * Cb - 0.509 * Cr;
+                    B = Y + Cb;
+
+                    result[m, n] = new Bgr(B, G, R);
+                }
+            }
+            return result;
+        }
+
+
         public static Image<Hls, Byte> ToHLS(Image<Bgr, Byte> image)
         {
             Image<Hls, Byte> result = new Image<Hls, byte>(image.Size);
             CvInvoke.CvtColor(image, result, ColorConversion.Bgr2Hls);
             return result;
         }
+
+        public static Image<Bgr, Byte> ToHLS(Image<Hls, Byte> image)
+        {
+            Image<Bgr, Byte> result = new Image<Bgr, byte>(image.Size);
+            CvInvoke.CvtColor(image, result, ColorConversion.Hls2Bgr);
+            return result;
+        }
+
 
         //converts to Hsi but saves in Bgr (no Hsi in EmguCv)
         public static Image<Bgr, Byte> ToHSI(Image<Bgr, Byte> image)
@@ -178,6 +248,7 @@ namespace diploma5_csharp
             return result;
         }
 
+
         public static BgrChannelAverageResult CalcBgrChannelAverage(Image<Bgr, Byte> image)
         {
             BgrChannels channels = GetBgrChannels(image);
@@ -221,6 +292,7 @@ namespace diploma5_csharp
             };
             return result;
         }
+
 
         public static BgrChannels GetBgrChannels(Image<Bgr, Byte> image)
         {
@@ -277,10 +349,12 @@ namespace diploma5_csharp
             return result;
         }
 
+
         public static void SetPixel(ref Image<Gray, Byte> image, int i, int j, byte value)
         {
             image.Data[i, j, 0] = value;
         }
+
 
         public static SplittedByMask<BgrChannels> SplitImageByMask(IInputArray inputImage, Image<Gray, Byte> mask)
         {
@@ -340,6 +414,7 @@ namespace diploma5_csharp
 
             return result;
         }
+
 
         public static MCvScalar GenerateRandomColor()
         {

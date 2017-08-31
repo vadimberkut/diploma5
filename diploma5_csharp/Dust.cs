@@ -12,10 +12,12 @@ namespace diploma5_csharp
 {
    public  class Dust
     {
-
-        public Image<Emgu.CV.Structure.Bgr, Byte> VisibilityEnhancementUsingTunedTriThresholdFuzzyIntensificationOperatorsMethod(Image<Bgr, Byte> image, TriThresholdFuzzyIntensificationOperatorsMethodParams _params)
+        // Source: http://www.mecs-press.org/ijisa/ijisa-v8-n8/IJISA-V8-N8-2.pdf
+        public Image<Bgr, Byte> VisibilityEnhancementUsingTunedTriThresholdFuzzyIntensificationOperatorsMethod(
+            Image<Bgr, Byte> image, 
+            TriThresholdFuzzyIntensificationOperatorsMethodParams _params
+        )
         {
-            //Resourse: http://www.mecs-press.org/ijisa/ijisa-v8-n8/IJISA-V8-N8-2.pdf
 
             //Image<Bgr, Byte> result = image.Clone();
             Image<Bgr, Byte> result = new Image<Bgr, byte>(image.Size);
@@ -91,10 +93,12 @@ namespace diploma5_csharp
             }
         }
 
-        //Universal method for dust, mist, fog
-        //Resourse: http://colorimaginglab.ugr.es/pages/pdfs/ao_2015_B222/!
-
-        public Image<Emgu.CV.Structure.Bgr, Byte> RecoveringOfWeatherDegradedImagesBasedOnRGBResponseRatioConstancyMethod(Image<Bgr, Byte> image, RGBResponseRatioConstancyMethodParams _params)
+        // Universal method for dust, mist, fog
+        // Source: http://colorimaginglab.ugr.es/pages/pdfs/ao_2015_B222/!
+        public Image<Bgr, Byte> RecoveringOfWeatherDegradedImagesBasedOnRGBResponseRatioConstancyMethod(
+            Image<Bgr, Byte> image, 
+            RGBResponseRatioConstancyMethodParams _params
+        )
         {
             //Image<Bgr, Byte> result = image.Clone();
             Image<Bgr, Byte> result = new Image<Bgr, byte>(image.Size);
@@ -180,5 +184,78 @@ namespace diploma5_csharp
             return result;
         }
 
+        // Source: http://www.jcomputers.us/vol12/jcp1204-02.pdf
+        // WLH - my name of the method means: Wiener Filter, Luminance Stretching, Modified Homomorphic Filtering
+        public Image<Bgr, Byte> VisibilityEnhancementUsingWLHMethod(
+            Image<Bgr, Byte> image, 
+            bool showWindows = false
+            )
+        {
+            Image<Bgr, Byte> result = new Image<Bgr, byte>(image.Size);
+            Image<Ycc, Byte> yCrCb;
+            Image<Bgr, Byte> yCbCrFormula;
+            Image<Bgr, Byte> bgrFromYCbCrFormula;
+            Image<Gray, Byte> luminanceChannelOrigin;
+            Image<Bgr, Byte> bgr;
+
+            //
+            // The Wiener Filter
+            //
+            // TODO
+
+            //
+            // Luminance Stretching
+            //
+            yCrCb = ImageHelper.ToYCrCb(image);
+            yCbCrFormula = ImageHelper.ToYCrCbUsingFormula(image);
+            bgrFromYCbCrFormula = ImageHelper.ToBgrFromYCrCbUsingFormula(yCbCrFormula);
+
+            var channels = yCrCb.Split();
+            var luminanceChannel = channels[0];
+            luminanceChannelOrigin = luminanceChannel.Clone();
+
+            double[] minValues;
+            double[] maxValues;
+            Point[] minLocations;
+            Point[] maxLocations;
+            luminanceChannel.MinMax(out minValues, out maxValues, out minLocations, out maxLocations);
+
+            double luminanceMin = minValues[0];
+            double luminanceMax = maxValues[0];
+
+            // apply formula
+            for (int m = 0; m < luminanceChannel.Rows; m++)
+            {
+                for (int n = 0; n < luminanceChannel.Cols; n++)
+                {
+                    Gray pixel = luminanceChannel[m, n];
+                    double P_i = pixel.Intensity;
+                    double value = ((P_i - luminanceMin) * 255) / (luminanceMax - luminanceMin);
+                    luminanceChannel[m, n] = new Gray(value);
+                }
+            }
+
+            channels[0] = luminanceChannel;
+
+            bgr = ImageHelper.ToBgr(new Image<Ycc, Byte>(channels));
+
+            //
+            //Modified Homomorphic Filtering
+            //
+            // NOTICE - I DON"T KNOW HOW TO IMPLEMENT IT
+
+            if (showWindows)
+            {
+                EmguCvWindowManager.Display(yCrCb, "yCrCb");
+                EmguCvWindowManager.Display(yCbCrFormula, "yCbCrFormula");
+                EmguCvWindowManager.Display(bgrFromYCbCrFormula, "bgrFromYCbCrFormula");
+                EmguCvWindowManager.Display(luminanceChannelOrigin, "luminanceChannelOrigin");
+                EmguCvWindowManager.Display(luminanceChannel, "luminanceChannel");
+                EmguCvWindowManager.Display(bgr, "bgr");
+                EmguCvWindowManager.Display(result, "result");
+            }
+
+            return result;
         }
+    }
 }

@@ -463,5 +463,20 @@ namespace diploma5_csharp
             _appState.SetOutputImage(result);
             this.DisplayImageInPictureBox(pictureBox3, result.Bitmap);
         }
+
+        private void buttonTestFilters_Click(object sender, EventArgs e)
+        {
+            var image = _appState.InputImageBgr;
+
+            Image<Bgr, byte> blur = image.SmoothBlur(10, 10, true);
+            Image<Bgr, byte> mediansmooth = image.SmoothMedian(15);
+            Image<Bgr, byte> bilat = image.SmoothBilatral(7, 255, 34);
+            Image<Bgr, byte> gauss = image.SmoothGaussian(3, 3, 34.3, 45.3);
+
+            EmguCvWindowManager.Display(blur, "0 blur");
+            EmguCvWindowManager.Display(mediansmooth, "0 mediansmooth");
+            EmguCvWindowManager.Display(bilat, "0 bilat");
+            EmguCvWindowManager.Display(gauss, "0 gauss");
+        }
     }
 }
