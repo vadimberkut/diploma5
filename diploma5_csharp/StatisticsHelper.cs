@@ -57,8 +57,15 @@ namespace diploma5_csharp
             stdDevL = stdDevL * (1.0 / ((double)count - 1.0));
             stdDevL = Math.Sqrt(stdDevL);
             return stdDevL;
-        }    
+        }
 
-        
+        public static double StandartDeviation2(double[] data)
+        {
+            double average = data.Average();
+            double sumOfSquaresOfDifferences = data.Select(val => (val - average) * (val - average)).Sum();
+            double sd = Math.Sqrt(sumOfSquaresOfDifferences / data.Length);
+
+            return sd;
+        }
     }
 }

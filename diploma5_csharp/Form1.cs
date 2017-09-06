@@ -459,7 +459,7 @@ namespace diploma5_csharp
         // AGC
         private void buttonApplyAGC_Click(object sender, EventArgs e)
         {
-            var result = GammaCorrection.AdaptiveV2(_appState.InputImageBgr, showWindows: true);
+            var result = GammaCorrection.Adaptive(_appState.InputImageBgr, showWindows: true);
             _appState.SetOutputImage(result);
             this.DisplayImageInPictureBox(pictureBox3, result.Bitmap);
         }

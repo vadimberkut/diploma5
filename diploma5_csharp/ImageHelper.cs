@@ -459,6 +459,20 @@ namespace diploma5_csharp
 
         #region GET IMAGE PIXELS
 
+        public static double[] GetImagePixels(Image<Gray, byte> image)
+        {
+            double[] result = new double[image.Rows * image.Cols];
+            for (int m = 0; m < image.Rows; m++)
+            {
+                for (int n = 0; n < image.Cols; n++)
+                {
+                    Gray pixel = image[m, n];
+                    result[m * n + n] = pixel.Intensity;
+                }
+            }
+            return result;
+        }
+
         public static double[] GetImagePixels(Image<Gray, double> image)
         {
             double[] result = new double[image.Rows * image.Cols];

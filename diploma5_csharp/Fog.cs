@@ -473,7 +473,9 @@ namespace diploma5_csharp
             Image<Bgr, Byte> clahe = new Image<Bgr, byte>(image.Size);
             Image<Gray, Byte> estimatedTransmissionDCP = new Image<Gray, byte>(image.Size);
             Image<Bgr, Byte> resultDCP;
-            Image<Bgr, Byte> resultGamma;
+            Image<Bgr, Byte> resultAdaptiveGammaCorrect;
+            Image<Bgr, Byte> resultEqualizeHist;
+            Image<Bgr, Byte> resultGammaCorrectt;
             Image<Bgr, Byte> result = new Image<Bgr, byte>(image.Size);
 
             // 1 - apply CLAHE
@@ -492,19 +494,27 @@ namespace diploma5_csharp
 
             // 3 - apply adaptive gamma correction
             // TODO
-            resultGamma = resultDCP.Clone();
-            //resultGamma._GammaCorrect(1.9);
-            resultGamma._EqualizeHist();
+            resultAdaptiveGammaCorrect = GammaCorrection.Adaptive(resultDCP);
+
+            // aplly gamma correction
+            resultGammaCorrectt = resultDCP.Clone();
+            resultGammaCorrectt._GammaCorrect(1.9);
+
+            // apply histogram equalization
+            resultEqualizeHist = resultDCP.Clone();
+            resultEqualizeHist._EqualizeHist();
 
 
-            result = resultGamma;
+            result = resultAdaptiveGammaCorrect;
 
             if (_params.ShowWindows)
             {
                 EmguCvWindowManager.Display(image, "1 image");
                 EmguCvWindowManager.Display(clahe, "2 clahe");
                 EmguCvWindowManager.Display(resultDCP, "3 resultDCP");
-                EmguCvWindowManager.Display(resultGamma, "5 resultGamma");
+                EmguCvWindowManager.Display(resultAdaptiveGammaCorrect, "5 resultAdaptiveGammaCorrect");
+                EmguCvWindowManager.Display(resultGammaCorrectt, "5.2 resultGammaCorrectt");
+                EmguCvWindowManager.Display(resultEqualizeHist, "5.3 resultEqualizeHist");
                 EmguCvWindowManager.Display(result, "5 result");
             }
 
