@@ -6,6 +6,7 @@ using Emgu.CV.CvEnum;
 using Emgu.CV.Structure;
 using diploma5_csharp.Models;
 using System.Linq;
+using diploma5_csharp.Helpers;
 
 namespace diploma5_csharp
 {

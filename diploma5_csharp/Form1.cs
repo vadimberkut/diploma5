@@ -18,6 +18,7 @@ using Emgu.CV.Structure;
 using Emgu.CV.UI;
 using Accord.Imaging.Converters;
 using Accord.Math;
+using diploma5_csharp.Helpers;
 
 namespace diploma5_csharp
 {

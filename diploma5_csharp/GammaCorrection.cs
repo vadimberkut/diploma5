@@ -1,4 +1,5 @@
-﻿using Emgu.CV;
+﻿using diploma5_csharp.Helpers;
+using Emgu.CV;
 using Emgu.CV.Structure;
 using Emgu.CV.UI;
 using System;

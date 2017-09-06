@@ -5,7 +5,7 @@ using Emgu.CV.CvEnum;
 using Emgu.CV.Structure;
 using System.Collections.Generic;
 
-namespace diploma5_csharp
+namespace diploma5_csharp.Helpers
 {
     public static class ImageHelper
     {
@@ -182,7 +182,7 @@ namespace diploma5_csharp
                     H = H / 360.0;
 
                     //Saturation
-                    double min = StatisticsHelper.Min(new double[] { R, G, B });
+                    double min = StatisticsHelper.Min(R, G, B);
                     double S = 1 - (3.0 / (R + G + B)) * min;
 
                     //Intensity

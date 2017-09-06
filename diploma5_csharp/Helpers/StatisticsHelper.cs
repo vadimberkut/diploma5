@@ -2,16 +2,21 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace diploma5_csharp
+namespace diploma5_csharp.Helpers
 {
     public static class StatisticsHelper
     {
-        public static double Min(double[] data)
+        public static double Min(params double[] data)
         {
             if (data.Length == 0)
                 throw new ArgumentException("Array must contain elements");
 
-            double min = data.Min();
+            double min = data[0];
+            for (int i = 1; i < data.Length; i++)
+            {
+                if (data[i] < min)
+                    min = data[i];
+            }
             return min;
         }
         //public static double Min(params double[] values)

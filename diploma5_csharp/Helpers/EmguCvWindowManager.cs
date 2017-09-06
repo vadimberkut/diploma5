@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Emgu.CV.Structure;
 
-namespace diploma5_csharp
+namespace diploma5_csharp.Helpers
 {
     public static class EmguCvWindowManager
     {

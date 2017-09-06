@@ -12,6 +12,7 @@ using Emgu.CV.Features2D;
 using Emgu.CV.Structure;
 using Accord.Statistics.Distributions.DensityKernels;
 using Emgu.CV.Util;
+using diploma5_csharp.Helpers;
 
 namespace diploma5_csharp
 {
