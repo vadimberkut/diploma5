@@ -83,7 +83,7 @@ namespace diploma5_csharp
             Image<Gray, Byte> imgMeanShiftGray;
 
             int kernel = 9; // 5 - 15
-            Emgu.CV.CvInvoke.GaussianBlur(image, imgGaussian, new Size(kernel, kernel), 0);
+            CvInvoke.GaussianBlur(image, imgGaussian, new Size(kernel, kernel), 0);
 
             double sp = 25; //The spatial window radius.
             double sr = 25; //The color window radius.
@@ -127,15 +127,13 @@ namespace diploma5_csharp
             }
 
             return shadowMask;
-
         }
 
 
         //REMOVAL
         public Image<Bgr, Byte> RemoveUsingAditiveMethod(Image<Bgr, Byte> image, Image<Gray, Byte> shadowMask, ShadowRemovalParams _params)
         {
-            //Image<Bgr, Byte> result = new Image<Bgr, byte>(image.Size);
-            Image<Bgr, Byte> result = image.Clone();
+            Image<Bgr, Byte> result = new Image<Bgr, byte>(image.Size);
 
             SplittedByMask<BgrChannels> splited = ImageHelper.SplitImageBgrByMask(image, shadowMask);
 

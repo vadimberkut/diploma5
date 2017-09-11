@@ -494,7 +494,6 @@ namespace diploma5_csharp
             transmission = estimatedTransmissionDCP;
 
             // 3 - apply adaptive gamma correction
-            // TODO
             resultAdaptiveGammaCorrect = GammaCorrection.Adaptive(resultDCP);
 
             // aplly gamma correction

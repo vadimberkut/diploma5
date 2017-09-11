@@ -39,7 +39,6 @@ namespace diploma5_csharp
             Point[] maxLocations;
             image.MinMax(out minValues, out maxValues, out minLocations, out maxLocations);
 
-
             for (int m = 0; m < image.Rows; m++)
             {
                 for (int n = 0; n < image.Cols; n++)
@@ -69,11 +68,9 @@ namespace diploma5_csharp
                     double G2 = u_G * 255;
                     double R2 = u_R * 255;
 
-                    //result[m, n] = new Bgr(B, G, R);
                     result[m, n] = new Bgr(B2, G2, R2);
                 }
             }
-
 
             return result;
         }
@@ -185,6 +182,8 @@ namespace diploma5_csharp
             return result;
         }
 
+        // !!!!!!!!!!
+        // NOTICE - I DON"T KNOW HOW TO IMPLEMENT IT
         // Source: http://www.jcomputers.us/vol12/jcp1204-02.pdf
         // WLH - my name of the method means: Wiener Filter, Luminance Stretching, Modified Homomorphic Filtering
         public Image<Bgr, Byte> VisibilityEnhancementUsingWLHMethod(
