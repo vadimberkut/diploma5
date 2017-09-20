@@ -83,6 +83,9 @@
             this.buttonRemoveFogUsingIdcpWithClahe = new System.Windows.Forms.Button();
             this.buttonApplyAGC = new System.Windows.Forms.Button();
             this.buttonTestFilters = new System.Windows.Forms.Button();
+            this.buttonEnhaceVisibilityUsingRobbyTanMethodForRoads = new System.Windows.Forms.Button();
+            this.buttonRemoveFogUsingDCPAndDFT = new System.Windows.Forms.Button();
+            this.buttonRemoveFogUsingCustomMethod = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).BeginInit();
@@ -574,7 +577,7 @@
             this.buttonRobbyTanFogRemovalMethod.Name = "buttonRobbyTanFogRemovalMethod";
             this.buttonRobbyTanFogRemovalMethod.Size = new System.Drawing.Size(121, 32);
             this.buttonRobbyTanFogRemovalMethod.TabIndex = 49;
-            this.buttonRobbyTanFogRemovalMethod.Text = "RobbyTan";
+            this.buttonRobbyTanFogRemovalMethod.Text = "RobbyTan UC";
             this.buttonRobbyTanFogRemovalMethod.UseVisualStyleBackColor = false;
             this.buttonRobbyTanFogRemovalMethod.Click += new System.EventHandler(this.buttonRobbyTanFogRemovalMethod_Click);
             // 
@@ -621,11 +624,47 @@
             this.buttonTestFilters.UseVisualStyleBackColor = true;
             this.buttonTestFilters.Click += new System.EventHandler(this.buttonTestFilters_Click);
             // 
+            // buttonEnhaceVisibilityUsingRobbyTanMethodForRoads
+            // 
+            this.buttonEnhaceVisibilityUsingRobbyTanMethodForRoads.BackColor = System.Drawing.SystemColors.Control;
+            this.buttonEnhaceVisibilityUsingRobbyTanMethodForRoads.Location = new System.Drawing.Point(710, 601);
+            this.buttonEnhaceVisibilityUsingRobbyTanMethodForRoads.Name = "buttonEnhaceVisibilityUsingRobbyTanMethodForRoads";
+            this.buttonEnhaceVisibilityUsingRobbyTanMethodForRoads.Size = new System.Drawing.Size(121, 40);
+            this.buttonEnhaceVisibilityUsingRobbyTanMethodForRoads.TabIndex = 54;
+            this.buttonEnhaceVisibilityUsingRobbyTanMethodForRoads.Text = "Robby Tan (VE for roads) WUC";
+            this.buttonEnhaceVisibilityUsingRobbyTanMethodForRoads.UseVisualStyleBackColor = false;
+            this.buttonEnhaceVisibilityUsingRobbyTanMethodForRoads.Click += new System.EventHandler(this.buttonEnhaceVisibilityUsingRobbyTanMethodForRoads_Click);
+            // 
+            // buttonRemoveFogUsingDCPAndDFT
+            // 
+            this.buttonRemoveFogUsingDCPAndDFT.BackColor = System.Drawing.SystemColors.Control;
+            this.buttonRemoveFogUsingDCPAndDFT.Location = new System.Drawing.Point(710, 647);
+            this.buttonRemoveFogUsingDCPAndDFT.Name = "buttonRemoveFogUsingDCPAndDFT";
+            this.buttonRemoveFogUsingDCPAndDFT.Size = new System.Drawing.Size(121, 32);
+            this.buttonRemoveFogUsingDCPAndDFT.TabIndex = 55;
+            this.buttonRemoveFogUsingDCPAndDFT.Text = "DCP with DFT";
+            this.buttonRemoveFogUsingDCPAndDFT.UseVisualStyleBackColor = false;
+            this.buttonRemoveFogUsingDCPAndDFT.Click += new System.EventHandler(this.buttonRemoveFogUsingDCPAndDFT_Click);
+            // 
+            // buttonRemoveFogUsingCustomMethod
+            // 
+            this.buttonRemoveFogUsingCustomMethod.BackColor = System.Drawing.SystemColors.Control;
+            this.buttonRemoveFogUsingCustomMethod.Location = new System.Drawing.Point(710, 685);
+            this.buttonRemoveFogUsingCustomMethod.Name = "buttonRemoveFogUsingCustomMethod";
+            this.buttonRemoveFogUsingCustomMethod.Size = new System.Drawing.Size(121, 32);
+            this.buttonRemoveFogUsingCustomMethod.TabIndex = 56;
+            this.buttonRemoveFogUsingCustomMethod.Text = "Custom";
+            this.buttonRemoveFogUsingCustomMethod.UseVisualStyleBackColor = false;
+            this.buttonRemoveFogUsingCustomMethod.Click += new System.EventHandler(this.buttonRemoveFogUsingCustomMethod_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1235, 616);
+            this.ClientSize = new System.Drawing.Size(1235, 758);
+            this.Controls.Add(this.buttonRemoveFogUsingCustomMethod);
+            this.Controls.Add(this.buttonRemoveFogUsingDCPAndDFT);
+            this.Controls.Add(this.buttonEnhaceVisibilityUsingRobbyTanMethodForRoads);
             this.Controls.Add(this.buttonTestFilters);
             this.Controls.Add(this.buttonApplyAGC);
             this.Controls.Add(this.buttonRemoveFogUsingIdcpWithClahe);
@@ -744,6 +783,9 @@
         private System.Windows.Forms.Button buttonRemoveFogUsingIdcpWithClahe;
         private System.Windows.Forms.Button buttonApplyAGC;
         private System.Windows.Forms.Button buttonTestFilters;
+        private System.Windows.Forms.Button buttonEnhaceVisibilityUsingRobbyTanMethodForRoads;
+        private System.Windows.Forms.Button buttonRemoveFogUsingDCPAndDFT;
+        private System.Windows.Forms.Button buttonRemoveFogUsingCustomMethod;
     }
 }
 

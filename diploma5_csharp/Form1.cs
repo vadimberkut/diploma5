@@ -416,6 +416,30 @@ namespace diploma5_csharp
             this.DisplayImageInPictureBox(pictureBox2, _appState.ShadowMaskImageGray.Bitmap);
         }
 
+        private void buttonEnhaceVisibilityUsingRobbyTanMethodForRoads_Click(object sender, EventArgs e)
+        {
+            var result = _appState.Fog.EnhaceVisibilityUsingRobbyTanMethodForRoads(_appState.InputImageBgr, new FogRemovalParams() { ShowWindows = GetCheckBoxValue(checkBoxShowOptionalWindows) });
+            _appState.SetOutputImage(result);
+            this.DisplayImageInPictureBox(pictureBox3, result.Bitmap);
+            //this.DisplayImageInPictureBox(pictureBox2, _appState.ShadowMaskImageGray.Bitmap);
+        }
+
+        private void buttonRemoveFogUsingDCPAndDFT_Click(object sender, EventArgs e)
+        {
+            var result = _appState.Fog.RemoveFogUsingDCPAndDFT(_appState.InputImageBgr, out _appState.ShadowMaskImageGray, new FogRemovalParams() { ShowWindows = GetCheckBoxValue(checkBoxShowOptionalWindows) });
+            _appState.SetOutputImage(result);
+            this.DisplayImageInPictureBox(pictureBox3, result.Bitmap);
+            this.DisplayImageInPictureBox(pictureBox2, _appState.ShadowMaskImageGray.Bitmap);
+        }
+
+        private void buttonRemoveFogUsingCustomMethod_Click(object sender, EventArgs e)
+        {
+            var result = _appState.Fog.RemoveFogUsingCustomMethod(_appState.InputImageBgr, out _appState.ShadowMaskImageGray, new FogRemovalParams() { ShowWindows = GetCheckBoxValue(checkBoxShowOptionalWindows) });
+            _appState.SetOutputImage(result);
+            this.DisplayImageInPictureBox(pictureBox3, result.Bitmap);
+            this.DisplayImageInPictureBox(pictureBox2, _appState.ShadowMaskImageGray.Bitmap);
+        }
+
         //
         //VISIBILITY ENHANCEMENT
         //
@@ -479,5 +503,7 @@ namespace diploma5_csharp
             EmguCvWindowManager.Display(bilat, "0 bilat");
             EmguCvWindowManager.Display(gauss, "0 gauss");
         }
+
+        
     }
 }

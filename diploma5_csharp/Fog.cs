@@ -522,6 +522,245 @@ namespace diploma5_csharp
         }
 
         #endregion
+
+        #region Robby T. Tan - Visibility enhacement for roads with foggy or hazy scenes
+        
+        // Source - http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.112.6005&rep=rep1&type=pdf
+        public Image<Bgr, Byte> EnhaceVisibilityUsingRobbyTanMethodForRoads(Image<Bgr, Byte> image, FogRemovalParams _params)
+        {
+            Image<Bgr, Byte> E = image;
+            Image<Bgr, double> E_normilized = new Image<Bgr, double>(image.Size);
+            Image<Gray, double> F = new Image<Gray, double>(image.Size);
+            Image<Gray, double> e_beta_dx = new Image<Gray, double>(image.Size);
+            Image<Bgr, Byte> result = new Image<Bgr, Byte>(image.Size);
+
+            // 1 - compute environmental light (as max values)
+            double I_b, I_g, I_r;
+            double[] minValues = new double[3];
+            double[] maxValues = new double[3];
+            Point[] minLocations = new Point[3];
+            Point[] maxLocations = new Point[3];
+            image.MinMax(out minValues, out maxValues, out minLocations, out maxLocations);
+            I_b = maxValues[0];
+            I_g = maxValues[1];
+            I_r = maxValues[2];
+
+            double Airlight = Math.Max(maxValues[0], Math.Max(maxValues[1], maxValues[2]));
+            //double Airlight = (maxValues[0] + maxValues[1] + maxValues[2]) / 3.0;
+
+            // compute Г_c
+            //double G_b = I_b / (I_b + I_g + I_r);
+            //double G_g = I_g / (I_b + I_g + I_r);
+            //double G_r = I_r / (I_b + I_g + I_r);
+
+            double G_b = I_b / 255;
+            double G_g = I_g / 255;
+            double G_r = I_r / 255;
+
+            //double G_b = I_b / Airlight;
+            //double G_g = I_g / Airlight;
+            //double G_r = I_r / Airlight;
+
+            // compute normilized input images E'_c
+            for (int m = 0; m < E.Rows; m++)
+            {
+                for (int n = 0; n < E.Cols; n++)
+                {
+                    Bgr e = E[m, n];
+
+                    double B = E[m, n].Blue / G_b;
+                    double G = E[m, n].Green / G_g;
+                    double R = E[m, n].Red / G_r;
+
+                    //double B = E[m, n].Blue * G_b;
+                    //double G = E[m, n].Green * G_g;
+                    //double R = E[m, n].Red * G_r;
+
+                    // take mod to cut hight value (my assumption)
+                    B = B % 255;
+                    G = G % 255;
+                    R = R % 255;
+
+                    E_normilized[m, n] = new Bgr(B, G, R);
+                }
+            }
+
+            // compute F based on the intensity value of the YIQ color model
+            for (int m = 0; m < E_normilized.Rows; m++)
+            {
+                for (int n = 0; n < E_normilized.Cols; n++)
+                {
+                    //double Y = 0.257 * E_normilized[m, n].Blue + 0.504 * E_normilized[m, n].Green + 0.098 * E_normilized[m, n].Red;
+                    double Y = 0.257 * E_normilized[m, n].Red + 0.504 * E_normilized[m, n].Green + 0.098 * E_normilized[m, n].Blue;
+                    F[m, n] = new Gray(Y);
+                }
+            }
+
+            // values of Y are approximated values, thus to create
+            // a better approximation, we diffuse these values by using
+            // Gaussian blur
+            F = F.SmoothGaussian(3);
+
+            // estimate the approximated value of (1 - e^(-beta*d(x))) by using Eq. (7)
+            // Eq. (7): F = (I_r+I_g+I_b)(1 - e^(-beta*d(x))) =>
+            // (1 - e^(-beta*d(x))) = F / (I_r+I_g+I_b) =>
+            // e^(-beta*d(x)) = 1 - F / (I_r+I_g+I_b)
+            for (int m = 0; m < E_normilized.Rows; m++)
+            {
+                for (int n = 0; n < E_normilized.Cols; n++)
+                {
+                    //double e_beta_dx_ = 1 - (F[m,n].Intensity / (I_b + I_g + I_r));
+                    double e_beta_dx_ = Math.Pow(1 - (F[m, n].Intensity / 255), -1);
+                    e_beta_dx[m, n] = new Gray(e_beta_dx_);
+                }
+            }
+
+            // enhance the visibility of the input image
+            for (int m = 0; m < E_normilized.Rows; m++)
+            {
+                for (int n = 0; n < E_normilized.Cols; n++)
+                {
+                    double B = (E[m,n].Blue - F[m,n].Intensity * G_b) * e_beta_dx[m,n].Intensity;
+                    double G = (E[m,n].Green - F[m,n].Intensity * G_g) * e_beta_dx[m,n].Intensity;
+                    double R = (E[m,n].Red - F[m,n].Intensity * G_r) * e_beta_dx[m,n].Intensity;
+
+                    result[m, n] = new Bgr(B, G, R);
+                }
+            }
+
+            var result2 = GammaCorrection.Adaptive(result);
+            var result3 = result.Clone();
+            result3._EqualizeHist();
+
+
+            if (_params.ShowWindows)
+            {
+                EmguCvWindowManager.Display(image, "1 image");
+                EmguCvWindowManager.Display(E_normilized.Convert<Bgr, Byte>(), "2 E_normilized");
+                EmguCvWindowManager.Display(F.Convert<Bgr, Byte>(), "3 F");
+                EmguCvWindowManager.Display(e_beta_dx.Convert<Bgr, Byte>(), "4 e_beta_dx");
+                EmguCvWindowManager.Display(result, "5 result");
+                EmguCvWindowManager.Display(result2, "5.2 result2");
+                EmguCvWindowManager.Display(result3, "5.3 result3");
+            }
+
+            return result;
+        }
+
+        #endregion
+
+
+        #region An approach which is based on Fast Fourier Transform
+
+        // Source - http://www.sciencedirect.com/science/article/pii/S1877050915013812
+        public Image<Bgr, Byte> RemoveFogUsingDCPAndDFT(Image<Bgr, Byte> image, out Image<Gray, Byte> transmission, FogRemovalParams _params)
+        {
+            Image<Bgr, Single> imageSingle = image.Convert<Bgr, Single>();
+            Image<Gray, Byte> DC;
+            Image<Gray, Single> DFT = new Image<Gray, Single>(image.Size);
+            Image<Gray, Single> DFT_inverse = new Image<Gray, Single>(image.Size);
+            Image<Gray, Single> DFT_lowPassFilter = new Image<Gray, Single>(image.Size);
+            Image<Gray, Single> DFT_highPassFilter = new Image<Gray, Single>(image.Size);
+            Image<Gray, Single> transmission_ = new Image<Gray, Single>(image.Size);
+            Image<Bgr, Byte> result = new Image<Bgr, Byte>(image.Size);
+
+            // compute DCP
+            DC = GetDarkChannel(image, patchSize: 7);
+
+            // apply fast fourier transform (FFT)
+            // for digital images use discrete fourier transform (DFT)
+            CvInvoke.Dft(src: DC.Convert<Gray, Single>(), dst: DFT, flags: DxtType.Forward, nonzeroRows: -1);
+            CvInvoke.Dft(src: DFT, dst: DFT_inverse, flags: DxtType.Inverse, nonzeroRows: -1);
+
+            float[,] lowPassMatrixKernel = new float[3, 3] {
+                    { 1.0f / 9.0f, 1.0f / 9.0f, 1.0f / 9.0f},
+                    { 1.0f / 9.0f, 1.0f / 9.0f, 1.0f / 9.0f},
+                    { 1.0f / 9.0f, 1.0f / 9.0f, 1.0f / 9.0f},
+                };
+            ConvolutionKernelF lowPassMatrix = new ConvolutionKernelF(lowPassMatrixKernel);
+            float[,] highPassMatrixKernel = new float[3, 3] {
+                    { 0, - 1.0f / 4.0f , 0},
+                    { - 1.0f / 4.0f, 2 , - 1.0f / 4.0f},
+                    { 0,  - 1.0f / 4.0f, 0},
+                };
+            ConvolutionKernelF highPassMatrix = new ConvolutionKernelF(highPassMatrixKernel);
+            CvInvoke.Filter2D(src: DFT, dst: DFT_lowPassFilter, kernel: lowPassMatrix, anchor: new Point(-1, -1));
+            CvInvoke.Filter2D(src: DFT, dst: DFT_highPassFilter, kernel: highPassMatrix, anchor: new Point(-1, -1));
+
+            for (int m = 0; m < DFT.Rows; m++)
+            {
+                for (int n = 0; n < DFT.Cols; n++)
+                {
+                    double sum = DFT_lowPassFilter[m, n].Intensity + DFT_highPassFilter[m, n].Intensity;
+                    transmission_[m, n] = new Gray(sum);
+                }
+            }
+
+            // compute transmission map
+            transmission = new Image<Gray, byte>(image.Size);
+
+            // estimate airlight
+            double airlight = EstimateAirlight(DC, image);
+
+            // restore image
+
+
+            if (_params.ShowWindows)
+            {
+                EmguCvWindowManager.Display(image, "1 image");
+                EmguCvWindowManager.Display(DC, "2 DC");
+                EmguCvWindowManager.Display(DFT, "3 DFT");
+                EmguCvWindowManager.Display(DFT_inverse, "4 DFT_inverse");
+                EmguCvWindowManager.Display(DFT_lowPassFilter, "5.1 DFT_lowPassFilter");
+                EmguCvWindowManager.Display(DFT_highPassFilter, "5.2 DFT_highPassFilter");
+                EmguCvWindowManager.Display(transmission_, "6 transmission_");
+                EmguCvWindowManager.Display(result, "9 result");
+            }
+
+            return result;
+        }
+
+        #endregion
+
+        #region My Fog removal nethod
+
+        public Image<Bgr, Byte> RemoveFogUsingCustomMethod(Image<Bgr, Byte> image, out Image<Gray, Byte> transmission, FogRemovalParams _params)
+        {
+            Image<Bgr, float> convultionResult = new Image<Bgr, float>(image.Size);
+            Image<Bgr, Byte> filter2DResult = new Image<Bgr, Byte>(image.Size);
+            Image<Bgr, Byte> result = new Image<Bgr, Byte>(image.Size);
+
+            // try filter2d
+            float[,] matrixKernel = new float[3, 3] {
+                { 0,-1, 0 },
+                {-1, 5,-1 },
+                { 0,-1, 0 }
+            };
+            ConvolutionKernelF matrix = new ConvolutionKernelF(matrixKernel);
+            //convultionResult = image.Convolution(matrix);
+            //Image<Bgr, Byte> BGRResult = convultionResult.Convert<Bgr, Byte>();
+            //Image<Bgr, Byte> BGRResult2 = convultionResult.ConvertScale<byte>(1, 0);
+            CvInvoke.Filter2D(image, filter2DResult, matrix, new Point(0, 0));
+            //EmguCvWindowManager.Display(convultionResult, "1 convultionResult");
+            //EmguCvWindowManager.Display(BGRResult, "1 BGRResult");
+            //EmguCvWindowManager.Display(BGRResult2, "1 BGRResult2");
+            EmguCvWindowManager.Display(filter2DResult, "1 filter2DResult");
+
+            var a = image - result;
+
+
+            transmission = new Image<Gray, byte>(image.Size);
+
+            if (_params.ShowWindows)
+            {
+                EmguCvWindowManager.Display(image, "1 image");
+                EmguCvWindowManager.Display(result, "9 result");
+            }
+
+            return result;
+        }
+
+        #endregion
     }
 
     class RobbyTanPixelPhi
