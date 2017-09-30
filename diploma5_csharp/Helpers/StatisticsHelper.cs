@@ -25,7 +25,7 @@ namespace diploma5_csharp.Helpers
         //    return min;
         //}
 
-        public static double Max(double[] data)
+        public static double Max(params double[] data)
         {
             if (data.Length == 0)
                 throw new ArgumentException("Array must contain elements");

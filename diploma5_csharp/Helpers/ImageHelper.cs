@@ -4,6 +4,7 @@ using Emgu.CV;
 using Emgu.CV.CvEnum;
 using Emgu.CV.Structure;
 using System.Collections.Generic;
+using System.Drawing;
 
 namespace diploma5_csharp.Helpers
 {
@@ -459,7 +460,7 @@ namespace diploma5_csharp.Helpers
 
         #region GET IMAGE PIXELS
 
-        public static double[] GetImagePixels(Image<Gray, byte> image)
+        public static double[] GetImagePixels(Image<Gray, Byte> image)
         {
             double[] result = new double[image.Rows * image.Cols];
             for (int m = 0; m < image.Rows; m++)
@@ -467,7 +468,7 @@ namespace diploma5_csharp.Helpers
                 for (int n = 0; n < image.Cols; n++)
                 {
                     Gray pixel = image[m, n];
-                    result[m * n + n] = pixel.Intensity;
+                    result[m * image.Cols + n] = pixel.Intensity;
                 }
             }
             return result;
@@ -481,7 +482,25 @@ namespace diploma5_csharp.Helpers
                 for (int n = 0; n < image.Cols; n++)
                 {
                     Gray pixel = image[m, n];
-                    result[m * n + n] = pixel.Intensity;
+                    result[m * image.Cols + n] = pixel.Intensity;
+                }
+            }
+            return result;
+        }
+
+        public static GrayImagePixelValueWithPosition[] GetImagePixelsWithPositions(Image<Gray, Byte> image)// : T is new
+        {
+            GrayImagePixelValueWithPosition[] result = new GrayImagePixelValueWithPosition[image.Rows * image.Cols];
+            for (int m = 0; m < image.Rows; m++)
+            {
+                for (int n = 0; n < image.Cols; n++)
+                {
+                    Gray pixel = image[m, n];
+                    result[m * image.Cols + n] = new GrayImagePixelValueWithPosition
+                    {
+                        Intensity = pixel.Intensity,
+                        Position = new Point(m, n)
+                    };
                 }
             }
             return result;
@@ -534,5 +553,11 @@ namespace diploma5_csharp.Helpers
     {
         public T In;
         public T Out;
+    }
+
+    public class GrayImagePixelValueWithPosition
+    {
+        public double Intensity { get; set; }
+        public Point Position { get; set; }
     }
 }

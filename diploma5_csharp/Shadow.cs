@@ -151,8 +151,10 @@ namespace diploma5_csharp
                     Bgr color = image[i, j];
                     Gray maskColor = shadowMask[i, j];
 
-                    if(maskColor.Intensity == 255)
+                    if (maskColor.Intensity == 255)
                         result[i, j] = new Bgr(color.Blue + diffB, color.Green + diffG, color.Red + diffR);
+                    else
+                        result[i, j] = image[i, j];
                 }
             }
 

@@ -172,9 +172,13 @@ namespace diploma5_csharp
                     I = sourceImg[i, j];
                     tmax = (t.Intensity / 255) < t0 ? t0 : (t.Intensity / 255);
 
-                    double B = Math.Abs((I.Blue - A) / tmax + A) > 255 ? 255 : Math.Abs((I.Blue - A) / tmax + A);
-                    double G = Math.Abs((I.Green - A) / tmax + A) > 255 ? 255 : Math.Abs((I.Green - A) / tmax + A);
-                    double R = Math.Abs((I.Red - A) / tmax + A) > 255 ? 255 : Math.Abs((I.Red - A) / tmax + A);
+                    //double B = Math.Abs((I.Blue - A) / tmax + A) > 255 ? 255 : Math.Abs((I.Blue - A) / tmax + A);
+                    //double G = Math.Abs((I.Green - A) / tmax + A) > 255 ? 255 : Math.Abs((I.Green - A) / tmax + A);
+                    //double R = Math.Abs((I.Red - A) / tmax + A) > 255 ? 255 : Math.Abs((I.Red - A) / tmax + A);
+
+                    double B = (I.Blue - A) / tmax + A;
+                    double G = (I.Green - A) / tmax + A;
+                    double R = (I.Red - A) / tmax + A;
 
                     dehazed[i,j] = new Bgr(B, G, R);
                 }
@@ -663,7 +667,7 @@ namespace diploma5_csharp
             Image<Gray, Single> DFT_highPassFilter = new Image<Gray, Single>(image.Size);
             Image<Gray, Single> transmission_ = new Image<Gray, Single>(image.Size);
             Image<Bgr, Byte> result = new Image<Bgr, Byte>(image.Size);
-
+            
             // compute DCP
             DC = GetDarkChannel(image, patchSize: 7);
 
@@ -722,7 +726,282 @@ namespace diploma5_csharp
 
         #endregion
 
-        #region My Fog removal nethod
+        #region Single Image Fog Removal Based on Local Extrema
+
+        // Source - http://html.rhhz.net/ieee-jas/html/20150205.htm
+        public Image<Bgr, Byte> RemoveFogUsingLocalExtremaMethod(Image<Bgr, Byte> image, out Image<Gray, Byte> transmission, FogRemovalParams _params)
+        {
+            Image<Bgr, Byte> I = image;
+            Image<Gray, Byte> DC;
+            Image<Bgr, Byte> result = new Image<Bgr, Byte>(image.Size);
+
+            // 1. compute dark channel
+            DC = GetDarkChannel(I, patchSize: 7);
+
+            // 2. Skylight Estimation and White Balance Skylight A is typically assumed to be a global constant
+            // In order to solve A,we choose the 0.1% brightest pixels of the dark channel as their preferred region
+            double takePercent = 0.001;
+            int takeAmount = (int)Math.Round((DC.Rows * DC.Cols) * takePercent);
+            var pixelsWithPositions = ImageHelper.GetImagePixelsWithPositions(DC);
+            var brightestPixels = pixelsWithPositions
+                .OrderByDescending(x => x.Intensity)
+                .Take(takeAmount)
+                .ToArray();
+
+            // take according pixels in original image
+            var brightestOriginalPixels = brightestPixels.Select(x => I[x.Position.X, x.Position.Y]).ToArray();
+
+            // compute A_mean for each channel
+            double A_mean_b = brightestOriginalPixels.Average(x => x.Blue);
+            double A_mean_g = brightestOriginalPixels.Average(x => x.Green);
+            double A_mean_r = brightestOriginalPixels.Average(x => x.Red);
+            double A_mean = (A_mean_b + A_mean_g + A_mean_r) / 3.0;
+
+            // compute skylight A
+            double A_mean_max = StatisticsHelper.Max(A_mean_b, A_mean_g, A_mean_r);
+            double A = A_mean / A_mean_max;
+
+            // apply white balance to image I to obtain corrected image I'
+            Image<Bgr, double> I_corrected = new Image<Bgr, double>(I.Size);
+            for (int m = 0; m < I.Rows; m++)
+            {
+                for (int n = 0; n < I.Cols; n++)
+                {
+                    double B2 = I[m, n].Blue / A;
+                    double G2 = I[m, n].Green / A;
+                    double R2 = I[m, n].Red / A;
+
+                    double B = I[m, n].Blue / (A_mean_b / A_mean_max);
+                    double G = I[m, n].Green / (A_mean_g / A_mean_max);
+                    double R = I[m, n].Red / (A_mean_r / A_mean_max);
+
+                    I_corrected[m, n] = new Bgr(B, G, R);
+                }
+            }
+
+            // Coarse Estimation of Atmospheric Veil (estimate transmission)
+            Image<Gray, double> V = new Image<Gray, double>(I_corrected.Size);
+            for (int m = 0; m < I.Rows; m++)
+            {
+                for (int n = 0; n < I.Cols; n++)
+                {
+                    double B = I_corrected[m, n].Blue;
+                    double G = I_corrected[m, n].Green;
+                    double R = I_corrected[m, n].Red;
+                    double min = StatisticsHelper.Min(B, G, R);
+                    V[m, n] = new Gray(255 - min);
+                }
+            }
+
+            // apply an edge-preserving smoothing approach based on the local extrema for refinement
+            //V.SmoothBilatral();
+            V = V.SmoothGaussian(5);
+
+            transmission = V.Convert<Gray, Byte>();
+
+            // remove fog
+            double q = 0.95; // q id used for regulating the degree of defogging
+            Image<Bgr, Byte> R_image = new Image<Bgr, Byte>(I.Size);
+            for (int m = 0; m < I.Rows; m++)
+            {
+                for (int n = 0; n < I.Cols; n++)
+                {
+                    double v = V[m, n].Intensity / 255.0;
+                    //double v = V[m, n].Intensity;
+
+                    //double B_ = I[m, n].Blue / 255.0;
+                    //double G_ = I[m, n].Green / 255.0;
+                    //double R_ = I[m, n].Red / 255.0;
+
+                    double B_ = I[m, n].Blue;
+                    double G_ = I[m, n].Green;
+                    double R_ = I[m, n].Red;
+
+                    //double B = ((B_ - q * v) / (1 - v)) * A;
+                    //double G = ((G_ - q * v) / (1 - v)) * A;
+                    //double R = ((R_ - q * v) / (1 - v)) * A;
+
+                    double B = ((I_corrected[m,n].Blue / 255 - q * v) / (1 - v));
+                    double G = ((I_corrected[m, n].Green / 255 - q * v) / (1 - v));
+                    double R = ((I_corrected[m, n].Red / 255 - q * v) / (1 - v));
+
+                    B = (B * 255);
+                    G = (G * 255);
+                    R = (R * 255);
+
+                    //B = (B % 255);
+                    //G = (G % 255);
+                    //R = (R % 255);
+
+                    if (B > 255) B = 255;
+                    if (G > 255) G = 255;
+                    if (R > 255) R = 255;
+
+                    if (B < 0) B = 0;
+                    if (G < 0) G = 0;
+                    if (R < 0) R = 0;
+
+                    R_image[m, n] = new Bgr(B, G, R);
+                }
+            }
+            result = GammaCorrection.Adaptive(R_image);
+
+            // Compute metrics
+            double MSE = ImageMetricHelper.MSE(image.Convert<Bgr, double>(), result.Convert<Bgr, double>());
+            double MSE2 = ImageMetricHelper.MSE(image.Convert<Bgr, double>(), image.Convert<Bgr, double>());
+            double NAE = ImageMetricHelper.NAE(image.Convert<Bgr, double>(), result.Convert<Bgr, double>());
+            double SC = ImageMetricHelper.SC(image.Convert<Bgr, double>(), result.Convert<Bgr, double>());
+            double PSNR = ImageMetricHelper.PSNR(image.Convert<Bgr, double>(), result.Convert<Bgr, double>());
+            double AD = ImageMetricHelper.AD(image.Convert<Bgr, double>(), result.Convert<Bgr, double>());
+
+            if (_params.ShowWindows)
+            {
+                EmguCvWindowManager.Display(image, "1 image");
+                EmguCvWindowManager.Display(DC, "2 DC");
+                EmguCvWindowManager.Display(I_corrected.Convert<Bgr, Byte>(), "3 I_corrected");
+                EmguCvWindowManager.Display(V.Convert<Gray, Byte>(), "4 V");
+                EmguCvWindowManager.Display(R_image, "5 R_image");
+                EmguCvWindowManager.Display(result, "9 result");
+            }
+
+            return result;
+        }
+
+        #endregion
+
+        #region Physics-based Fast Single Image Fog Removal 
+
+        // Source - https://pdfs.semanticscholar.org/dfb8/39c695604ee2b0419a545eb9986be7a6d51d.pdf
+        public Image<Bgr, Byte> RemoveFogUsingPhysicsBasedMethod(Image<Bgr, Byte> image, out Image<Gray, Byte> transmission, FogRemovalParams _params)
+        {
+            Image<Bgr, Byte> I = image;
+            Image<Gray, Byte> DC;
+            Image<Bgr, Byte> result = new Image<Bgr, Byte>(image.Size);
+
+            // 1. compute dark channel
+            DC = GetDarkChannel(I, patchSize: 7);
+
+            // 2. Skylight Estimation and White Balance Skylight A is typically assumed to be a global constant
+            // In order to solve A,we choose the 0.1% brightest pixels of the dark channel as their preferred region
+            double takePercent = 0.001;
+            int takeAmount = (int)Math.Round((DC.Rows * DC.Cols) * takePercent);
+            var pixelsWithPositions = ImageHelper.GetImagePixelsWithPositions(DC);
+            var brightestPixels = pixelsWithPositions
+                .OrderByDescending(x => x.Intensity)
+                .Take(takeAmount)
+                .ToArray();
+
+            // take according pixels in original image
+            var brightestOriginalPixels = brightestPixels.Select(x => I[x.Position.X, x.Position.Y]).ToArray();
+
+            // compute A_mean for each channel
+            double A_mean_b = brightestOriginalPixels.Average(x => x.Blue);
+            double A_mean_g = brightestOriginalPixels.Average(x => x.Green);
+            double A_mean_r = brightestOriginalPixels.Average(x => x.Red);
+            double A_mean = (A_mean_b + A_mean_g + A_mean_r) / 3.0;
+
+            // compute skylight A
+            double A_mean_max = StatisticsHelper.Max(A_mean_b, A_mean_g, A_mean_r);
+            double A = A_mean / A_mean_max;
+
+            // apply white balance to image I to obtain corrected image I'
+            Image<Bgr, double> I_corrected = new Image<Bgr, double>(I.Size);
+            for (int m = 0; m < I.Rows; m++)
+            {
+                for (int n = 0; n < I.Cols; n++)
+                {
+                    double B2 = I[m, n].Blue / A;
+                    double G2 = I[m, n].Green / A;
+                    double R2 = I[m, n].Red / A;
+
+                    double B = I[m, n].Blue / (A_mean_b / A_mean_max);
+                    double G = I[m, n].Green / (A_mean_g / A_mean_max);
+                    double R = I[m, n].Red / (A_mean_r / A_mean_max);
+
+                    I_corrected[m, n] = new Bgr(B, G, R);
+                }
+            }
+
+            // Coarse Estimation of Atmospheric Veil (estimate transmission)
+            Image<Gray, double> V = new Image<Gray, double>(I_corrected.Size);
+            for (int m = 0; m < I.Rows; m++)
+            {
+                for (int n = 0; n < I.Cols; n++)
+                {
+                    double B = I_corrected[m, n].Blue;
+                    double G = I_corrected[m, n].Green;
+                    double R = I_corrected[m, n].Red;
+                    double min = StatisticsHelper.Min(B, G, R);
+                    V[m, n] = new Gray(min);
+                }
+            }
+
+            // apply an edge-preserving smoothing approach based on the local extrema for refinement
+            //V.SmoothBilatral();
+            V = V.SmoothGaussian(5);
+
+            transmission = V.Convert<Gray, Byte>();
+
+            // remove fog
+            double q = 0.95; // q id used for regulating the degree of defogging
+            Image<Bgr, Byte> R_image = new Image<Bgr, Byte>(I.Size);
+            for (int m = 0; m < I.Rows; m++)
+            {
+                for (int n = 0; n < I.Cols; n++)
+                {
+                    //double v = V[m, n].Intensity / 255.0;
+                    double v = V[m, n].Intensity;
+
+                    //double B_ = I[m, n].Blue / 255.0;
+                    //double G_ = I[m, n].Green / 255.0;
+                    //double R_ = I[m, n].Red / 255.0;
+
+                    double B_ = I[m, n].Blue;
+                    double G_ = I[m, n].Green;
+                    double R_ = I[m, n].Red;
+
+                    double B = ((I_corrected[m, n].Blue / 255 - q * v) / (1 - v));
+                    double G = ((I_corrected[m, n].Green / 255 - q * v) / (1 - v));
+                    double R = ((I_corrected[m, n].Red / 255 - q * v) / (1 - v));
+
+                    B = (B * 255);
+                    G = (G * 255);
+                    R = (R * 255);
+
+                    B = (B % 255);
+                    G = (G % 255);
+                    R = (R % 255);
+
+                    if (B > 255) B = 255;
+                    if (G > 255) G = 255;
+                    if (R > 255) R = 255;
+
+                    if (B < 0) B = 0;
+                    if (G < 0) G = 0;
+                    if (R < 0) R = 0;
+
+                    R_image[m, n] = new Bgr(B, G, R);
+                }
+            }
+            result = R_image.Convert<Bgr, Byte>();
+
+
+            if (_params.ShowWindows)
+            {
+                EmguCvWindowManager.Display(image, "1 image");
+                EmguCvWindowManager.Display(DC, "2 DC");
+                EmguCvWindowManager.Display(I_corrected, "3 I_corrected double");
+                EmguCvWindowManager.Display(I_corrected.Convert<Bgr, Byte>(), "3 I_corrected");
+                EmguCvWindowManager.Display(V.Convert<Gray, Byte>(), "4 V");
+                EmguCvWindowManager.Display(result, "9 result");
+            }
+
+            return result;
+        }
+
+        #endregion
+
+        #region My Fog removal method
 
         public Image<Bgr, Byte> RemoveFogUsingCustomMethod(Image<Bgr, Byte> image, out Image<Gray, Byte> transmission, FogRemovalParams _params)
         {

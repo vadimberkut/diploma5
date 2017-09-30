@@ -86,6 +86,7 @@
             this.buttonEnhaceVisibilityUsingRobbyTanMethodForRoads = new System.Windows.Forms.Button();
             this.buttonRemoveFogUsingDCPAndDFT = new System.Windows.Forms.Button();
             this.buttonRemoveFogUsingCustomMethod = new System.Windows.Forms.Button();
+            this.buttonRemoveFogUsingLocalExtremaMethod = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).BeginInit();
@@ -642,7 +643,7 @@
             this.buttonRemoveFogUsingDCPAndDFT.Name = "buttonRemoveFogUsingDCPAndDFT";
             this.buttonRemoveFogUsingDCPAndDFT.Size = new System.Drawing.Size(121, 32);
             this.buttonRemoveFogUsingDCPAndDFT.TabIndex = 55;
-            this.buttonRemoveFogUsingDCPAndDFT.Text = "DCP with DFT";
+            this.buttonRemoveFogUsingDCPAndDFT.Text = "DCP with DFT UC";
             this.buttonRemoveFogUsingDCPAndDFT.UseVisualStyleBackColor = false;
             this.buttonRemoveFogUsingDCPAndDFT.Click += new System.EventHandler(this.buttonRemoveFogUsingDCPAndDFT_Click);
             // 
@@ -657,11 +658,23 @@
             this.buttonRemoveFogUsingCustomMethod.UseVisualStyleBackColor = false;
             this.buttonRemoveFogUsingCustomMethod.Click += new System.EventHandler(this.buttonRemoveFogUsingCustomMethod_Click);
             // 
+            // buttonRemoveFogUsingLocalExtremaMethod
+            // 
+            this.buttonRemoveFogUsingLocalExtremaMethod.BackColor = System.Drawing.SystemColors.Control;
+            this.buttonRemoveFogUsingLocalExtremaMethod.Location = new System.Drawing.Point(710, 723);
+            this.buttonRemoveFogUsingLocalExtremaMethod.Name = "buttonRemoveFogUsingLocalExtremaMethod";
+            this.buttonRemoveFogUsingLocalExtremaMethod.Size = new System.Drawing.Size(121, 32);
+            this.buttonRemoveFogUsingLocalExtremaMethod.TabIndex = 57;
+            this.buttonRemoveFogUsingLocalExtremaMethod.Text = "Local Extrema UC";
+            this.buttonRemoveFogUsingLocalExtremaMethod.UseVisualStyleBackColor = false;
+            this.buttonRemoveFogUsingLocalExtremaMethod.Click += new System.EventHandler(this.buttonRemoveFogUsingLocalExtremaMethod_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1235, 758);
+            this.Controls.Add(this.buttonRemoveFogUsingLocalExtremaMethod);
             this.Controls.Add(this.buttonRemoveFogUsingCustomMethod);
             this.Controls.Add(this.buttonRemoveFogUsingDCPAndDFT);
             this.Controls.Add(this.buttonEnhaceVisibilityUsingRobbyTanMethodForRoads);
@@ -786,6 +799,7 @@
         private System.Windows.Forms.Button buttonEnhaceVisibilityUsingRobbyTanMethodForRoads;
         private System.Windows.Forms.Button buttonRemoveFogUsingDCPAndDFT;
         private System.Windows.Forms.Button buttonRemoveFogUsingCustomMethod;
+        private System.Windows.Forms.Button buttonRemoveFogUsingLocalExtremaMethod;
     }
 }
 

@@ -145,6 +145,7 @@
     <Compile Include="CustomFormElements\Prompt.cs" />
     <Compile Include="CustomFormElements\SaveImagePrompt.cs" />
     <Compile Include="Dust.cs" />
+    <Compile Include="Extensions\EmguCvMatExtensions.cs" />
     <Compile Include="Helpers\EmguCvWindowManager.cs" />
     <Compile Include="Extensions\Hsi.cs" />
     <Compile Include="Fog.cs" />
@@ -156,6 +157,7 @@
     </Compile>
     <Compile Include="GammaCorrection.cs" />
     <Compile Include="Helpers\ImageHelper.cs" />
+    <Compile Include="Helpers\ImageMetricHelper.cs" />
     <Compile Include="Helpers\MathHelper.cs" />
     <Compile Include="Models\BgrChannelAverageResult.cs" />
     <Compile Include="Models\FogRemovalParams.cs" />
