@@ -866,7 +866,8 @@ namespace diploma5_csharp
                     double G = I_corrected[m, n].Green;
                     double R = I_corrected[m, n].Red;
                     double min = StatisticsHelper.Min(B, G, R);
-                    V[m, n] = new Gray(255 - min);
+                    //V[m, n] = new Gray(255 - min);
+                    V[m, n] = new Gray(min);
                 }
             }
 
@@ -883,32 +884,46 @@ namespace diploma5_csharp
             {
                 for (int n = 0; n < I.Cols; n++)
                 {
+                    // 1 approach - original (bad results)
                     double v = V[m, n].Intensity / 255.0;
                     //double v = V[m, n].Intensity;
 
-                    //double B_ = I[m, n].Blue / 255.0;
-                    //double G_ = I[m, n].Green / 255.0;
-                    //double R_ = I[m, n].Red / 255.0;
+                    //double B_ = I[m, n].Blue;
+                    //double G_ = I[m, n].Green;
+                    //double R_ = I[m, n].Red;
 
-                    double B_ = I[m, n].Blue;
-                    double G_ = I[m, n].Green;
-                    double R_ = I[m, n].Red;
+                    double B_ = I[m, n].Blue / 255.0;
+                    double G_ = I[m, n].Green / 255.0;
+                    double R_ = I[m, n].Red / 255.0;
 
-                    //double B = ((B_ - q * v) / (1 - v)) * A;
-                    //double G = ((G_ - q * v) / (1 - v)) * A;
-                    //double R = ((R_ - q * v) / (1 - v)) * A;
-
-                    double B = ((I_corrected[m,n].Blue / 255 - q * v) / (1 - v));
-                    double G = ((I_corrected[m, n].Green / 255 - q * v) / (1 - v));
-                    double R = ((I_corrected[m, n].Red / 255 - q * v) / (1 - v));
+                    double B = ((B_ - q * v) / (1 - v)) * A;
+                    double G = ((G_ - q * v) / (1 - v)) * A;
+                    double R = ((R_ - q * v) / (1 - v)) * A;
 
                     B = (B * 255);
                     G = (G * 255);
                     R = (R * 255);
 
-                    //B = (B % 255);
-                    //G = (G % 255);
-                    //R = (R % 255);
+                    B = (B % 255);
+                    G = (G % 255);
+                    R = (R % 255);
+
+                    // 2 approach - modificated (too dark)
+                    //double v = V[m, n].Intensity / 255.0;
+
+                    //double B_ = I_corrected[m, n].Blue / 255.0;
+                    //double G_ = I_corrected[m, n].Green / 255.0;
+                    //double R_ = I_corrected[m, n].Red / 255.0;
+
+                    //double B = ((B_ - q * v) / (1 - v)) * A;
+                    //double G = ((G_ - q * v) / (1 - v)) * A;
+                    //double R = ((R_ - q * v) / (1 - v)) * A;
+
+                    //B = (B * 255);
+                    //G = (G * 255);
+                    //R = (R * 255);
+
+
 
                     if (B > 255) B = 255;
                     if (G > 255) G = 255;

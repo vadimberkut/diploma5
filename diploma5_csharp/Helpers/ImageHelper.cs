@@ -10,6 +10,63 @@ namespace diploma5_csharp.Helpers
 {
     public static class ImageHelper
     {
+        public static double Max(Image<Gray, Byte> image)
+        {
+            double[] minValues, maxValues;
+            Point[] minLocations, maxLocations;
+            image.MinMax(out minValues, out maxValues, out minLocations, out maxLocations);
+            return maxValues[0];
+        }
+
+        public static double Min(Image<Gray, Byte> image)
+        {
+            double[] minValues, maxValues;
+            Point[] minLocations, maxLocations;
+            image.MinMax(out minValues, out maxValues, out minLocations, out maxLocations);
+            return minValues[0];
+        }
+
+        public static double Max(Image<Gray, double> image)
+        {
+            double[] minValues, maxValues;
+            Point[] minLocations, maxLocations;
+            image.MinMax(out minValues, out maxValues, out minLocations, out maxLocations);
+            return maxValues[0];
+        }
+
+        public static double Min(Image<Gray, double> image)
+        {
+            double[] minValues, maxValues;
+            Point[] minLocations, maxLocations;
+            image.MinMax(out minValues, out maxValues, out minLocations, out maxLocations);
+            return minValues[0];
+        }
+
+        public static double Sum(Image<Gray, Byte> image)
+        {
+            double sum = 0;
+            for (int m = 0; m < image.Rows; m++)
+            {
+                for (int n = 0; n < image.Cols; n++)
+                {
+                    sum += image[m, n].Intensity;
+                }
+            }
+            return sum;
+        }
+
+        public static double Sum(Image<Gray, double> image)
+        {
+            double sum = 0;
+            for (int m = 0; m < image.Rows; m++)
+            {
+                for (int n = 0; n < image.Cols; n++)
+                {
+                    sum += image[m, n].Intensity;
+                }
+            }
+            return sum;
+        }
 
         public static Image<Lab, Byte> ToLab(Image<Bgr, Byte> image)
         {
