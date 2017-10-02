@@ -7,6 +7,7 @@ using Emgu.CV.Structure;
 using diploma5_csharp.Models;
 using System.Linq;
 using diploma5_csharp.Helpers;
+using System.Diagnostics;
 
 namespace diploma5_csharp
 {
@@ -14,13 +15,16 @@ namespace diploma5_csharp
     {
         #region DarkChannelPrior (Patch-based DCP)
 
-        public Image<Emgu.CV.Structure.Bgr, Byte> RemoveFogUsingDarkChannelPrior(Image<Bgr, Byte> image, out Image<Gray, Byte> transmission, FogRemovalParams _params)
+        public BaseMethodResponse RemoveFogUsingDarkChannelPrior(Image<Bgr, Byte> image, FogRemovalParams _params)
         {
-            Image<Bgr, Byte> result = image.Clone();
             Image<Bgr, Byte> imgFog = image.Clone();
             Image<Gray, Byte> imgDarkChannel = new Image<Gray, byte>(image.Size);
             Image<Gray, Byte> T = new Image<Gray, byte>(image.Size);
-            Image<Bgr, Byte> fogfree = image.Clone();
+            Image<Gray, Byte> transmission;
+            Image<Bgr, Byte> result = image.Clone();
+
+            var stopwatch = new Stopwatch();
+            stopwatch.Start();
 
             int Airlight;
 
@@ -29,20 +33,29 @@ namespace diploma5_csharp
             imgDarkChannel = GetDarkChannel(imgFog, patchSize);
             Airlight = EstimateAirlight(imgDarkChannel, imgFog);
             T = EstimateTransmission(imgDarkChannel, Airlight);
-            fogfree = RemoveFog(imgFog, T, Airlight);
+            result = RemoveFog(imgFog, T, Airlight);
 
             //Return out params
             transmission = T;
+
+            stopwatch.Stop();
 
             if (_params.ShowWindows)
             {
                 EmguCvWindowManager.Display(imgDarkChannel, "1 imgDarkChannel darkChannel MDCP");
                 EmguCvWindowManager.Display(T, "2 estimateTransmission");
                 EmguCvWindowManager.Display(imgFog, "3 imgFog");
-                EmguCvWindowManager.Display(fogfree, "4 fogfree");
+                EmguCvWindowManager.Display(result, "4 result");
             }
 
-            return fogfree;
+            var Metrics = ImageMetricHelper.ComputeAll(image.Convert<Bgr, double>(), result.Convert<Bgr, double>());
+            return new BaseMethodResponse
+            {
+                EnhancementResult = result,
+                DetectionResult = transmission,
+                Metrics = Metrics,
+                ExecutionTimeMs = stopwatch.ElapsedMilliseconds
+            };
         }
 
         private Image<Gray, Byte> GetDarkChannel(Image<Bgr, Byte> sourceImg, int patchSize)
@@ -192,10 +205,14 @@ namespace diploma5_csharp
 
         // Articles review - http://www.ijcea.com/wp-content/uploads/2014/06/RUCHIKA_SHARMA_et_al.pdf
         // Article - http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.329.7924&rep=rep1&type=pdf
-        public Image<Emgu.CV.Structure.Bgr, Byte> RemoveUsingRobbyTanMethod(Image<Bgr, Byte> image, FogRemovalParams _params)
+        public BaseMethodResponse RemoveUsingRobbyTanMethod(Image<Bgr, Byte> image, FogRemovalParams _params)
         {
             Image<Bgr, Byte> I = image.Clone();
+            Image<Gray, Byte> transmission = new Image<Gray, byte>(image.Size);
             Image<Bgr, Byte> result = image.Clone();
+
+            var stopwatch = new Stopwatch();
+            stopwatch.Start();
 
             // 1 - Estimate atmospheric light L_oo
             // find spot with highest initsity in image I
@@ -294,6 +311,7 @@ namespace diploma5_csharp
                 }
             }
 
+            stopwatch.Stop();
 
             if (_params.ShowWindows)
             {
@@ -302,7 +320,14 @@ namespace diploma5_csharp
                 EmguCvWindowManager.Display(result, "100 result");
             }
 
-            return result;
+            var Metrics = ImageMetricHelper.ComputeAll(image.Convert<Bgr, double>(), result.Convert<Bgr, double>());
+            return new BaseMethodResponse
+            {
+                EnhancementResult = result,
+                DetectionResult = transmission,
+                Metrics = Metrics,
+                ExecutionTimeMs = stopwatch.ElapsedMilliseconds
+            };
         }
 
         private Bgr[,] GetImagePatch(int patchSize, Point centerPixel, Image<Bgr, Byte> image)
@@ -377,11 +402,15 @@ namespace diploma5_csharp
         #region PixelBasedMedianChannelPrior (Pixel-based MCP)
 
         // Source - http://onlinepresent.org/proceedings/vol98_2015/31.pdf
-        public Image<Emgu.CV.Structure.Bgr, Byte> RemoveFogUsingMedianChannelPrior(Image<Bgr, Byte> image, out Image<Gray, Byte> transmission, FogRemovalParams _params)
+        public BaseMethodResponse RemoveFogUsingMedianChannelPrior(Image<Bgr, Byte> image, FogRemovalParams _params)
         {
             Image<Bgr, Byte> imgFog = image.Clone();
             Image<Gray, Byte> imgDarkChannel = new Image<Gray, byte>(image.Size);
+            Image<Gray, Byte> transmission = new Image<Gray, byte>(image.Size);
             Image<Bgr, Byte> result = new Image<Bgr, byte>(image.Size);
+
+            var stopwatch = new Stopwatch();
+            stopwatch.Start();
 
             // 1 - median channel
             //Image<Gray, Byte> J_median = new Image<Gray, byte>(image.Size);
@@ -456,6 +485,8 @@ namespace diploma5_csharp
                 }
             }
 
+            stopwatch.Stop();
+
             if (_params.ShowWindows)
             {
                 EmguCvWindowManager.Display(image, "1 image");
@@ -464,7 +495,14 @@ namespace diploma5_csharp
                 EmguCvWindowManager.Display(result, "4 result");
             }
 
-            return result;
+            var Metrics = ImageMetricHelper.ComputeAll(image.Convert<Bgr, double>(), result.Convert<Bgr, double>());
+            return new BaseMethodResponse
+            {
+                EnhancementResult = result,
+                DetectionResult = transmission,
+                Metrics = Metrics,
+                ExecutionTimeMs = stopwatch.ElapsedMilliseconds
+            };
         }
 
         #endregion
@@ -472,16 +510,18 @@ namespace diploma5_csharp
         #region NEW INTEGRATED FOG REMOVAL ALGORITHM IDCP WITH CLAHE
 
         // Source - http://iraj.in/journal/journal_file/journal_pdf/4-54-140014656845-51.pdf
-        public Image<Emgu.CV.Structure.Bgr, Byte> RemoveFogUsingIdcpWithClahe(Image<Bgr, Byte> image, out Image<Gray, Byte> transmission, FogRemovalParams _params)
+        public BaseMethodResponse RemoveFogUsingIdcpWithClahe(Image<Bgr, Byte> image, FogRemovalParams _params)
         {
             Image<Lab, Byte> lab;
             Image<Bgr, Byte> clahe = new Image<Bgr, byte>(image.Size);
-            Image<Gray, Byte> estimatedTransmissionDCP = new Image<Gray, byte>(image.Size);
-            Image<Bgr, Byte> resultDCP;
             Image<Bgr, Byte> resultAdaptiveGammaCorrect;
             Image<Bgr, Byte> resultEqualizeHist;
             Image<Bgr, Byte> resultGammaCorrectt;
+            Image<Gray, Byte> transmission = new Image<Gray, byte>(image.Size);
             Image<Bgr, Byte> result = new Image<Bgr, byte>(image.Size);
+
+            var stopwatch = new Stopwatch();
+            stopwatch.Start();
 
             // 1 - apply CLAHE
             lab = ImageHelper.ToLab(image); // convert to LAB
@@ -494,35 +534,44 @@ namespace diploma5_csharp
             clahe = ImageHelper.ToBgr(lab);
 
             // 2 - apply DCP
-            resultDCP = RemoveFogUsingDarkChannelPrior(clahe, out estimatedTransmissionDCP, new FogRemovalParams() { ShowWindows = false });
-            transmission = estimatedTransmissionDCP;
+            var resultDCP = RemoveFogUsingDarkChannelPrior(clahe, new FogRemovalParams() { ShowWindows = false });
+            transmission = resultDCP.DetectionResult;
 
             // 3 - apply adaptive gamma correction
-            resultAdaptiveGammaCorrect = GammaCorrection.Adaptive(resultDCP);
+            resultAdaptiveGammaCorrect = GammaCorrection.Adaptive(resultDCP.EnhancementResult);
 
             // aplly gamma correction
-            resultGammaCorrectt = resultDCP.Clone();
+            resultGammaCorrectt = resultDCP.EnhancementResult.Clone();
             resultGammaCorrectt._GammaCorrect(1.9);
 
             // apply histogram equalization
-            resultEqualizeHist = resultDCP.Clone();
+            resultEqualizeHist = resultDCP.EnhancementResult.Clone();
             resultEqualizeHist._EqualizeHist();
 
 
             result = resultAdaptiveGammaCorrect;
 
+            stopwatch.Stop();
+
             if (_params.ShowWindows)
             {
                 EmguCvWindowManager.Display(image, "1 image");
                 EmguCvWindowManager.Display(clahe, "2 clahe");
-                EmguCvWindowManager.Display(resultDCP, "3 resultDCP");
+                EmguCvWindowManager.Display(resultDCP.EnhancementResult, "3 resultDCP");
                 EmguCvWindowManager.Display(resultAdaptiveGammaCorrect, "5 resultAdaptiveGammaCorrect");
                 EmguCvWindowManager.Display(resultGammaCorrectt, "5.2 resultGammaCorrectt");
                 EmguCvWindowManager.Display(resultEqualizeHist, "5.3 resultEqualizeHist");
                 EmguCvWindowManager.Display(result, "5 result");
             }
 
-            return result;
+            var Metrics = ImageMetricHelper.ComputeAll(image.Convert<Bgr, double>(), result.Convert<Bgr, double>());
+            return new BaseMethodResponse
+            {
+                EnhancementResult = result,
+                DetectionResult = transmission,
+                Metrics = Metrics,
+                ExecutionTimeMs = stopwatch.ElapsedMilliseconds
+            };
         }
 
         #endregion
@@ -530,13 +579,17 @@ namespace diploma5_csharp
         #region Robby T. Tan - Visibility enhacement for roads with foggy or hazy scenes
         
         // Source - http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.112.6005&rep=rep1&type=pdf
-        public Image<Bgr, Byte> EnhaceVisibilityUsingRobbyTanMethodForRoads(Image<Bgr, Byte> image, FogRemovalParams _params)
+        public BaseMethodResponse EnhaceVisibilityUsingRobbyTanMethodForRoads(Image<Bgr, Byte> image, FogRemovalParams _params)
         {
             Image<Bgr, Byte> E = image;
             Image<Bgr, double> E_normilized = new Image<Bgr, double>(image.Size);
             Image<Gray, double> F = new Image<Gray, double>(image.Size);
             Image<Gray, double> e_beta_dx = new Image<Gray, double>(image.Size);
+            Image<Gray, Byte> transmission = new Image<Gray, Byte>(image.Size);
             Image<Bgr, Byte> result = new Image<Bgr, Byte>(image.Size);
+
+            var stopwatch = new Stopwatch();
+            stopwatch.Start();
 
             // 1 - compute environmental light (as max values)
             double I_b, I_g, I_r;
@@ -636,6 +689,7 @@ namespace diploma5_csharp
             var result3 = result.Clone();
             result3._EqualizeHist();
 
+            stopwatch.Stop();
 
             if (_params.ShowWindows)
             {
@@ -648,16 +702,22 @@ namespace diploma5_csharp
                 EmguCvWindowManager.Display(result3, "5.3 result3");
             }
 
-            return result;
+            var Metrics = ImageMetricHelper.ComputeAll(image.Convert<Bgr, double>(), result.Convert<Bgr, double>());
+            return new BaseMethodResponse
+            {
+                EnhancementResult = result,
+                DetectionResult = transmission,
+                Metrics = Metrics,
+                ExecutionTimeMs = stopwatch.ElapsedMilliseconds
+            };
         }
 
         #endregion
 
-
         #region An approach which is based on Fast Fourier Transform
 
         // Source - http://www.sciencedirect.com/science/article/pii/S1877050915013812
-        public Image<Bgr, Byte> RemoveFogUsingDCPAndDFT(Image<Bgr, Byte> image, out Image<Gray, Byte> transmission, FogRemovalParams _params)
+        public BaseMethodResponse RemoveFogUsingDCPAndDFT(Image<Bgr, Byte> image, FogRemovalParams _params)
         {
             Image<Bgr, Single> imageSingle = image.Convert<Bgr, Single>();
             Image<Gray, Byte> DC;
@@ -666,8 +726,12 @@ namespace diploma5_csharp
             Image<Gray, Single> DFT_lowPassFilter = new Image<Gray, Single>(image.Size);
             Image<Gray, Single> DFT_highPassFilter = new Image<Gray, Single>(image.Size);
             Image<Gray, Single> transmission_ = new Image<Gray, Single>(image.Size);
+            Image<Gray, Byte> transmission;
             Image<Bgr, Byte> result = new Image<Bgr, Byte>(image.Size);
-            
+
+            var stopwatch = new Stopwatch();
+            stopwatch.Start();
+
             // compute DCP
             DC = GetDarkChannel(image, patchSize: 7);
 
@@ -709,6 +773,8 @@ namespace diploma5_csharp
             // restore image
 
 
+            stopwatch.Stop();
+
             if (_params.ShowWindows)
             {
                 EmguCvWindowManager.Display(image, "1 image");
@@ -721,7 +787,14 @@ namespace diploma5_csharp
                 EmguCvWindowManager.Display(result, "9 result");
             }
 
-            return result;
+            var Metrics = ImageMetricHelper.ComputeAll(image.Convert<Bgr, double>(), result.Convert<Bgr, double>());
+            return new BaseMethodResponse
+            {
+                EnhancementResult = result,
+                DetectionResult = transmission,
+                Metrics = Metrics,
+                ExecutionTimeMs = stopwatch.ElapsedMilliseconds
+            };
         }
 
         #endregion
@@ -729,11 +802,15 @@ namespace diploma5_csharp
         #region Single Image Fog Removal Based on Local Extrema
 
         // Source - http://html.rhhz.net/ieee-jas/html/20150205.htm
-        public Image<Bgr, Byte> RemoveFogUsingLocalExtremaMethod(Image<Bgr, Byte> image, out Image<Gray, Byte> transmission, FogRemovalParams _params)
+        public BaseMethodResponse RemoveFogUsingLocalExtremaMethod(Image<Bgr, Byte> image, FogRemovalParams _params)
         {
             Image<Bgr, Byte> I = image;
             Image<Gray, Byte> DC;
-            Image<Bgr, Byte> result = new Image<Bgr, Byte>(image.Size);
+            Image<Gray, Byte> transmission;
+            Image<Bgr, Byte> result;
+
+            var stopwatch = new Stopwatch();
+            stopwatch.Start();
 
             // 1. compute dark channel
             DC = GetDarkChannel(I, patchSize: 7);
@@ -846,13 +923,7 @@ namespace diploma5_csharp
             }
             result = GammaCorrection.Adaptive(R_image);
 
-            // Compute metrics
-            double MSE = ImageMetricHelper.MSE(image.Convert<Bgr, double>(), result.Convert<Bgr, double>());
-            double MSE2 = ImageMetricHelper.MSE(image.Convert<Bgr, double>(), image.Convert<Bgr, double>());
-            double NAE = ImageMetricHelper.NAE(image.Convert<Bgr, double>(), result.Convert<Bgr, double>());
-            double SC = ImageMetricHelper.SC(image.Convert<Bgr, double>(), result.Convert<Bgr, double>());
-            double PSNR = ImageMetricHelper.PSNR(image.Convert<Bgr, double>(), result.Convert<Bgr, double>());
-            double AD = ImageMetricHelper.AD(image.Convert<Bgr, double>(), result.Convert<Bgr, double>());
+            stopwatch.Stop();
 
             if (_params.ShowWindows)
             {
@@ -864,7 +935,14 @@ namespace diploma5_csharp
                 EmguCvWindowManager.Display(result, "9 result");
             }
 
-            return result;
+            var Metrics = ImageMetricHelper.ComputeAll(image.Convert<Bgr, double>(), result.Convert<Bgr, double>());
+            return new BaseMethodResponse
+            {
+                EnhancementResult = result,
+                DetectionResult = transmission,
+                Metrics = Metrics,
+                ExecutionTimeMs = stopwatch.ElapsedMilliseconds
+            };
         }
 
         #endregion
@@ -872,11 +950,15 @@ namespace diploma5_csharp
         #region Physics-based Fast Single Image Fog Removal 
 
         // Source - https://pdfs.semanticscholar.org/dfb8/39c695604ee2b0419a545eb9986be7a6d51d.pdf
-        public Image<Bgr, Byte> RemoveFogUsingPhysicsBasedMethod(Image<Bgr, Byte> image, out Image<Gray, Byte> transmission, FogRemovalParams _params)
+        public BaseMethodResponse RemoveFogUsingPhysicsBasedMethod(Image<Bgr, Byte> image, FogRemovalParams _params)
         {
             Image<Bgr, Byte> I = image;
             Image<Gray, Byte> DC;
+            Image<Gray, Byte> transmission = null;
             Image<Bgr, Byte> result = new Image<Bgr, Byte>(image.Size);
+
+            var stopwatch = new Stopwatch();
+            stopwatch.Start();
 
             // 1. compute dark channel
             DC = GetDarkChannel(I, patchSize: 7);
@@ -985,6 +1067,7 @@ namespace diploma5_csharp
             }
             result = R_image.Convert<Bgr, Byte>();
 
+            stopwatch.Stop();
 
             if (_params.ShowWindows)
             {
@@ -996,18 +1079,29 @@ namespace diploma5_csharp
                 EmguCvWindowManager.Display(result, "9 result");
             }
 
-            return result;
+            var Metrics = ImageMetricHelper.ComputeAll(image.Convert<Bgr, double>(), result.Convert<Bgr, double>());
+            return new BaseMethodResponse
+            {
+                EnhancementResult = result,
+                DetectionResult = transmission,
+                Metrics = Metrics,
+                ExecutionTimeMs = stopwatch.ElapsedMilliseconds
+            };
         }
 
         #endregion
 
         #region My Fog removal method
 
-        public Image<Bgr, Byte> RemoveFogUsingCustomMethod(Image<Bgr, Byte> image, out Image<Gray, Byte> transmission, FogRemovalParams _params)
+        public BaseMethodResponse RemoveFogUsingCustomMethod(Image<Bgr, Byte> image, FogRemovalParams _params)
         {
             Image<Bgr, float> convultionResult = new Image<Bgr, float>(image.Size);
             Image<Bgr, Byte> filter2DResult = new Image<Bgr, Byte>(image.Size);
+            Image<Gray, Byte> transmission = null;
             Image<Bgr, Byte> result = new Image<Bgr, Byte>(image.Size);
+
+            var stopwatch = new Stopwatch();
+            stopwatch.Start();
 
             // try filter2d
             float[,] matrixKernel = new float[3, 3] {
@@ -1025,10 +1119,9 @@ namespace diploma5_csharp
             //EmguCvWindowManager.Display(BGRResult2, "1 BGRResult2");
             EmguCvWindowManager.Display(filter2DResult, "1 filter2DResult");
 
-            var a = image - result;
-
-
             transmission = new Image<Gray, byte>(image.Size);
+
+            stopwatch.Stop();
 
             if (_params.ShowWindows)
             {
@@ -1036,7 +1129,14 @@ namespace diploma5_csharp
                 EmguCvWindowManager.Display(result, "9 result");
             }
 
-            return result;
+            var Metrics = ImageMetricHelper.ComputeAll(image.Convert<Bgr, double>(), result.Convert<Bgr, double>());
+            return new BaseMethodResponse
+            {
+                EnhancementResult = result,
+                DetectionResult = transmission,
+                Metrics = Metrics,
+                ExecutionTimeMs = stopwatch.ElapsedMilliseconds
+            };
         }
 
         #endregion

@@ -25,11 +25,13 @@ namespace diploma5_csharp
     public partial class Form1 : Form
     {
         private AppState _appState;
+        private MethodInfoStore _methodInfoStore;
 
         public Form1()
         {
             InitializeComponent();
             _appState = new AppState(this);
+            _methodInfoStore = new MethodInfoStore();
         }
 
         ////DISABLE X Button
@@ -226,6 +228,7 @@ namespace diploma5_csharp
                 //string fileContent = sr.ReadToEnd();
                 //sr.Close();
                 Bitmap image = new Bitmap(fileName);
+                _appState.InputImageFileName = fileName;
                 _appState.SetInputImage(new Image<Bgr, Byte>(image));
                 this.DisplayImageInPictureBox(pictureBox1, image);
 
@@ -386,66 +389,163 @@ namespace diploma5_csharp
         //
         private void buttonRemoveFogUsingDarkChannelMethod_Click(object sender, EventArgs e)
         {
-            var result = _appState.Fog.RemoveFogUsingDarkChannelPrior(_appState.InputImageBgr, out _appState.ShadowMaskImageGray, new FogRemovalParams() { ShowWindows = GetCheckBoxValue(checkBoxShowOptionalWindows) });
-            _appState.SetOutputImage(result);
-            this.DisplayImageInPictureBox(pictureBox3, result.Bitmap);
-            this.DisplayImageInPictureBox(pictureBox2, _appState.ShadowMaskImageGray.Bitmap);
+            var result = _appState.Fog.RemoveFogUsingDarkChannelPrior(_appState.InputImageBgr, new FogRemovalParams() { ShowWindows = GetCheckBoxValue(checkBoxShowOptionalWindows) });
+            _appState.SetOutputImage(result.EnhancementResult);
+            _appState.SetShadowMaskImage(result.DetectionResult);
+            this.DisplayImageInPictureBox(pictureBox3, result.EnhancementResult.Bitmap);
+            this.DisplayImageInPictureBox(pictureBox2, result.DetectionResult.Bitmap);
+
+            // save metrics
+            _methodInfoStore.AddOrUpdate(new EnhanceMethodInfoModel
+            {
+                ImageFileName = _appState.InputImageFileName,
+                EnhanceMethodName = nameof(Fog.RemoveFogUsingDarkChannelPrior),
+                Metrics = result.Metrics,
+                ExecutionTimeMs = result.ExecutionTimeMs
+            });
         }
 
         private void buttonRobbyTanFogRemovalMethod_Click(object sender, EventArgs e)
         {
             var result = _appState.Fog.RemoveUsingRobbyTanMethod(_appState.InputImageBgr, new FogRemovalParams() { ShowWindows = GetCheckBoxValue(checkBoxShowOptionalWindows) });
-            _appState.SetOutputImage(result);
-            this.DisplayImageInPictureBox(pictureBox3, result.Bitmap);
-            //this.DisplayImageInPictureBox(pictureBox2, _appState.ShadowMaskImageGray.Bitmap);
+            _appState.SetOutputImage(result.EnhancementResult);
+            _appState.SetShadowMaskImage(result.DetectionResult);
+            this.DisplayImageInPictureBox(pictureBox3, result.EnhancementResult.Bitmap);
+            this.DisplayImageInPictureBox(pictureBox2, result.DetectionResult.Bitmap);
+
+            // save metrics
+            _methodInfoStore.AddOrUpdate(new EnhanceMethodInfoModel
+            {
+                ImageFileName = _appState.InputImageFileName,
+                EnhanceMethodName = nameof(Fog.RemoveUsingRobbyTanMethod),
+                Metrics = result.Metrics,
+                ExecutionTimeMs = result.ExecutionTimeMs
+            });
         }
 
         private void buttonRemoveFogUsingMedianChannelPrior_Click(object sender, EventArgs e)
         {
-            var result = _appState.Fog.RemoveFogUsingMedianChannelPrior(_appState.InputImageBgr, out _appState.ShadowMaskImageGray, new FogRemovalParams() { ShowWindows = GetCheckBoxValue(checkBoxShowOptionalWindows) });
-            _appState.SetOutputImage(result);
-            this.DisplayImageInPictureBox(pictureBox3, result.Bitmap);
-            this.DisplayImageInPictureBox(pictureBox2, _appState.ShadowMaskImageGray.Bitmap);
+            var result = _appState.Fog.RemoveFogUsingMedianChannelPrior(_appState.InputImageBgr, new FogRemovalParams() { ShowWindows = GetCheckBoxValue(checkBoxShowOptionalWindows) });
+            _appState.SetOutputImage(result.EnhancementResult);
+            _appState.SetShadowMaskImage(result.DetectionResult);
+            this.DisplayImageInPictureBox(pictureBox3, result.EnhancementResult.Bitmap);
+            this.DisplayImageInPictureBox(pictureBox2, result.DetectionResult.Bitmap);
+
+            // save metrics
+            _methodInfoStore.AddOrUpdate(new EnhanceMethodInfoModel
+            {
+                ImageFileName = _appState.InputImageFileName,
+                EnhanceMethodName = nameof(Fog.RemoveFogUsingMedianChannelPrior),
+                Metrics = result.Metrics,
+                ExecutionTimeMs = result.ExecutionTimeMs
+            });
         }
 
         private void buttonRemoveFogUsingIdcpWithClahe_Click(object sender, EventArgs e)
         {
-            var result = _appState.Fog.RemoveFogUsingIdcpWithClahe(_appState.InputImageBgr, out _appState.ShadowMaskImageGray, new FogRemovalParams() { ShowWindows = GetCheckBoxValue(checkBoxShowOptionalWindows) });
-            _appState.SetOutputImage(result);
-            this.DisplayImageInPictureBox(pictureBox3, result.Bitmap);
-            this.DisplayImageInPictureBox(pictureBox2, _appState.ShadowMaskImageGray.Bitmap);
+            var result = _appState.Fog.RemoveFogUsingIdcpWithClahe(_appState.InputImageBgr, new FogRemovalParams() { ShowWindows = GetCheckBoxValue(checkBoxShowOptionalWindows) });
+            _appState.SetOutputImage(result.EnhancementResult);
+            _appState.SetShadowMaskImage(result.DetectionResult);
+            this.DisplayImageInPictureBox(pictureBox3, result.EnhancementResult.Bitmap);
+            this.DisplayImageInPictureBox(pictureBox2, result.DetectionResult.Bitmap);
+
+            // save metrics
+            _methodInfoStore.AddOrUpdate(new EnhanceMethodInfoModel
+            {
+                ImageFileName = _appState.InputImageFileName,
+                EnhanceMethodName = nameof(Fog.RemoveFogUsingIdcpWithClahe),
+                Metrics = result.Metrics,
+                ExecutionTimeMs = result.ExecutionTimeMs
+            });
         }
 
         private void buttonEnhaceVisibilityUsingRobbyTanMethodForRoads_Click(object sender, EventArgs e)
         {
             var result = _appState.Fog.EnhaceVisibilityUsingRobbyTanMethodForRoads(_appState.InputImageBgr, new FogRemovalParams() { ShowWindows = GetCheckBoxValue(checkBoxShowOptionalWindows) });
-            _appState.SetOutputImage(result);
-            this.DisplayImageInPictureBox(pictureBox3, result.Bitmap);
-            //this.DisplayImageInPictureBox(pictureBox2, _appState.ShadowMaskImageGray.Bitmap);
+            _appState.SetOutputImage(result.EnhancementResult);
+            _appState.SetShadowMaskImage(result.DetectionResult);
+            this.DisplayImageInPictureBox(pictureBox3, result.EnhancementResult.Bitmap);
+            this.DisplayImageInPictureBox(pictureBox2, result.DetectionResult.Bitmap);
+
+            // save metrics
+            _methodInfoStore.AddOrUpdate(new EnhanceMethodInfoModel
+            {
+                ImageFileName = _appState.InputImageFileName,
+                EnhanceMethodName = nameof(Fog.EnhaceVisibilityUsingRobbyTanMethodForRoads),
+                Metrics = result.Metrics,
+                ExecutionTimeMs = result.ExecutionTimeMs
+            });
         }
 
         private void buttonRemoveFogUsingDCPAndDFT_Click(object sender, EventArgs e)
         {
-            var result = _appState.Fog.RemoveFogUsingDCPAndDFT(_appState.InputImageBgr, out _appState.ShadowMaskImageGray, new FogRemovalParams() { ShowWindows = GetCheckBoxValue(checkBoxShowOptionalWindows) });
-            _appState.SetOutputImage(result);
-            this.DisplayImageInPictureBox(pictureBox3, result.Bitmap);
-            this.DisplayImageInPictureBox(pictureBox2, _appState.ShadowMaskImageGray.Bitmap);
-        }
+            var result = _appState.Fog.RemoveFogUsingDCPAndDFT(_appState.InputImageBgr, new FogRemovalParams() { ShowWindows = GetCheckBoxValue(checkBoxShowOptionalWindows) });
+            _appState.SetOutputImage(result.EnhancementResult);
+            _appState.SetShadowMaskImage(result.DetectionResult);
+            this.DisplayImageInPictureBox(pictureBox3, result.EnhancementResult.Bitmap);
+            this.DisplayImageInPictureBox(pictureBox2, result.DetectionResult.Bitmap);
 
-        private void buttonRemoveFogUsingCustomMethod_Click(object sender, EventArgs e)
-        {
-            var result = _appState.Fog.RemoveFogUsingCustomMethod(_appState.InputImageBgr, out _appState.ShadowMaskImageGray, new FogRemovalParams() { ShowWindows = GetCheckBoxValue(checkBoxShowOptionalWindows) });
-            _appState.SetOutputImage(result);
-            this.DisplayImageInPictureBox(pictureBox3, result.Bitmap);
-            this.DisplayImageInPictureBox(pictureBox2, _appState.ShadowMaskImageGray.Bitmap);
+            // save metrics
+            _methodInfoStore.AddOrUpdate(new EnhanceMethodInfoModel
+            {
+                ImageFileName = _appState.InputImageFileName,
+                EnhanceMethodName = nameof(Fog.RemoveFogUsingDCPAndDFT),
+                Metrics = result.Metrics,
+                ExecutionTimeMs = result.ExecutionTimeMs
+            });
         }
 
         private void buttonRemoveFogUsingLocalExtremaMethod_Click(object sender, EventArgs e)
         {
-            var result = _appState.Fog.RemoveFogUsingLocalExtremaMethod(_appState.InputImageBgr, out _appState.ShadowMaskImageGray, new FogRemovalParams() { ShowWindows = GetCheckBoxValue(checkBoxShowOptionalWindows) });
-            _appState.SetOutputImage(result);
-            this.DisplayImageInPictureBox(pictureBox3, result.Bitmap);
-            this.DisplayImageInPictureBox(pictureBox2, _appState.ShadowMaskImageGray.Bitmap);
+            var result = _appState.Fog.RemoveFogUsingLocalExtremaMethod(_appState.InputImageBgr, new FogRemovalParams() { ShowWindows = GetCheckBoxValue(checkBoxShowOptionalWindows) });
+            _appState.SetOutputImage(result.EnhancementResult);
+            _appState.SetShadowMaskImage(result.DetectionResult);
+            this.DisplayImageInPictureBox(pictureBox3, result.EnhancementResult.Bitmap);
+            this.DisplayImageInPictureBox(pictureBox2, result.DetectionResult.Bitmap);
+
+            // save metrics
+            _methodInfoStore.AddOrUpdate(new EnhanceMethodInfoModel
+            {
+                ImageFileName = _appState.InputImageFileName,
+                EnhanceMethodName = nameof(Fog.RemoveFogUsingLocalExtremaMethod),
+                Metrics = result.Metrics,
+                ExecutionTimeMs = result.ExecutionTimeMs
+            });
+        }
+
+        private void buttonRemoveFogUsingPhysicsBasedMethod_Click(object sender, EventArgs e)
+        {
+            var result = _appState.Fog.RemoveFogUsingPhysicsBasedMethod(_appState.InputImageBgr, new FogRemovalParams() { ShowWindows = GetCheckBoxValue(checkBoxShowOptionalWindows) });
+            _appState.SetOutputImage(result.EnhancementResult);
+            _appState.SetShadowMaskImage(result.DetectionResult);
+            this.DisplayImageInPictureBox(pictureBox3, result.EnhancementResult.Bitmap);
+            this.DisplayImageInPictureBox(pictureBox2, result.DetectionResult.Bitmap);
+
+            // save metrics
+            _methodInfoStore.AddOrUpdate(new EnhanceMethodInfoModel
+            {
+                ImageFileName = _appState.InputImageFileName,
+                EnhanceMethodName = nameof(Fog.RemoveFogUsingPhysicsBasedMethod),
+                Metrics = result.Metrics,
+                ExecutionTimeMs = result.ExecutionTimeMs
+            });
+        }
+        private void buttonRemoveFogUsingCustomMethod_Click(object sender, EventArgs e)
+        {
+            var result = _appState.Fog.RemoveFogUsingCustomMethod(_appState.InputImageBgr, new FogRemovalParams() { ShowWindows = GetCheckBoxValue(checkBoxShowOptionalWindows) });
+            _appState.SetOutputImage(result.EnhancementResult);
+            _appState.SetShadowMaskImage(result.DetectionResult);
+            this.DisplayImageInPictureBox(pictureBox3, result.EnhancementResult.Bitmap);
+            this.DisplayImageInPictureBox(pictureBox2, result.DetectionResult.Bitmap);
+
+            // save metrics
+            _methodInfoStore.AddOrUpdate(new EnhanceMethodInfoModel
+            {
+                ImageFileName = _appState.InputImageFileName,
+                EnhanceMethodName = nameof(Fog.RemoveFogUsingCustomMethod),
+                Metrics = result.Metrics,
+                ExecutionTimeMs = result.ExecutionTimeMs
+            });
         }
 
         //

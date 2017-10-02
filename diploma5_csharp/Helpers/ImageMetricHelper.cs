@@ -1,4 +1,5 @@
 ﻿using diploma5_csharp.Extensions;
+using diploma5_csharp.Models;
 using Emgu.CV;
 using Emgu.CV.Structure;
 using System;
@@ -14,6 +15,24 @@ namespace diploma5_csharp.Helpers
     public static class ImageMetricHelper
     {
         #region Public members
+
+        public static MetricsResult ComputeAll(Image<Bgr, double> image1, Image<Bgr, double> image2)
+        {
+            double MSE = ImageMetricHelper.MSE(image1.Convert<Bgr, double>(), image2.Convert<Bgr, double>());
+            double NAE = ImageMetricHelper.NAE(image1.Convert<Bgr, double>(), image2.Convert<Bgr, double>());
+            double SC = ImageMetricHelper.SC(image1.Convert<Bgr, double>(), image2.Convert<Bgr, double>());
+            double PSNR = ImageMetricHelper.PSNR(image1.Convert<Bgr, double>(), image2.Convert<Bgr, double>());
+            double AD = ImageMetricHelper.AD(image1.Convert<Bgr, double>(), image2.Convert<Bgr, double>());
+
+            return new MetricsResult
+            {
+                MSE = MSE,
+                NAE = NAE,
+                SC = SC,
+                PSNR = PSNR,
+                AD = AD
+            };
+        }
 
         //public static void AAA<TColor, TDepth>(Image<TColor, TDepth> image)
         //    where TColor : struct, IColor

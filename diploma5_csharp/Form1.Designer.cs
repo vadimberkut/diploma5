@@ -87,6 +87,7 @@
             this.buttonRemoveFogUsingDCPAndDFT = new System.Windows.Forms.Button();
             this.buttonRemoveFogUsingCustomMethod = new System.Windows.Forms.Button();
             this.buttonRemoveFogUsingLocalExtremaMethod = new System.Windows.Forms.Button();
+            this.buttonRemoveFogUsingPhysicsBasedMethod = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).BeginInit();
@@ -650,7 +651,7 @@
             // buttonRemoveFogUsingCustomMethod
             // 
             this.buttonRemoveFogUsingCustomMethod.BackColor = System.Drawing.SystemColors.Control;
-            this.buttonRemoveFogUsingCustomMethod.Location = new System.Drawing.Point(710, 685);
+            this.buttonRemoveFogUsingCustomMethod.Location = new System.Drawing.Point(710, 723);
             this.buttonRemoveFogUsingCustomMethod.Name = "buttonRemoveFogUsingCustomMethod";
             this.buttonRemoveFogUsingCustomMethod.Size = new System.Drawing.Size(121, 32);
             this.buttonRemoveFogUsingCustomMethod.TabIndex = 56;
@@ -661,7 +662,7 @@
             // buttonRemoveFogUsingLocalExtremaMethod
             // 
             this.buttonRemoveFogUsingLocalExtremaMethod.BackColor = System.Drawing.SystemColors.Control;
-            this.buttonRemoveFogUsingLocalExtremaMethod.Location = new System.Drawing.Point(710, 723);
+            this.buttonRemoveFogUsingLocalExtremaMethod.Location = new System.Drawing.Point(710, 685);
             this.buttonRemoveFogUsingLocalExtremaMethod.Name = "buttonRemoveFogUsingLocalExtremaMethod";
             this.buttonRemoveFogUsingLocalExtremaMethod.Size = new System.Drawing.Size(121, 32);
             this.buttonRemoveFogUsingLocalExtremaMethod.TabIndex = 57;
@@ -669,11 +670,23 @@
             this.buttonRemoveFogUsingLocalExtremaMethod.UseVisualStyleBackColor = false;
             this.buttonRemoveFogUsingLocalExtremaMethod.Click += new System.EventHandler(this.buttonRemoveFogUsingLocalExtremaMethod_Click);
             // 
+            // buttonRemoveFogUsingPhysicsBasedMethod
+            // 
+            this.buttonRemoveFogUsingPhysicsBasedMethod.BackColor = System.Drawing.SystemColors.Control;
+            this.buttonRemoveFogUsingPhysicsBasedMethod.Location = new System.Drawing.Point(837, 685);
+            this.buttonRemoveFogUsingPhysicsBasedMethod.Name = "buttonRemoveFogUsingPhysicsBasedMethod";
+            this.buttonRemoveFogUsingPhysicsBasedMethod.Size = new System.Drawing.Size(121, 32);
+            this.buttonRemoveFogUsingPhysicsBasedMethod.TabIndex = 58;
+            this.buttonRemoveFogUsingPhysicsBasedMethod.Text = "Physics Based UC";
+            this.buttonRemoveFogUsingPhysicsBasedMethod.UseVisualStyleBackColor = false;
+            this.buttonRemoveFogUsingPhysicsBasedMethod.Click += new System.EventHandler(this.buttonRemoveFogUsingPhysicsBasedMethod_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1235, 758);
+            this.Controls.Add(this.buttonRemoveFogUsingPhysicsBasedMethod);
             this.Controls.Add(this.buttonRemoveFogUsingLocalExtremaMethod);
             this.Controls.Add(this.buttonRemoveFogUsingCustomMethod);
             this.Controls.Add(this.buttonRemoveFogUsingDCPAndDFT);
@@ -800,6 +813,7 @@
         private System.Windows.Forms.Button buttonRemoveFogUsingDCPAndDFT;
         private System.Windows.Forms.Button buttonRemoveFogUsingCustomMethod;
         private System.Windows.Forms.Button buttonRemoveFogUsingLocalExtremaMethod;
+        private System.Windows.Forms.Button buttonRemoveFogUsingPhysicsBasedMethod;
     }
 }
 

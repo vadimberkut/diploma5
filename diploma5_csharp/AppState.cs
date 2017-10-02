@@ -12,6 +12,7 @@ namespace diploma5_csharp
         public Fog Fog;
         public Dust Dust;
 
+        public string InputImageFileName;
         public Image<Bgr, byte> InputImageBgr;
         public Image<Lab, byte> InputImageLab;
 
