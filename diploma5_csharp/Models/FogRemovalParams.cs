@@ -9,5 +9,6 @@ namespace diploma5_csharp.Models
     public class FogRemovalParams
     {
         public bool ShowWindows { get; set; }
+        public string InputImageFileName { get; set; }
     }
 }

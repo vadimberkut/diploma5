@@ -5,6 +5,7 @@ using Emgu.CV.CvEnum;
 using Emgu.CV.Structure;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Numerics;
 
 namespace diploma5_csharp.Helpers
 {
@@ -561,6 +562,247 @@ namespace diploma5_csharp.Helpers
                 }
             }
             return result;
+        }
+
+        #endregion
+
+
+        #region Fast Fourier Transform
+        // TAKEN FROM https://github.com/rajatvikramsingh/RajatView
+
+        // WITH ERROR
+        public static Image<Gray, Byte> FFT(Image<Gray, Byte> img)
+        {
+            //Image<Gray, byte> img = new Image<Gray, byte>(openFileDialog1.FileName);
+            double[,] arr = new double[img.Height, img.Width];
+            Image<Gray, byte> fft_img = new Image<Gray, byte>(img.Height, img.Width);
+            double p = 0;
+            for (int k = 0; k < img.Height; k++)
+            {
+                for (int l = 0; l < img.Width; l++)
+                {
+                    /*p = calculate_fft(img[k, l].Intensity, k, l, img.Height, img.Width);
+                    
+                    arr[k, l] = p;*/
+                    Complex total = Complex.Zero;
+                    for (int i = 0; i < img.Width; i++)
+                    {
+                        for (int j = 0; j < img.Height; j++)
+                        {
+                            Complex c1 = Complex.Multiply(Complex.ImaginaryOne, (2 * Math.PI));
+                            double c2 = (((double)(k * i)) / ((double)img.Width)) + (((double)(l * j)) / ((double)img.Height));
+                            Complex power = Complex.Multiply(c1, c2);
+                            Complex exp = Complex.Exp(power);
+                            Complex answer;
+                            if ((i + j) % 2 != 0)
+                                answer = Complex.Divide((-img[i, j].Intensity), exp);
+                            else
+                                answer = Complex.Divide(img[i, j].Intensity, exp);
+                            total = Complex.Add(total, answer);
+                        }
+                    }
+                    total = Complex.Divide(total, (img.Width * img.Height));
+                    double value = 1 + Math.Log10(total.Magnitude);
+                    arr[k, l] = value;
+                }
+            }
+
+            fft_img = scaleImage(arr, fft_img.Height, fft_img.Width);
+            return fft_img;
+
+        }
+
+        public static Image<Gray, byte> scaleImage(double[,] arr, int height, int width)
+        {
+            double min = arr[0, 0];
+
+            double[,] imgnew = new double[height, width];
+            Image<Gray, byte> image = new Image<Gray, byte>(height, width);
+            for (int i = 0; i < height; i++)
+                for (int j = 0; j < width; j++)
+                {
+                    if (arr[i, j] < min)
+                        min = arr[i, j];
+                }
+
+            for (int i = 0; i < height; i++)
+                for (int j = 0; j < width; j++)
+                    imgnew[i, j] = arr[i, j] - min;
+            double max = imgnew[0, 0];
+            for (int i = 0; i < height; i++)
+                for (int j = 0; j < width; j++)
+                {
+                    if (imgnew[i, j] > max)
+                        max = imgnew[i, j];
+                }
+            for (int i = 0; i < height; i++)
+                for (int j = 0; j < width; j++)
+                    image[i, j] = new Gray((imgnew[i, j] / max) * 255);
+            return image;
+        }
+
+        public static Image<Gray, float> IdealLowPassFilter(Image<Gray, byte> img)
+        {
+            Image<Gray, float> im_pad = filter(img.Convert<Gray, float>());
+            Image<Gray, float> retimage = new Image<Gray, float>(2 * img.Width, 2 * img.Height);
+            var h = retidealmask(img, 150, 0);
+            retimage = convolve(im_pad, h);
+            return retimage;
+        }
+
+        public static Image<Gray, float> IdealHightPassFilter(Image<Gray, byte> img)
+        {
+            Image<Gray, float> im_pad = filter(img.Convert<Gray, float>());
+            Image<Gray, float> retimage = new Image<Gray, float>(2 * img.Width, 2 * img.Height);
+            var h = retidealmask(img, 200, 1);
+            retimage = convolve(im_pad, h);
+            return retimage;
+        }
+
+        public static Image<Gray, float> ButterworthLowPassFilter(Image<Gray, byte> img)
+        {
+            Image<Gray, float> im_pad = filter(img.Convert<Gray, float>());
+            Image<Gray, float> retimage = new Image<Gray, float>(2 * img.Width, 2 * img.Height);
+            var h = retbutterworthmask(img, 1, 0);
+            retimage = convolve(im_pad, h);
+            return retimage;
+        }
+
+        public static Image<Gray, float> ButterworthHightPassFilter(Image<Gray, byte> img)
+        {
+            Image<Gray, float> im_pad = filter(img.Convert<Gray, float>());
+            Image<Gray, float> retimage = new Image<Gray, float>(2 * img.Width, 2 * img.Height);
+            var h = retbutterworthmask(img, 1, 1);
+            retimage = convolve(im_pad, h);
+            return retimage;
+        }
+
+        public static Image<Gray, float> GaussianLowPassFilter(Image<Gray, byte> img)
+        {
+            Image<Gray, float> im_pad = filter(img.Convert<Gray, float>());
+            Image<Gray, float> retimage = new Image<Gray, float>(2 * img.Width, 2 * img.Height);
+            var h = retgaussianmask(img, 0);
+            retimage = convolve(im_pad, h);
+            return retimage;
+        }
+
+        public static Image<Gray, float> GaussianHightPassFilter(Image<Gray, byte> img)
+        {
+            Image<Gray, float> im_pad = filter(img.Convert<Gray, float>());
+            Image<Gray, float> retimage = new Image<Gray, float>(2 * img.Width, 2 * img.Height);
+            var h = retgaussianmask(img, 1);
+            retimage = convolve(im_pad, h);
+            return retimage;
+        }
+
+        private static Image<Gray, float> filter(Image<Gray, float> img)
+        {
+            Image<Gray, float> im_pad = new Image<Gray, float>(img.Width * 2, img.Height * 2);
+            Image<Gray, float> dft = new Image<Gray, float>(img.Width * 2, img.Height * 2);
+            im_pad = pad(img);
+            CvInvoke.Dft(im_pad, dft, DxtType.Forward, 0);
+            return dft;
+
+        }
+
+        private static Image<Gray, float> pad(Image<Gray, float> ig)
+        {
+            Image<Gray, float> im_new = new Image<Gray, float>(ig.Width * 2, ig.Height * 2);
+            Image<Gray, float> img_return = new Image<Gray, float>(ig.Width * 2, ig.Height * 2);
+            double b = 0;
+
+            for (int i = 0; i < ig.Rows; i++)
+            {
+                for (int j = 0; j < ig.Cols; j++)
+                {
+                    b = ig[i, j].Intensity;
+                    b = b * ((-1) ^ (i + j));
+                    img_return[i, j] = new Gray(b);
+                }
+
+            }
+            return img_return;
+
+        }
+
+        private static double[,] retidealmask(Image<Gray, byte> img, int radius, int mode)
+        {
+            var h = new double[img.Rows * 2, img.Cols * 2];
+            for (int i = 0; i < 2 * img.Rows; i++)
+                for (int j = 0; j < 2 * img.Cols; j++)
+                {
+                    if (Math.Sqrt(Math.Pow((i - (img.Width)), 2) + Math.Pow(j - (img.Height), 2)) <= radius)
+                        h[i, j] = 1;
+                    else
+                        h[i, j] = 0;
+                }
+            if (mode == 0)
+            {
+                for (int i = 0; i < 2 * img.Rows; i++)
+                    for (int j = 0; j < 2 * img.Cols; j++)
+                    {
+                        h[i, j] = 1 - h[i, j];
+                    }
+            }
+            return h;
+        }
+
+        private static double[,] retbutterworthmask(Image<Gray, byte> img, int n, int mode)
+        {
+            var h = new double[img.Rows * 2, img.Cols * 2];
+            for (int i = 0; i < 2 * img.Rows; i++)
+                for (int j = 0; j < 2 * img.Cols; j++)
+                {
+                    h[i, j] = 1 / (Math.Pow((Math.Sqrt(Math.Pow((i - (img.Width)), 2) + Math.Pow(j - (img.Height), 2)) / 30), 2 * n) + 1);
+                }
+            if (mode == 0)
+            {
+                for (int i = 0; i < 2 * img.Rows; i++)
+                    for (int j = 0; j < 2 * img.Cols; j++)
+                    {
+                        h[i, j] = 1 - h[i, j];
+                    }
+            }
+            return h;
+        }
+
+        private static double[,] retgaussianmask(Image<Gray, byte> img, int mode)
+        {
+            var h = new double[img.Rows * 2, img.Cols * 2];
+            for (int i = 0; i < 2 * img.Rows; i++)
+                for (int j = 0; j < 2 * img.Cols; j++)
+                {
+                    h[i, j] = Math.Exp(((-1) * (Math.Pow((i - (img.Width)), 2) + Math.Pow(j - (img.Height), 2))) / (2 * Math.Pow(15, 2)));
+                }
+            if (mode == 0)
+            {
+                for (int i = 0; i < 2 * img.Rows; i++)
+                    for (int j = 0; j < 2 * img.Cols; j++)
+                    {
+                        h[i, j] = 1 - h[i, j];
+                    }
+            }
+            return h;
+        }
+
+        private static Image<Gray, float> convolve(Image<Gray, float> img, double[,] h)
+        {
+            Image<Gray, float> ans = new Image<Gray, float>(img.Width, img.Height);
+            Image<Gray, float> retimg = new Image<Gray, float>(img.Width, img.Height);
+            Image<Gray, float> retimg1 = new Image<Gray, float>(img.Width / 2, img.Height / 2);
+            for (int k = 0; k < img.Rows; k++)
+                for (int l = 0; l < img.Cols; l++)
+                {
+                    ans[k, l] = new Gray(img[k, l].Intensity * h[k, l]);
+                }
+            CvInvoke.Dft(ans, retimg, DxtType.InvScale, 0);
+            for (int k = 0; k < img.Rows / 2; k++)
+                for (int l = 0; l < img.Cols / 2; l++)
+                {
+                    retimg1[k, l] = retimg[k, l];
+                }
+
+            return retimg1;
         }
 
         #endregion

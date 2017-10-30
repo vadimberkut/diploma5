@@ -88,6 +88,9 @@
             this.buttonRemoveFogUsingCustomMethod = new System.Windows.Forms.Button();
             this.buttonRemoveFogUsingLocalExtremaMethod = new System.Windows.Forms.Button();
             this.buttonRemoveFogUsingPhysicsBasedMethod = new System.Windows.Forms.Button();
+            this.textBoxFvmMetric = new System.Windows.Forms.TextBox();
+            this.label13 = new System.Windows.Forms.Label();
+            this.buttonRemoveFogUsingCustomMethodWithDepthEstimation = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).BeginInit();
@@ -681,11 +684,41 @@
             this.buttonRemoveFogUsingPhysicsBasedMethod.UseVisualStyleBackColor = false;
             this.buttonRemoveFogUsingPhysicsBasedMethod.Click += new System.EventHandler(this.buttonRemoveFogUsingPhysicsBasedMethod_Click);
             // 
+            // textBoxFvmMetric
+            // 
+            this.textBoxFvmMetric.Location = new System.Drawing.Point(12, 621);
+            this.textBoxFvmMetric.Name = "textBoxFvmMetric";
+            this.textBoxFvmMetric.Size = new System.Drawing.Size(75, 20);
+            this.textBoxFvmMetric.TabIndex = 59;
+            // 
+            // label13
+            // 
+            this.label13.AutoSize = true;
+            this.label13.Location = new System.Drawing.Point(12, 605);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(29, 13);
+            this.label13.TabIndex = 60;
+            this.label13.Text = "FVM";
+            // 
+            // buttonRemoveFogUsingCustomMethodWithDepthEstimation
+            // 
+            this.buttonRemoveFogUsingCustomMethodWithDepthEstimation.BackColor = System.Drawing.SystemColors.Control;
+            this.buttonRemoveFogUsingCustomMethodWithDepthEstimation.Location = new System.Drawing.Point(837, 723);
+            this.buttonRemoveFogUsingCustomMethodWithDepthEstimation.Name = "buttonRemoveFogUsingCustomMethodWithDepthEstimation";
+            this.buttonRemoveFogUsingCustomMethodWithDepthEstimation.Size = new System.Drawing.Size(131, 32);
+            this.buttonRemoveFogUsingCustomMethodWithDepthEstimation.TabIndex = 61;
+            this.buttonRemoveFogUsingCustomMethodWithDepthEstimation.Text = "Custom With Depth Est";
+            this.buttonRemoveFogUsingCustomMethodWithDepthEstimation.UseVisualStyleBackColor = false;
+            this.buttonRemoveFogUsingCustomMethodWithDepthEstimation.Click += new System.EventHandler(this.buttonRemoveFogUsingCustomMethodWithDepthEstimation_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1235, 758);
+            this.Controls.Add(this.buttonRemoveFogUsingCustomMethodWithDepthEstimation);
+            this.Controls.Add(this.label13);
+            this.Controls.Add(this.textBoxFvmMetric);
             this.Controls.Add(this.buttonRemoveFogUsingPhysicsBasedMethod);
             this.Controls.Add(this.buttonRemoveFogUsingLocalExtremaMethod);
             this.Controls.Add(this.buttonRemoveFogUsingCustomMethod);
@@ -814,6 +847,9 @@
         private System.Windows.Forms.Button buttonRemoveFogUsingCustomMethod;
         private System.Windows.Forms.Button buttonRemoveFogUsingLocalExtremaMethod;
         private System.Windows.Forms.Button buttonRemoveFogUsingPhysicsBasedMethod;
+        private System.Windows.Forms.TextBox textBoxFvmMetric;
+        private System.Windows.Forms.Label label13;
+        private System.Windows.Forms.Button buttonRemoveFogUsingCustomMethodWithDepthEstimation;
     }
 }
 

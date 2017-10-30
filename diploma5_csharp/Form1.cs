@@ -403,6 +403,7 @@ namespace diploma5_csharp
                 Metrics = result.Metrics,
                 ExecutionTimeMs = result.ExecutionTimeMs
             });
+            this.textBoxFvmMetric.Text = result.Metrics.FVM.ToString();
         }
 
         private void buttonRobbyTanFogRemovalMethod_Click(object sender, EventArgs e)
@@ -421,6 +422,7 @@ namespace diploma5_csharp
                 Metrics = result.Metrics,
                 ExecutionTimeMs = result.ExecutionTimeMs
             });
+            this.textBoxFvmMetric.Text = result.Metrics.FVM.ToString();
         }
 
         private void buttonRemoveFogUsingMedianChannelPrior_Click(object sender, EventArgs e)
@@ -439,6 +441,7 @@ namespace diploma5_csharp
                 Metrics = result.Metrics,
                 ExecutionTimeMs = result.ExecutionTimeMs
             });
+            this.textBoxFvmMetric.Text = result.Metrics.FVM.ToString();
         }
 
         private void buttonRemoveFogUsingIdcpWithClahe_Click(object sender, EventArgs e)
@@ -457,6 +460,7 @@ namespace diploma5_csharp
                 Metrics = result.Metrics,
                 ExecutionTimeMs = result.ExecutionTimeMs
             });
+            this.textBoxFvmMetric.Text = result.Metrics.FVM.ToString();
         }
 
         private void buttonEnhaceVisibilityUsingRobbyTanMethodForRoads_Click(object sender, EventArgs e)
@@ -475,6 +479,7 @@ namespace diploma5_csharp
                 Metrics = result.Metrics,
                 ExecutionTimeMs = result.ExecutionTimeMs
             });
+            this.textBoxFvmMetric.Text = result.Metrics.FVM.ToString();
         }
 
         private void buttonRemoveFogUsingDCPAndDFT_Click(object sender, EventArgs e)
@@ -493,6 +498,7 @@ namespace diploma5_csharp
                 Metrics = result.Metrics,
                 ExecutionTimeMs = result.ExecutionTimeMs
             });
+            this.textBoxFvmMetric.Text = result.Metrics.FVM.ToString();
         }
 
         private void buttonRemoveFogUsingLocalExtremaMethod_Click(object sender, EventArgs e)
@@ -511,6 +517,7 @@ namespace diploma5_csharp
                 Metrics = result.Metrics,
                 ExecutionTimeMs = result.ExecutionTimeMs
             });
+            this.textBoxFvmMetric.Text = result.Metrics.FVM.ToString();
         }
 
         private void buttonRemoveFogUsingPhysicsBasedMethod_Click(object sender, EventArgs e)
@@ -529,10 +536,11 @@ namespace diploma5_csharp
                 Metrics = result.Metrics,
                 ExecutionTimeMs = result.ExecutionTimeMs
             });
+            this.textBoxFvmMetric.Text = result.Metrics.FVM.ToString();
         }
         private void buttonRemoveFogUsingCustomMethod_Click(object sender, EventArgs e)
         {
-            var result = _appState.Fog.RemoveFogUsingCustomMethod(_appState.InputImageBgr, new FogRemovalParams() { ShowWindows = GetCheckBoxValue(checkBoxShowOptionalWindows) });
+            var result = _appState.Fog.RemoveFogUsingCustomMethod(_appState.InputImageBgr, new FogRemovalParams() { ShowWindows = GetCheckBoxValue(checkBoxShowOptionalWindows), InputImageFileName = _appState.InputImageFileName });
             _appState.SetOutputImage(result.EnhancementResult);
             _appState.SetShadowMaskImage(result.DetectionResult);
             this.DisplayImageInPictureBox(pictureBox3, result.EnhancementResult.Bitmap);
@@ -546,6 +554,26 @@ namespace diploma5_csharp
                 Metrics = result.Metrics,
                 ExecutionTimeMs = result.ExecutionTimeMs
             });
+            this.textBoxFvmMetric.Text = result.Metrics.FVM.ToString();
+        }
+
+        private void buttonRemoveFogUsingCustomMethodWithDepthEstimation_Click(object sender, EventArgs e)
+        {
+            var result = _appState.Fog.RemoveFogUsingCustomMethodWithDepthEstimation(_appState.InputImageBgr, new FogRemovalParams() { ShowWindows = GetCheckBoxValue(checkBoxShowOptionalWindows), InputImageFileName = _appState.InputImageFileName });
+            _appState.SetOutputImage(result.EnhancementResult);
+            _appState.SetShadowMaskImage(result.DetectionResult);
+            this.DisplayImageInPictureBox(pictureBox3, result.EnhancementResult.Bitmap);
+            this.DisplayImageInPictureBox(pictureBox2, result.DetectionResult.Bitmap);
+
+            // save metrics
+            _methodInfoStore.AddOrUpdate(new EnhanceMethodInfoModel
+            {
+                ImageFileName = _appState.InputImageFileName,
+                EnhanceMethodName = nameof(Fog.RemoveFogUsingCustomMethodWithDepthEstimation),
+                Metrics = result.Metrics,
+                ExecutionTimeMs = result.ExecutionTimeMs
+            });
+            this.textBoxFvmMetric.Text = result.Metrics.FVM.ToString();
         }
 
         //
