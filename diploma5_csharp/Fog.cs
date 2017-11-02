@@ -20,7 +20,6 @@ namespace diploma5_csharp
 
         public BaseMethodResponse RemoveFogUsingDarkChannelPrior(Image<Bgr, Byte> image, FogRemovalParams _params)
         {
-            Image<Bgr, Byte> imgFog = image.Clone();
             Image<Gray, Byte> imgDarkChannel = new Image<Gray, byte>(image.Size);
             Image<Gray, Byte> T = new Image<Gray, byte>(image.Size);
             Image<Gray, Byte> transmission;
@@ -33,10 +32,17 @@ namespace diploma5_csharp
 
             //int patchSize = 5;
             int patchSize = 7;
-            imgDarkChannel = GetDarkChannel(imgFog, patchSize);
-            Airlight = EstimateAirlight(imgDarkChannel, imgFog);
+            imgDarkChannel = GetDarkChannel(image, patchSize);
+            Airlight = EstimateAirlight(imgDarkChannel, image);
             T = EstimateTransmission(imgDarkChannel, Airlight);
-            result = RemoveFog(imgFog, T, Airlight);
+            result = RemoveFog(image, T, Airlight);
+
+            // try vendor
+            var darkChannel2 = DehazeDarkChannel.getMedianDarkChannel(image, 5);
+            var Airlight2 = DehazeDarkChannel.estimateA(darkChannel2);
+            var T2 = DehazeDarkChannel.estimateTransmission(darkChannel2, Airlight2);
+            var ad = Airlight2;
+            var fogfree2 = DehazeDarkChannel.getDehazed(image, T2, Airlight2);
 
             //Return out params
             transmission = T;
@@ -47,8 +53,12 @@ namespace diploma5_csharp
             {
                 EmguCvWindowManager.Display(imgDarkChannel, "1 imgDarkChannel darkChannel MDCP");
                 EmguCvWindowManager.Display(T, "2 estimateTransmission");
-                EmguCvWindowManager.Display(imgFog, "3 imgFog");
+                EmguCvWindowManager.Display(image, "3 image");
                 EmguCvWindowManager.Display(result, "4 result");
+
+                EmguCvWindowManager.Display(darkChannel2, "1 darkChannel2");
+                EmguCvWindowManager.Display(T2, "2 T2");
+                EmguCvWindowManager.Display(fogfree2, "4 fogfree2");
             }
 
             var Metrics = ImageMetricHelper.ComputeAll(image.Convert<Bgr, double>(), result.Convert<Bgr, double>());
@@ -152,7 +162,7 @@ namespace diploma5_csharp
         private Image<Gray, Byte> EstimateTransmission(Image<Gray, Byte> DC, int airlight) //DC - darkChannel
         {
             double w = 0.75;
-            //double w = 0.95;
+            // double w = 0.95;
             Image<Gray, Byte> transmission = DC.Clone();
             MCvScalar intensity;
 
@@ -170,15 +180,15 @@ namespace diploma5_csharp
         //dehazing foggy image
         private Image<Bgr, Byte> RemoveFog(Image<Bgr, Byte> sourceImg, Image<Gray, Byte> transmissionImg, int airlight)
         {
-            double t0 = 0.1;
+            double t0 = 0.1; // 0.28;
             double tmax;
 
             int A = airlight;//airlight
-//            Scalar t; //transmission
             Gray t; //transmission
             Bgr I; //I(x) - source image pixel
-                     //            Mat dehazed = Mat::zeros(sourceImg.rows, sourceImg.cols, CV_8UC3);
             Image<Bgr, Byte> dehazed = new Image<Bgr, Byte>(sourceImg.Size);
+
+            var min = ImageHelper.Min(transmissionImg) / 255.0;
 
             for (int i = 0; i < sourceImg.Rows; i++)
             {
@@ -195,13 +205,13 @@ namespace diploma5_csharp
                         tmax = (t.Intensity / 255);
                     }
 
-                    double B = Math.Abs((I.Blue - A) / tmax + A) > 255 ? 255 : Math.Abs((I.Blue - A) / tmax + A);
-                    double G = Math.Abs((I.Green - A) / tmax + A) > 255 ? 255 : Math.Abs((I.Green - A) / tmax + A);
-                    double R = Math.Abs((I.Red - A) / tmax + A) > 255 ? 255 : Math.Abs((I.Red - A) / tmax + A);
+                    double B = (I.Blue - A) / tmax + A;
+                    double G = (I.Green - A) / tmax + A;
+                    double R = (I.Red - A) / tmax + A;
 
-                    //double B = (I.Blue - A) / tmax + A;
-                    //double G = (I.Green - A) / tmax + A;
-                    //double R = (I.Red - A) / tmax + A;
+                    B = B > 255 ? 255 : Math.Abs(B);
+                    G = G > 255 ? 255 : Math.Abs(G);
+                    R = R > 255 ? 255 : Math.Abs(R);
 
                     dehazed[i,j] = new Bgr(B, G, R);
                 }
@@ -729,13 +739,11 @@ namespace diploma5_csharp
         // Source - http://www.sciencedirect.com/science/article/pii/S1877050915013812
         public BaseMethodResponse RemoveFogUsingDCPAndDFT(Image<Bgr, Byte> image, FogRemovalParams _params)
         {
-            Image<Bgr, Single> imageSingle = image.Convert<Bgr, Single>();
             Image<Gray, Byte> DC;
-            Image<Gray, Single> DFT = new Image<Gray, Single>(image.Size);
-            Image<Gray, Single> DFT_inverse = new Image<Gray, Single>(image.Size);
-            Image<Gray, Single> DFT_lowPassFilter = new Image<Gray, Single>(image.Size);
-            Image<Gray, Single> DFT_highPassFilter = new Image<Gray, Single>(image.Size);
-            Image<Gray, Single> transmission_ = new Image<Gray, Single>(image.Size);
+            Image<Gray, float> DFT = new Image<Gray, float>(image.Size);
+            Image<Gray, float> DFT_inverse = new Image<Gray, float>(image.Size);
+            
+            Image<Gray, float> transmission_ = new Image<Gray, float>(image.Size);
             Image<Gray, Byte> transmission;
             Image<Bgr, Byte> result = new Image<Bgr, Byte>(image.Size);
 
@@ -747,9 +755,18 @@ namespace diploma5_csharp
 
             // apply fast fourier transform (FFT)
             // for digital images use discrete fourier transform (DFT)
-            CvInvoke.Dft(src: DC.Convert<Gray, Single>(), dst: DFT, flags: DxtType.Forward, nonzeroRows: -1);
+            CvInvoke.Dft(src: DC.Convert<Gray, float>(), dst: DFT, flags: DxtType.Forward, nonzeroRows: -1);
             CvInvoke.Dft(src: DFT, dst: DFT_inverse, flags: DxtType.Inverse, nonzeroRows: -1);
+            EmguCvWindowManager.Display(DC, "DFT before");
+            EmguCvWindowManager.Display(DFT, "DFT1");
+            EmguCvWindowManager.Display(DFT.Convert<Gray, Byte>(), "DFT2");
+            EmguCvWindowManager.Display(DFT_inverse, "DFT_inverse1");
+            EmguCvWindowManager.Display(DFT_inverse.Convert<Gray, Byte>(), "DFT_inverse2");
 
+
+            Image<Gray, float> DFT_lowPassFilter = new Image<Gray, float>(image.Size);
+            Image<Gray, float> DFT_highPassFilter = new Image<Gray, float>(image.Size);
+            Image<Gray, float> DFT_sum = new Image<Gray, float>(image.Size);
             float[,] lowPassMatrixKernel = new float[3, 3] {
                     { 1.0f / 9.0f, 1.0f / 9.0f, 1.0f / 9.0f},
                     { 1.0f / 9.0f, 1.0f / 9.0f, 1.0f / 9.0f},
@@ -764,6 +781,7 @@ namespace diploma5_csharp
             ConvolutionKernelF highPassMatrix = new ConvolutionKernelF(highPassMatrixKernel);
             CvInvoke.Filter2D(src: DFT, dst: DFT_lowPassFilter, kernel: lowPassMatrix, anchor: new Point(-1, -1));
             CvInvoke.Filter2D(src: DFT, dst: DFT_highPassFilter, kernel: highPassMatrix, anchor: new Point(-1, -1));
+            DFT_sum = DFT_lowPassFilter + DFT_highPassFilter;
 
             for (int m = 0; m < DFT.Rows; m++)
             {
@@ -773,11 +791,18 @@ namespace diploma5_csharp
                     transmission_[m, n] = new Gray(sum);
                 }
             }
+            EmguCvWindowManager.Display(DFT_lowPassFilter, "5.1 DFT_lowPassFilter1");
+            EmguCvWindowManager.Display(DFT_lowPassFilter.Convert<Gray, Byte>(), "5.1 DFT_lowPassFilter2");
+            EmguCvWindowManager.Display(DFT_highPassFilter, "5.2 DFT_highPassFilter1");
+            EmguCvWindowManager.Display(DFT_highPassFilter.Convert<Gray, Byte>(), "5.2 DFT_highPassFilter2");
+            EmguCvWindowManager.Display(DFT_sum, "5.3 DFT_sum1");
+            EmguCvWindowManager.Display(DFT_sum.Convert<Gray, Byte>(), "5.3 DFT_sum2");
 
             //var fft = ImageHelper.FFT(ImageHelper.TotGray(image));
             //EmguCvWindowManager.Display(fft, "fft");
 
-            var gray = ImageHelper.TotGray(image);
+            // var gray = ImageHelper.TotGray(image);
+            var gray = DC;
 
             var idealLowPassFilter = ImageHelper.IdealLowPassFilter(gray);
             var idealHightPassFilter = ImageHelper.IdealHightPassFilter(gray);
@@ -801,14 +826,79 @@ namespace diploma5_csharp
             EmguCvWindowManager.Display(gaussianPassFiltersSum.Convert<Gray, Byte>(), "gaussianPassFiltersSum");
 
             // compute transmission map
-            transmission = butterworthPassFiltersSum.Convert<Gray, Byte>().Resize(image.Width, image.Height, Inter.Nearest);
+            transmission = butterworthPassFiltersSum.Convert<Gray, Byte>().Resize(image.Width, image.Height, Inter.Linear);
+
+            // inverse
+            transmission = ImageHelper.Inverse(transmission);
+
+            // smooth with median filter
+            transmission = transmission.SmoothMedian(5);
 
             // estimate airlight
             int airlight = EstimateAirlight(DC, image);
 
+            // compute DC transmission map
+            var transmissionDC = EstimateTransmission(DC, airlight);
+
             // restore image with DC
             var dcResult = RemoveFog(image, transmission, airlight);
             result = dcResult;
+
+            // apply DC to colors and FFT to intensity
+            var lab = ImageHelper.ToLab(image);
+            var channels = lab.Split();
+            var l = channels[0]; var lRes = new Image<Gray, Byte>(lab.Size);
+            var a = channels[1]; var aRes = new Image<Gray, Byte>(lab.Size);
+            var b = channels[2]; var bRes = new Image<Gray, Byte>(lab.Size);
+            for (int i = 0; i < image.Rows; i++)
+            {
+                for (int j = 0; j < image.Cols; j++)
+                {
+                    var LT = transmission[i, j].Intensity;
+                    var abT = transmissionDC[i, j].Intensity;
+
+                    var l_ = l[i, j].Intensity;
+                    var a_ = a[i, j].Intensity;
+                    var b_ = b[i, j].Intensity;
+
+                    var LTmax = Math.Max(LT / 255.0, 0.2);
+                    var abTmax = Math.Max(abT / 255.0, 0.2);
+
+                    double L = (l_ - airlight) / LTmax + airlight;
+                    //double A = (a_ - airlight) / abTmax + airlight;
+                    //double B = (b_ - airlight) / abTmax + airlight;
+                    double A = (a_ - airlight) / LTmax + airlight;
+                    double B = (b_ - airlight) / LTmax + airlight;
+
+
+                    //if(L < 0 || L > 255)
+                    //{
+                    //    L = (l_ - airlight) / (1 - LTmax) + airlight;
+                    //}
+
+                    //L = L % 255;
+                    //A = A % 255;
+                    //B = B % 255;
+
+                    L = L > 255 ? 255 : Math.Abs(L);
+                    A = A > 255 ? 255 : Math.Abs(A);
+                    B = B > 255 ? 255 : Math.Abs(B);
+
+                    lRes[i, j] = new Gray(L);
+                    //aRes[i, j] = new Gray(A);
+                    //bRes[i, j] = new Gray(B);
+
+                    //lRes[i, j] = new Gray(l_);
+                    aRes[i, j] = new Gray(a_);
+                    bRes[i, j] = new Gray(b_);
+                }
+            }
+            var labRes = new Image<Lab, Byte>(new Image<Gray, Byte>[]{ lRes, aRes, bRes });
+            var bgrRes = ImageHelper.ToBgr(labRes);
+            EmguCvWindowManager.Display(image, "image");
+            EmguCvWindowManager.Display(lab, "lab");
+            EmguCvWindowManager.Display(labRes, "labRes");
+            EmguCvWindowManager.Display(bgrRes, "bgrRes");
 
             stopwatch.Stop();
 
@@ -816,11 +906,10 @@ namespace diploma5_csharp
             {
                 EmguCvWindowManager.Display(image, "1 image");
                 EmguCvWindowManager.Display(DC, "2 DC");
-                EmguCvWindowManager.Display(DFT, "3 DFT");
-                EmguCvWindowManager.Display(DFT_inverse, "4 DFT_inverse");
-                EmguCvWindowManager.Display(DFT_lowPassFilter, "5.1 DFT_lowPassFilter");
-                EmguCvWindowManager.Display(DFT_highPassFilter, "5.2 DFT_highPassFilter");
-                EmguCvWindowManager.Display(transmission_, "6 transmission_");
+                
+                
+                EmguCvWindowManager.Display(transmission_.Convert<Gray, Byte>(), "6 transmission_");
+                EmguCvWindowManager.Display(transmission, "6 transmission");
                 EmguCvWindowManager.Display(result, "9 result");
             }
 

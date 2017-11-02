@@ -566,6 +566,31 @@ namespace diploma5_csharp.Helpers
 
         #endregion
 
+        public static Image<Gray, float> MaskToImage(double[,] mask)
+        {
+            Image<Gray, float> image = new Image<Gray, float>(mask.GetLength(1), mask.GetLength(0));
+            for (int m = 0; m < mask.GetLength(0); m++)
+            {
+                for (int n = 0; n < mask.GetLength(1); n++)
+                {
+                    image[m, n] = new Gray(mask[m,n] * 255);
+                }
+            }
+            return image;
+        }
+
+        public static Image<Gray, byte> Inverse(Image<Gray, byte> image)
+        {
+            Image<Gray, byte> result = new Image<Gray, byte>(image.Size);
+            for (int m = 0; m < image.Rows; m++)
+            {
+                for (int n = 0; n < image.Cols; n++)
+                {
+                    result[m, n] = new Gray(255 - image[m, n].Intensity);
+                }
+            }
+            return result;
+        }
 
         #region Fast Fourier Transform
         // TAKEN FROM https://github.com/rajatvikramsingh/RajatView
@@ -647,6 +672,15 @@ namespace diploma5_csharp.Helpers
             Image<Gray, float> retimage = new Image<Gray, float>(2 * img.Width, 2 * img.Height);
             var h = retidealmask(img, 150, 0);
             retimage = convolve(im_pad, h);
+
+            //var maskImg = MaskToImage(h);
+            //EmguCvWindowManager.Display(pad(img.Convert<Gray, float>()), "IdealLowPassFilter pad1");
+            //EmguCvWindowManager.Display(pad(img.Convert<Gray, float>()).Convert<Gray, Byte>(), "IdealLowPassFilter pad2");
+            //EmguCvWindowManager.Display(im_pad, "IdealLowPassFilter im_pad1");
+            //EmguCvWindowManager.Display(im_pad.Convert<Gray, Byte>(), "IdealLowPassFilter im_pad2");
+            //EmguCvWindowManager.Display(maskImg, "IdealLowPassFilter maskImg1");
+            //EmguCvWindowManager.Display(maskImg.Convert<Gray, Byte>(), "IdealLowPassFilter maskImg2");
+
             return retimage;
         }
 
@@ -707,22 +741,32 @@ namespace diploma5_csharp.Helpers
 
         private static Image<Gray, float> pad(Image<Gray, float> ig)
         {
-            Image<Gray, float> im_new = new Image<Gray, float>(ig.Width * 2, ig.Height * 2);
-            Image<Gray, float> img_return = new Image<Gray, float>(ig.Width * 2, ig.Height * 2);
-            double b = 0;
+            // Origin (double size of image with white pixels)
+            //Image<Gray, float> im_new = new Image<Gray, float>(ig.Width * 2, ig.Height * 2);
+            //Image<Gray, float> img_return = new Image<Gray, float>(ig.Width * 2, ig.Height * 2);
+            //double b = 0;
 
-            for (int i = 0; i < ig.Rows; i++)
-            {
-                for (int j = 0; j < ig.Cols; j++)
-                {
-                    b = ig[i, j].Intensity;
-                    b = b * ((-1) ^ (i + j));
-                    img_return[i, j] = new Gray(b);
-                }
+            //for (int i = 0; i < ig.Rows; i++)
+            //{
+            //    for (int j = 0; j < ig.Cols; j++)
+            //    {
+            //        b = ig[i, j].Intensity;
+            //        b = b * ((-1) ^ (i + j));
+            //        img_return[i, j] = new Gray(b);
+            //    }
 
-            }
-            return img_return;
+            //}
+            // return img_return;
 
+            // My (resize image in 2 times)
+            return ig.Resize(ig.Width * 2, ig.Height * 2, Inter.Linear);
+
+            // My (resize optimal)
+            //int m = CvInvoke.GetOptimalDFTSize(ig.Rows);
+            //int n = CvInvoke.GetOptimalDFTSize(ig.Cols);
+            //Image<Gray, float> padded = new Image<Gray, float>(ig.Size);
+            //CvInvoke.CopyMakeBorder(ig, padded, 0, m - ig.Rows, 0, n - ig.Cols, BorderType.Constant);
+            //return padded;
         }
 
         private static double[,] retidealmask(Image<Gray, byte> img, int radius, int mode)
@@ -796,11 +840,20 @@ namespace diploma5_csharp.Helpers
                     ans[k, l] = new Gray(img[k, l].Intensity * h[k, l]);
                 }
             CvInvoke.Dft(ans, retimg, DxtType.InvScale, 0);
-            for (int k = 0; k < img.Rows / 2; k++)
-                for (int l = 0; l < img.Cols / 2; l++)
-                {
-                    retimg1[k, l] = retimg[k, l];
-                }
+            //CvInvoke.Dft(ans, retimg, DxtType.Inverse, 0);
+
+            // Original (reduce image size back)
+            //for (int k = 0; k < img.Rows / 2; k++)
+            //    for (int l = 0; l < img.Cols / 2; l++)
+            //    {
+            //        retimg1[k, l] = retimg[k, l];
+            //    }
+
+            // My (resize image back)
+            retimg1 = retimg.Resize(retimg.Width / 2, retimg.Height / 2, Inter.Linear);
+
+            // My (resize optimal)
+            //retimg1 = retimg;
 
             return retimg1;
         }
