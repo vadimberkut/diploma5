@@ -532,6 +532,20 @@ namespace diploma5_csharp.Helpers
             return result;
         }
 
+        public static GrayPixelWithCoords[] GetImagePixelsWithCoords(Image<Gray, Byte> image)
+        {
+            GrayPixelWithCoords[] result = new GrayPixelWithCoords[image.Rows * image.Cols];
+            for (int m = 0; m < image.Rows; m++)
+            {
+                for (int n = 0; n < image.Cols; n++)
+                {
+                    Gray pixel = image[m, n];
+                    result[m * image.Cols + n] = new GrayPixelWithCoords { Intensity = pixel.Intensity, Coords = new PixelCoords(m, n) };
+                }
+            }
+            return result;
+        }
+
         public static double[] GetImagePixels(Image<Gray, double> image)
         {
             double[] result = new double[image.Rows * image.Cols];
@@ -859,6 +873,32 @@ namespace diploma5_csharp.Helpers
         }
 
         #endregion
+
+
+        // Source - http://efundies.com/adjust-the-contrast-of-an-image-in-c/
+        public static Image<Bgr, byte> AdjustContrast(Image<Bgr, byte> image, double threshold = 10)
+        {
+            Image<Bgr, byte> result = new Image<Bgr, byte>(image.Size);
+            var contrast = Math.Pow((100.0 + threshold) / 100.0, 2);
+            for (int m = 0; m < image.Rows; m++)
+            {
+                for (int n = 0; n < image.Cols; n++)
+                {
+                    var pixel = image[m, n];
+
+                    double B = pixel.Blue;
+                    double G = pixel.Green;
+                    double R = pixel.Red;
+
+                    B = ((((B / 255.0) - 0.5) * contrast) + 0.5) * 255.0;
+                    G = ((((G / 255.0) - 0.5) * contrast) + 0.5) * 255.0;
+                    R = ((((R / 255.0) - 0.5) * contrast) + 0.5) * 255.0;
+
+                    result[m, n] = new Bgr(B, G, R);
+                }
+            }
+            return result;
+        }
     }
 
 
@@ -899,6 +939,23 @@ namespace diploma5_csharp.Helpers
         }
 
         public double[] Intensity;
+    }
+
+    public class GrayPixelWithCoords
+    {
+        public double Intensity;
+        public PixelCoords Coords;
+    }
+
+    public class PixelCoords
+    {
+        public PixelCoords(int row, int col)
+        {
+            Row = row;
+            Col = col;
+        }
+        public int Row;
+        public int Col;
     }
 
     public class SplittedByMask<T>

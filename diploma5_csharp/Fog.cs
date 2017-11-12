@@ -11,6 +11,7 @@ using System.Diagnostics;
 using Kaliko.ImageLibrary;
 using Kaliko.ImageLibrary.Filters;
 using System.IO;
+using Accord.Imaging.Filters;
 
 namespace diploma5_csharp
 {
@@ -1236,6 +1237,7 @@ namespace diploma5_csharp
 
         public BaseMethodResponse RemoveFogUsingCustomMethod(Image<Bgr, Byte> image, FogRemovalParams _params)
         {
+            Image<Lab, byte> lab = ImageHelper.ToLab(image);
             Image<Bgr, float> convultionResult = new Image<Bgr, float>(image.Size);
             Image<Bgr, Byte> filter2DResult = new Image<Bgr, Byte>(image.Size);
             Image<Gray, Byte> transmission = null;
@@ -1244,117 +1246,209 @@ namespace diploma5_csharp
             var stopwatch = new Stopwatch();
             stopwatch.Start();
 
-            // try filter2d
-            float[,] matrixKernel = new float[3, 3] {
-                { 0,-1, 0 },
-                {-1, 5,-1 },
-                { 0,-1, 0 }
-            };
-            ConvolutionKernelF matrix = new ConvolutionKernelF(matrixKernel);
-            //convultionResult = image.Convolution(matrix);
-            //Image<Bgr, Byte> BGRResult = convultionResult.Convert<Bgr, Byte>();
-            //Image<Bgr, Byte> BGRResult2 = convultionResult.ConvertScale<byte>(1, 0);
-            CvInvoke.Filter2D(image, filter2DResult, matrix, new Point(0, 0));
-            //EmguCvWindowManager.Display(convultionResult, "1 convultionResult");
-            //EmguCvWindowManager.Display(BGRResult, "1 BGRResult");
-            //EmguCvWindowManager.Display(BGRResult2, "1 BGRResult2");
-            EmguCvWindowManager.Display(filter2DResult, "1 filter2DResult");
+            //// try filter2d
+            //float[,] matrixKernel = new float[3, 3] {
+            //    { 0,-1, 0 },
+            //    {-1, 5,-1 },
+            //    { 0,-1, 0 }
+            //};
+            //ConvolutionKernelF matrix = new ConvolutionKernelF(matrixKernel);
+            ////convultionResult = image.Convolution(matrix);
+            ////Image<Bgr, Byte> BGRResult = convultionResult.Convert<Bgr, Byte>();
+            ////Image<Bgr, Byte> BGRResult2 = convultionResult.ConvertScale<byte>(1, 0);
+            //CvInvoke.Filter2D(image, filter2DResult, matrix, new Point(0, 0));
+            ////EmguCvWindowManager.Display(convultionResult, "1 convultionResult");
+            ////EmguCvWindowManager.Display(BGRResult, "1 BGRResult");
+            ////EmguCvWindowManager.Display(BGRResult2, "1 BGRResult2");
+            //EmguCvWindowManager.Display(filter2DResult, "1 filter2DResult");
 
-            // billateral filter
-            var billateral = image.SmoothBilatral(3, 5, 5);
-            EmguCvWindowManager.Display(billateral, "1 billateral");
+            //// billateral filter
+            //var billateral = image.SmoothBilatral(3, 5, 5);
+            //EmguCvWindowManager.Display(billateral, "1 billateral");
 
-            // AGC
-            var agc = GammaCorrection.Adaptive(image);
-            EmguCvWindowManager.Display(agc, "1 agc");
+            //// AGC
+            //var agc = GammaCorrection.Adaptive(image);
+            //EmguCvWindowManager.Display(agc, "1 agc");
 
-            //// unsharp mask
-            //// sharpen image using "unsharp mask" algorithm
-            //Image<Bgr, byte> blurred = new Image<Bgr, byte>(image.Size); double sigma = 1, threshold = 5, amount = 1;
-            //CvInvoke.GaussianBlur(image, blurred, new Size(), sigma, sigma);
-            //var lowConstrastMask = image.AbsDiff(blurred).ThresholdBinary( < threshold;
-            //var sharpened = image * (1 + amount) + blurred * (-amount);
-            //image.Copy(sharpened, lowContrastMask);
+            ////use Kaliko.ImageLibrary;
+            //KalikoImage imageK = new KalikoImage(image.Bitmap);
+            //// Apply unsharpen filter (radius = 1.4, amount = 32%, threshold = 0)
+            //imageK.ApplyFilter(new UnsharpMaskFilter(radius: 1f, amount: 4f, threshold: 0));
+            //var unharpMask = new Image<Bgr, byte>(imageK.GetAsBitmap());
+            //EmguCvWindowManager.Display(unharpMask, "1 unsharp mask KalikoImage");
 
-            //use Kaliko.ImageLibrary;
-            KalikoImage imageK = new KalikoImage(image.Bitmap);
-            // Apply unsharpen filter (radius = 1.4, amount = 32%, threshold = 0)
-            imageK.ApplyFilter(new UnsharpMaskFilter(radius: 1f, amount: 5f, threshold: 0));
-            var unharpMask = new Image<Bgr, byte>(imageK.GetAsBitmap());
-            EmguCvWindowManager.Display(unharpMask, "1 unsharp mask KalikoImage");
+            //// !!!NOT SHARP
+            //var UnsharpMask = new Func<Image<Bgr, byte>, int, int, int, Image<Bgr, byte>>((original, radius, amountPercent, threshold) => {
+            //    // copy original for our return value
+            //    var retval = original.Copy();
 
-            // !!!NOT SHARP
-            var UnsharpMask = new Func<Image<Bgr, byte>, int, int, int, Image<Bgr, byte>>((original, radius, amountPercent, threshold) => {
-                // copy original for our return value
-                var retval = original.Copy();
+            //    // create the blurred copy
+            //    var blurred = original.SmoothGaussian(radius);
 
-                // create the blurred copy
-                var blurred = original.SmoothGaussian(radius);
+            //    // subtract blurred from original, pixel-by-pixel to make unsharp mask
+            //    var unsharpMask_ = original - blurred;
 
-                // subtract blurred from original, pixel-by-pixel to make unsharp mask
-                var unsharpMask_ = original - blurred;
+            //    //var highContrast = increaseContrast(original, amountPercent);
+            //    //var highContrast = original.Copy();
+            //    //highContrast._GammaCorrect(amountPercent);
+            //    KalikoImage highContrastK = new KalikoImage(original.Bitmap);
+            //    highContrastK.ApplyFilter(new ContrastFilter(amountPercent));
+            //    var highContrast = new Image<Bgr, byte>(highContrastK.GetAsBitmap());
 
-                //var highContrast = increaseContrast(original, amountPercent);
-                //var highContrast = original.Copy();
-                //highContrast._GammaCorrect(amountPercent);
-                KalikoImage highContrastK = new KalikoImage(original.Bitmap);
-                highContrastK.ApplyFilter(new ContrastFilter(amountPercent));
-                var highContrast = new Image<Bgr, byte>(highContrastK.GetAsBitmap());
+            //    // assuming row-major ordering
+            //    for (int row = 0; row < original.Rows; row++)
+            //    {
+            //        for (int col = 0; col < original.Cols; col++)
+            //        {
+            //            Bgr origColor = original[row, col];
+            //            Bgr contrastColor = highContrast[row, col];
 
-                // assuming row-major ordering
-                for (int row = 0; row < original.Rows; row++)
+            //            var bgrDiff = new Func<Bgr, Bgr, Bgr>((b1_, b2_) => new Bgr(b1_.Blue - b2_.Blue, b1_.Green - b2_.Green, b1_.Red - b2_.Red));
+            //            // difference = contrastColor - origColor
+            //            Bgr difference = bgrDiff(contrastColor, origColor);
+
+            //            // float percent = luminanceAsPercent(unsharpMask[row][col]);
+            //            var luminanceAsPercent_ = new Func<double, float>((v_) => (float)v_ / 255f);
+            //            float percentB = luminanceAsPercent_(unsharpMask_[row, col].Blue);
+            //            float percentG = luminanceAsPercent_(unsharpMask_[row, col].Green);
+            //            float percentR = luminanceAsPercent_(unsharpMask_[row, col].Red);
+
+            //            // color delta = difference * percent;
+            //            var deltaB = difference.Blue * percentB;
+            //            var deltaG = difference.Green * percentG;
+            //            var deltaR = difference.Red * percentR;
+
+            //            //if (abs(delta) > threshold)
+            //            //    retval[row][col] += delta;
+            //            var newBgr_ = new Bgr(retval[row, col].Blue, retval[row, col].Green, retval[row, col].Red);
+            //            if (Math.Abs(deltaB) > threshold)
+            //                newBgr_.Blue += deltaB;
+            //            if (Math.Abs(deltaG) > threshold)
+            //                newBgr_.Green += deltaG;
+            //            if (Math.Abs(deltaR) > threshold)
+            //                newBgr_.Red += deltaR;
+
+            //            retval[row, col] = newBgr_;
+            //        }
+            //    }
+
+            //    return retval;
+            //});
+            //var unharpMaskAlg = UnsharpMask(image, 19, 50, 0);
+            //EmguCvWindowManager.Display(unharpMaskAlg, "1 unharpMaskAlg");
+
+            //var response = this.RemoveFogUsingIdcpWithClahe(unharpMask, new FogRemovalParams { ShowWindows = true });
+            //result = response.EnhancementResult;
+
+
+            //transmission = new Image<Gray, byte>(image.Size);
+
+
+            //// Method 2
+
+            // 0. Preprocessing - use color alignment algorithm from github
+            var preprocessed = image.Clone();
+
+            // 1. Compute transmission using FFT
+            var gray = ImageHelper.TotGray(preprocessed); // TODO - get gray image in more smart way
+            var hpF = ImageHelper.ButterworthHightPassFilter(gray);
+            var lpF = ImageHelper.ButterworthLowPassFilter(gray);
+            var T_float = hpF + lpF;
+            var T = T_float.Convert<Gray, byte>();
+            // inverse
+            T = ImageHelper.Inverse(T);
+            // smooth with median filter
+            T = T.SmoothMedian(5);
+            // stretch to [0;1]
+            double[] minValues, maxValues; Point[] minLocations, maxLocations;
+            T.MinMax(out minValues, out maxValues, out minLocations, out maxLocations);
+            double Tmin = minValues[0];
+            double Tmax = maxValues[0];
+            //Tmin = 0.2 * 255;
+            //Tmax = 255;
+            for (int i = 0; i < T.Rows; i++)
+            {
+                for (int j = 0; j < T.Cols; j++)
                 {
-                    for (int col = 0; col < original.Cols; col++)
-                    {
-                        Bgr origColor = original[row, col];
-                        Bgr contrastColor = highContrast[row, col];
 
-                        var bgrDiff = new Func<Bgr, Bgr, Bgr>((b1_, b2_) => new Bgr(b1_.Blue - b2_.Blue, b1_.Green - b2_.Green, b1_.Red - b2_.Red));
-                        // difference = contrastColor - origColor
-                        Bgr difference = bgrDiff(contrastColor, origColor);
-
-                        // float percent = luminanceAsPercent(unsharpMask[row][col]);
-                        var luminanceAsPercent_ = new Func<double, float>((v_) => (float)v_ / 255f);
-                        float percentB = luminanceAsPercent_(unsharpMask_[row, col].Blue);
-                        float percentG = luminanceAsPercent_(unsharpMask_[row, col].Green);
-                        float percentR = luminanceAsPercent_(unsharpMask_[row, col].Red);
-
-                        // color delta = difference * percent;
-                        var deltaB = difference.Blue * percentB;
-                        var deltaG = difference.Green * percentG;
-                        var deltaR = difference.Red * percentR;
-
-                        //if (abs(delta) > threshold)
-                        //    retval[row][col] += delta;
-                        var newBgr_ = new Bgr(retval[row, col].Blue, retval[row, col].Green, retval[row, col].Red);
-                        if (Math.Abs(deltaB) > threshold)
-                            newBgr_.Blue += deltaB;
-                        if (Math.Abs(deltaG) > threshold)
-                            newBgr_.Green += deltaG;
-                        if (Math.Abs(deltaR) > threshold)
-                            newBgr_.Red += deltaR;
-
-                        retval[row, col] = newBgr_;
-                    }
+                    var newT = ((T[i, j].Intensity - Tmin) / (Tmax - Tmin)) * 255;
+                    // newT += 0.2 * 255;
+                    T[i, j] = new Gray(newT);
                 }
+            }
+            transmission = T;
 
-                return retval;
-            });
-            var unharpMaskAlg = UnsharpMask(image, 19, 50, 0);
-            EmguCvWindowManager.Display(unharpMaskAlg, "1 unharpMaskAlg");
+            // 1.2 etimate airlight using DC
+            //var DC = GetDarkChannel(preprocessed, patchSize: 7);
+            //var A = EstimateAirlight(DC, preprocessed);
 
-            var response = this.RemoveFogUsingIdcpWithClahe(unharpMask, new FogRemovalParams { ShowWindows = true });
-            result = response.EnhancementResult;
+            // 1.3 etimate airlight using T
+            double takePercent = 0.001; // take most dark transmission's pixels
+            double takeAmount = (T.Rows * T.Cols) * takePercent;
+            var mostDarkPixels = ImageHelper.GetImagePixelsWithCoords(T).OrderBy(x => x.Intensity).Take((int)takeAmount);
+            var mostBrightesTransmissionPixelInImage = mostDarkPixels.OrderByDescending(x => {
+                return lab[x.Coords.Row, x.Coords.Col].X;
+            }).First();
+            var A = lab[mostBrightesTransmissionPixelInImage.Coords.Row, mostBrightesTransmissionPixelInImage.Coords.Col].X; // take most dark
 
+            // 2. Apply fog removal using modifiend fog model
+            var processed = new Image<Bgr, byte>(image.Size);
+            
+            // BGR
+            for (int i = 0; i < image.Rows; i++)
+            {
+                for (int j = 0; j < image.Cols; j++)
+                {
+                    var t = T[i, j].Intensity / 255.0;
+                    t = Math.Max(t, 0.1);
 
-            transmission = new Image<Gray, byte>(image.Size);
+                    var B = preprocessed[i, j].Blue;
+                    var G = preprocessed[i, j].Green;
+                    var R = preprocessed[i, j].Red;
+
+                    double B_ = B;
+                    double G_ = G;
+                    double R_ = R;
+
+                    // ADJUST THE CONTRAST
+                    var threshold = 10;
+                    var contrast = Math.Pow((100.0 + threshold) / 100.0, 2);
+                    B_ = ((((B_ / 255.0) - 0.5) * contrast) + 0.5) * 255.0;
+                    G_ = ((((G_ / 255.0) - 0.5) * contrast) + 0.5) * 255.0;
+                    R_ = ((((R_ / 255.0) - 0.5) * contrast) + 0.5) * 255.0;
+
+                    // 1st working way - too vivid colors
+                    double c = 2.5;
+                    B_ = (1 - ((Math.Abs(B - A) / (255.0 * c)) / t)) * B_;
+                    G_ = (1 - ((Math.Abs(G - A) / (255.0 * c)) / t)) * G_;
+                    R_ = (1 - ((Math.Abs(R - A) / (255.0 * c)) / t)) * R_;
+
+                    B_ = B_ > 255 ? 255 : Math.Abs(B_);
+                    G_ = G_ > 255 ? 255 : Math.Abs(G_);
+                    R_ = R_ > 255 ? 255 : Math.Abs(R_);
+
+                    processed[i, j] = new Bgr(B_, G_, R_);
+                }
+            }
+
+            // 3. Postprocessing - use AGC or somithing similar to balance brightness & colors
+            //var postProcessed = GammaCorrection.Adaptive(processed);
+            var postProcessed = processed.Clone();
+            // create filter
+            ContrastStretch filter = new ContrastStretch();
+            filter.ApplyInPlace(postProcessed.Bitmap);
+            result = postProcessed;
 
             stopwatch.Stop();
 
             if (_params.ShowWindows)
             {
-                EmguCvWindowManager.Display(image, "1 image");
-                EmguCvWindowManager.Display(result, "9 result");
+                EmguCvWindowManager.Display(image, "image");
+                EmguCvWindowManager.Display(preprocessed, "preprocessed");
+                EmguCvWindowManager.Display(T, "T");
+                EmguCvWindowManager.Display(processed, "processed");
+                EmguCvWindowManager.Display(postProcessed, "postProcessed");
+                EmguCvWindowManager.Display(result, "result");
             }
 
             var Metrics = ImageMetricHelper.ComputeAll(image.Convert<Bgr, double>(), result.Convert<Bgr, double>());
@@ -1377,7 +1471,7 @@ namespace diploma5_csharp
             var stopwatch = new Stopwatch();
             stopwatch.Start();
 
-            #region Try python depth estimation
+#region Try python depth estimation
 
             // Load depth map image
             var imagePath = _params.InputImageFileName;
@@ -1434,7 +1528,7 @@ namespace diploma5_csharp
             EmguCvWindowManager.Display(result0, "result0");
             EmguCvWindowManager.Display(result, "result");
 
-            #endregion
+#endregion
 
             transmission = new Image<Gray, byte>(image.Size);
 
@@ -1458,7 +1552,7 @@ namespace diploma5_csharp
 
 
 
-        #endregion
+#endregion
     }
 
     class RobbyTanPixelPhi

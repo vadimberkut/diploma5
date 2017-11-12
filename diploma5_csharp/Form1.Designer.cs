@@ -647,7 +647,7 @@
             this.buttonRemoveFogUsingDCPAndDFT.Name = "buttonRemoveFogUsingDCPAndDFT";
             this.buttonRemoveFogUsingDCPAndDFT.Size = new System.Drawing.Size(121, 32);
             this.buttonRemoveFogUsingDCPAndDFT.TabIndex = 55;
-            this.buttonRemoveFogUsingDCPAndDFT.Text = "DCP with DFT UC";
+            this.buttonRemoveFogUsingDCPAndDFT.Text = "DCP with DFT";
             this.buttonRemoveFogUsingDCPAndDFT.UseVisualStyleBackColor = false;
             this.buttonRemoveFogUsingDCPAndDFT.Click += new System.EventHandler(this.buttonRemoveFogUsingDCPAndDFT_Click);
             // 
