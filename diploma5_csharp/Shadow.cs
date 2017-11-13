@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using Accord.Imaging.Converters;
-using Accord.MachineLearning;
 using Accord.Math;
 using diploma5_csharp.Models;
 using Emgu.CV;
@@ -13,6 +12,7 @@ using Emgu.CV.Structure;
 using Accord.Statistics.Distributions.DensityKernels;
 using Emgu.CV.Util;
 using diploma5_csharp.Helpers;
+using Accord.MachineLearning;
 
 namespace diploma5_csharp
 {
@@ -92,7 +92,7 @@ namespace diploma5_csharp
             CvInvoke.PyrMeanShiftFiltering(imgGaussian.Mat, imgMeanShift.Mat, sp, sr, maxLevel, new MCvTermCriteria(5, 1));
 
             //Convert BGR to Gray
-            imgMeanShiftGray = ImageHelper.TotGray(imgMeanShift);
+            imgMeanShiftGray = ImageHelper.ToGray(imgMeanShift);
 
             //Set threshold from params or calc it
             double thresh;

@@ -6,6 +6,7 @@ using Emgu.CV.Structure;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Numerics;
+using System.Diagnostics;
 
 namespace diploma5_csharp.Helpers
 {
@@ -83,6 +84,13 @@ namespace diploma5_csharp.Helpers
             return result;
         }
 
+        public static Image<Bgr, Byte> ToBgr(Image<Gray, Byte> image)
+        {
+            Image<Bgr, Byte> result = new Image<Bgr, byte>(image.Size);
+            CvInvoke.CvtColor(image, result, ColorConversion.Gray2Bgr);
+            return result;
+        }
+
 
         public static Image<Hsv, Byte> ToHsv(Image<Bgr, Byte> image)
         {
@@ -99,7 +107,7 @@ namespace diploma5_csharp.Helpers
         }
 
 
-        public static Image<Gray, Byte> TotGray(Image<Bgr, Byte> image)
+        public static Image<Gray, Byte> ToGray(Image<Bgr, Byte> image)
         {
             Image<Gray, Byte> result = new Image<Gray, byte>(image.Size);
             CvInvoke.CvtColor(image, result, ColorConversion.Bgr2Gray);
@@ -899,6 +907,337 @@ namespace diploma5_csharp.Helpers
             }
             return result;
         }
+
+        #region Guided Filter
+        // EmguCv Guided Filter - http://www.emgu.com/wiki/files/3.2.0/document/html/47f05712-19f6-f558-ff34-0e6f3b1445ef.htm
+
+        public static Image<Gray, byte> GuidedFilterEmguCv(
+                Image<Bgr, byte> guideImage, 
+                Image<Gray, byte> inputImage,
+                int radius = 3,
+                double eps = 0.02,
+                int dDepth = -1
+            )
+            //where TColor : struct, IColor
+            //where TDepth : struct
+        {
+            Image<Gray, byte> result = new Image<Gray, byte>(inputImage.Size);
+
+            //var fastGuidedFilter = new AForge.Imaging.Filters.FastGuidedFilter
+            //{
+            //    KernelSize = 8,
+            //    Epsilon = 0.02f,
+            //    SubSamplingRatio = 0.25f,
+            //    OverlayImage = (Bitmap)bmp.Clone()
+            //};
+
+            IInputArray guide = guideImage; // guided image (or array of images) with up to 3 channels, if it have more then 3 channels then only first 3 channels will be used.
+            IInputArray src = inputImage; // filtering image with any numbers of channels.
+            IOutputArray dst = result; // output image.
+            //int radius = 3; // radius of Guided Filter.
+            //double eps = 0.02; // regularization term of Guided Filter. eps^2 is similar to the sigma in the color space into bilateralFilter.
+            //int dDepth = -1; // optional depth of the output image.
+            Emgu.CV.XImgproc.XImgprocInvoke.GuidedFilter(guide: guide, src: src, dst: dst, radius: radius, eps: eps, dDepth: dDepth);
+            return result;
+        }
+
+        // Guided Filter By clarkzjw - https://github.com/clarkzjw/GuidedFilter
+        // as author said his method is better than OpenCv implementation wich can give wrong results sometimes
+        public static void GuidedFilterBy_clarkzjw(Mat guide, Mat src, Mat dst, int radius = 3, double eps = 0.02)
+        {
+            int depth = guide.NumberOfChannels;
+            Debug.Assert(depth == 1 || depth == 3);
+
+            if (depth == 3)
+                GuidedFilterColorBy_clarkzjw(guide, src, dst, radius, eps);
+            else if (depth == 1)
+                GuidedFilterMonoBy_clarkzjw(guide, src, dst, radius, eps);
+        }
+
+        public static Image<Gray, byte> GuidedFilterBy_clarkzjw(
+                Image<Bgr, byte> guideImage,
+                Image<Gray, byte> inputImage,
+                int radius,
+                double eps
+            )
+        {
+            Mat dst = (new Image<Gray, byte>(inputImage.Size)).Mat;
+            GuidedFilterBy_clarkzjw(guideImage.Mat, inputImage.Mat, dst, radius, eps);
+            Image<Gray, byte> result = dst.ToImage<Gray, byte>();
+            return result;
+        }
+
+        public static void GuidedFilterColorBy_clarkzjw(Mat guide, Mat src, Mat dst, int radius, double eps)
+        {
+            int height = src.Rows;
+            int width = src.Cols;
+            int widthstep = guide.Step;
+            int gwidthstep = src.Step;
+            int nch = guide.ElementSize;
+            int gnch = src.ElementSize;
+
+            int i, j;
+            int m, n;
+            int w;
+            int e = 0;
+            int st_row, ed_row;
+            int st_col, ed_col;
+
+            double sum_Ir, sum_Ig, sum_Ib;
+            double sum_Ir_square, sum_Ig_square, sum_Ib_square;
+            double sum_IrIg, sum_IgIb, sum_IrIb;
+            double sum_PiIr, sum_PiIg, sum_PiIb;
+            double sum_Pi;
+
+            double A, B, C, D, E, F, G, H, I, J, K, L;
+            double X, Y, Z;
+            double ak_r, ak_g, ak_b;
+            double bk;
+            double det;
+
+            double tmp_Ir, tmp_Ig, tmp_Ib;
+            double tmp_p, tmp_q;
+
+            //double* v_ak_r = (double*)malloc(sizeof(double) * height * width);
+            //double* v_ak_g = (double*)malloc(sizeof(double) * height * width);
+            //double* v_ak_b = (double*)malloc(sizeof(double) * height * width);
+            //double* v_bk = (double*)malloc(sizeof(double) * height * width);
+
+            double[] v_ak_r = new double[height * width];
+            double[] v_ak_g = new double[height * width];
+            double[] v_ak_b = new double[height * width];
+            double[] v_bk = new double[height * width];
+
+            int count = 0;
+
+            //uchar* data_guide = guide.data;
+            //uchar* data_src = src.data;
+            //uchar* data_dst = dst.data;
+
+            //Array data_guide = guide.Data;
+            //Array data_src = src.Data;
+            //Array data_dst = dst.Data;
+
+            byte[] data_guide = guide.GetData();
+            byte[] data_src = src.GetData();
+            byte[] data_dst = dst.GetData();
+
+            for (i = 0; i < height; i++)
+            {
+                for (j = 0; j < width; j++)
+                {
+                    st_row = i - radius; ed_row = i + radius;
+                    st_col = j - radius; ed_col = j + radius;
+
+                    st_row = st_row < 0 ? 0 : st_row;
+                    ed_row = ed_row >= height ? (height - 1) : ed_row;
+                    st_col = st_col < 0 ? 0 : st_col;
+                    ed_col = ed_col >= width ? (width - 1) : ed_col;
+
+                    sum_Ir = sum_Ig = sum_Ib = 0;
+                    sum_Ir_square = sum_Ig_square = sum_Ib_square = 0;
+                    sum_IrIg = sum_IgIb = sum_IrIb = 0;
+                    sum_PiIr = sum_PiIg = sum_PiIb = 0;
+                    sum_Pi = 0;
+                    w = 0;
+
+                    for (m = st_row; m <= ed_row; m++)
+                    {
+                        for (n = st_col; n <= ed_col; n++)
+                        {
+                            //tmp_Ib = *(data_guide + m * widthstep + n * nch);
+                            //tmp_Ig = *(data_guide + m * widthstep + n * nch + 1);
+                            //tmp_Ir = *(data_guide + m * widthstep + n * nch + 2);
+
+                            //tmp_p = *(data_src + m * gwidthstep + n * gnch);
+
+                            //tmp_Ib = (double)data_guide.GetValue(m * widthstep + n * nch);
+                            //tmp_Ig = (double)data_guide.GetValue(m * widthstep + n * nch + 1);
+                            //tmp_Ir = (double)data_guide.GetValue(m * widthstep + n * nch + 2);
+
+                            //tmp_p = (double)data_src.GetValue(m * gwidthstep + n * gnch);
+
+                            tmp_Ib = (double)data_guide[m * widthstep + n * nch];
+                            tmp_Ig = (double)data_guide[m * widthstep + n * nch + 1];
+                            tmp_Ir = (double)data_guide[m * widthstep + n * nch + 2];
+
+                            tmp_p = (double)data_src[m * gwidthstep + n * gnch];
+
+                            sum_Ib += tmp_Ib;
+                            sum_Ig += tmp_Ig;
+                            sum_Ir += tmp_Ir;
+
+                            sum_Ib_square += tmp_Ib * tmp_Ib;
+                            sum_Ig_square += tmp_Ig * tmp_Ig;
+                            sum_Ir_square += tmp_Ir * tmp_Ir;
+
+                            sum_IrIg += tmp_Ir * tmp_Ig;
+                            sum_IgIb += tmp_Ig * tmp_Ib;
+                            sum_IrIb += tmp_Ir * tmp_Ib;
+
+                            sum_Pi += tmp_p;
+                            sum_PiIb += tmp_p * tmp_Ib;
+                            sum_PiIg += tmp_p * tmp_Ig;
+                            sum_PiIr += tmp_p * tmp_Ir;
+
+                            w++;
+                        }
+                    }
+
+                    A = (sum_Ir_square + w * eps) * sum_Ig - sum_Ir * sum_IrIg;
+                    B = sum_IrIg * sum_Ig - sum_Ir * (sum_Ig_square + w * eps);
+                    C = sum_IrIb * sum_Ig - sum_Ir * sum_IgIb;
+                    D = sum_PiIr * sum_Ig - sum_PiIg * sum_Ir;
+                    E = (sum_Ir_square + w * eps) * sum_Ib - sum_IrIb * sum_Ir;
+                    F = sum_IrIg * sum_Ib - sum_IgIb * sum_Ir;
+                    G = sum_IrIb * sum_Ib - (sum_Ib_square + w * eps) * sum_Ir;
+                    H = sum_PiIr * sum_Ib - sum_PiIb * sum_Ir;
+                    I = (sum_Ir_square + w * eps) * w - sum_Ir * sum_Ir;
+                    J = sum_IrIg * w - sum_Ig * sum_Ir;
+                    K = sum_IrIb * w - sum_Ib * sum_Ir;
+                    L = sum_PiIr * w - sum_Pi * sum_Ir;
+
+                    det = A * F * K + B * G * I + C * E * J - C * F * I - A * G * J - B * E * K;
+                    X = D * F * K + B * G * L + C * H * J - C * F * L - D * G * J - B * H * K;
+                    Y = A * H * K + D * G * I + C * E * L - C * H * I - D * E * K - A * G * L;
+                    Z = A * F * L + B * H * I + D * J * E - D * F * I - B * E * L - A * H * J;
+
+                    ak_r = X / det;
+                    ak_g = Y / det;
+                    ak_b = Z / det;
+
+                    bk = (sum_PiIg - sum_IrIg * ak_r - (sum_Ig_square + w * eps) * ak_g - sum_IgIb * ak_b) / sum_Ig;
+
+                    //tmp_Ib = *(data_guide + i * widthstep + j * nch);
+                    //tmp_Ig = *(data_guide + i * widthstep + j * nch + 1);
+                    //tmp_Ir = *(data_guide + i * widthstep + j * nch + 2);
+
+                    //tmp_Ib = (double)data_guide.GetValue(i * widthstep + j * nch);
+                    //tmp_Ig = (double)data_guide.GetValue(i * widthstep + j * nch + 1);
+                    //tmp_Ir = (double)data_guide.GetValue(i * widthstep + j * nch + 2);
+
+                    tmp_Ib = (double)data_guide[i * widthstep + j * nch];
+                    tmp_Ig = (double)data_guide[i * widthstep + j * nch + 1];
+                    tmp_Ir = (double)data_guide[i * widthstep + j * nch + 2];
+
+                    tmp_q = ak_b * tmp_Ib + ak_g * tmp_Ig + ak_r * tmp_Ir + bk;
+                    tmp_q = tmp_q > 255 ? 255 : (tmp_q < 0 ? 0 : tmp_q);
+
+                    //*(data_dst + i * gwidthstep + j * gnch) = cvRound(tmp_q);
+                    //data_dst.SetValue(Math.Round(tmp_q), i * gwidthstep + j * gnch);
+                    data_dst[i * gwidthstep + j * gnch] = (byte)Math.Round(tmp_q);
+
+                    v_ak_b[count] = ak_b;
+                    v_ak_g[count] = ak_g;
+                    v_ak_r[count] = ak_r;
+                    v_bk[count] = bk;
+                    count++;
+                }
+            }
+
+            for (i = 0; i < height; i++)
+            {
+                for (j = 0; j < width; j++)
+                {
+                    st_row = i - radius; ed_row = i + radius;
+                    st_col = j - radius; ed_col = j + radius;
+
+                    st_row = st_row < 0 ? 0 : st_row;
+                    ed_row = ed_row >= height ? (height - 1) : ed_row;
+                    st_col = st_col < 0 ? 0 : st_col;
+                    ed_col = ed_col >= width ? (width - 1) : ed_col;
+
+                    // double ak_r, ak_g, ak_b, bk;
+                    ak_r = ak_g = ak_b = bk = 0;
+
+                    int number = 0;
+                    for (m = st_row; m <= ed_row; m++)
+                    {
+                        for (n = st_col; n <= ed_col; n++)
+                        {
+                            ak_r += v_ak_r[(m) * width + n];
+                            ak_g += v_ak_g[(m) * width + n];
+                            ak_b += v_ak_b[(m) * width + n];
+                            bk += v_bk[(m) * width + n];
+                            number++;
+                        }
+                    }
+
+                    ak_r /= number;
+                    ak_g /= number;
+                    ak_b /= number;
+                    bk /= number;
+
+                    //tmp_Ib = *(data_guide + i * widthstep + j * nch);
+                    //tmp_Ig = *(data_guide + i * widthstep + j * nch + 1);
+                    //tmp_Ir = *(data_guide + i * widthstep + j * nch + 2);
+
+                    //tmp_Ib = (double)data_guide.GetValue(i * widthstep + j * nch);
+                    //tmp_Ig = (double)data_guide.GetValue(i * widthstep + j * nch + 1);
+                    //tmp_Ir = (double)data_guide.GetValue(i * widthstep + j * nch + 2);
+
+                    tmp_Ib = (double)data_guide[i * widthstep + j * nch];
+                    tmp_Ig = (double)data_guide[i * widthstep + j * nch + 1];
+                    tmp_Ir = (double)data_guide[i * widthstep + j * nch + 2];
+
+                    tmp_q = ak_b * tmp_Ib + ak_g * tmp_Ig + ak_r * tmp_Ir + bk;
+                    tmp_q = tmp_q > 255 ? 255 : (tmp_q < 0 ? 0 : tmp_q);
+
+                    //*(data_dst + i * gwidthstep + j * gnch) = cvRound(tmp_q);
+                    //data_dst.SetValue(Math.Round(tmp_q), i * gwidthstep + j * gnch);
+                    data_dst[i * gwidthstep + j * gnch] = (byte)Math.Round(tmp_q);
+                }
+            }
+            //free(v_ak_b);
+            //free(v_ak_g);
+            //free(v_ak_r);
+            //free(v_bk);
+
+            dst.SetTo(data_dst);
+        }
+
+        public static void GuidedFilterMonoBy_clarkzjw(Mat guide, Mat src, Mat dst, int radius, double eps)
+        {
+            throw new NotImplementedException();
+        }
+
+        #endregion
+
+        #region Image Min, Max
+
+        public static ImageMinMaxResult ImageMinMax(Image<Bgr, Byte> image)
+        {
+            double[] minValues, maxValues;
+            Point[] minLocations, maxLocations;
+
+            image.MinMax(out minValues, out maxValues, out minLocations, out maxLocations);
+
+            return new ImageMinMaxResult
+            {
+                MinValues = minValues,
+                MaxValues = maxValues,
+                MinLocations = minLocations,
+                MaxLocations = maxLocations
+            };
+        }
+
+        public static ImageMinMaxResult ImageMinMax(Image<Gray, Byte> image)
+        {
+            double[] minValues, maxValues;
+            Point[] minLocations, maxLocations;
+
+            image.MinMax(out minValues, out maxValues, out minLocations, out maxLocations);
+
+            return new ImageMinMaxResult
+            {
+                MinValues = minValues,
+                MaxValues = maxValues,
+                MinLocations = minLocations,
+                MaxLocations = maxLocations
+            };
+        }
+
+        #endregion
     }
 
 
@@ -968,5 +1307,17 @@ namespace diploma5_csharp.Helpers
     {
         public double Intensity { get; set; }
         public Point Position { get; set; }
+    }
+
+    public class ImageMinMaxResult
+    {
+        public ImageMinMaxResult()
+        {
+        }
+
+        public double[] MinValues { get; set; }
+        public double[] MaxValues { get; set; }
+        public Point[] MinLocations { get; set; }
+        public Point[] MaxLocations { get; set; }
     }
 }

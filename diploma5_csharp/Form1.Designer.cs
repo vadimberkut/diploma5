@@ -91,6 +91,7 @@
             this.textBoxFvmMetric = new System.Windows.Forms.TextBox();
             this.label13 = new System.Windows.Forms.Label();
             this.buttonRemoveFogUsingCustomMethodWithDepthEstimation = new System.Windows.Forms.Button();
+            this.buttonRemoveFogUsingMultiCoreDSPMethod = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).BeginInit();
@@ -711,11 +712,23 @@
             this.buttonRemoveFogUsingCustomMethodWithDepthEstimation.UseVisualStyleBackColor = false;
             this.buttonRemoveFogUsingCustomMethodWithDepthEstimation.Click += new System.EventHandler(this.buttonRemoveFogUsingCustomMethodWithDepthEstimation_Click);
             // 
+            // buttonRemoveFogUsingMultiCoreDSPMethod
+            // 
+            this.buttonRemoveFogUsingMultiCoreDSPMethod.BackColor = System.Drawing.SystemColors.Control;
+            this.buttonRemoveFogUsingMultiCoreDSPMethod.Location = new System.Drawing.Point(964, 685);
+            this.buttonRemoveFogUsingMultiCoreDSPMethod.Name = "buttonRemoveFogUsingMultiCoreDSPMethod";
+            this.buttonRemoveFogUsingMultiCoreDSPMethod.Size = new System.Drawing.Size(121, 32);
+            this.buttonRemoveFogUsingMultiCoreDSPMethod.TabIndex = 62;
+            this.buttonRemoveFogUsingMultiCoreDSPMethod.Text = "Multi-core DSP";
+            this.buttonRemoveFogUsingMultiCoreDSPMethod.UseVisualStyleBackColor = false;
+            this.buttonRemoveFogUsingMultiCoreDSPMethod.Click += new System.EventHandler(this.buttonRemoveFogUsingMultiCoreDSPMethod_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1235, 758);
+            this.Controls.Add(this.buttonRemoveFogUsingMultiCoreDSPMethod);
             this.Controls.Add(this.buttonRemoveFogUsingCustomMethodWithDepthEstimation);
             this.Controls.Add(this.label13);
             this.Controls.Add(this.textBoxFvmMetric);
@@ -850,6 +863,7 @@
         private System.Windows.Forms.TextBox textBoxFvmMetric;
         private System.Windows.Forms.Label label13;
         private System.Windows.Forms.Button buttonRemoveFogUsingCustomMethodWithDepthEstimation;
+        private System.Windows.Forms.Button buttonRemoveFogUsingMultiCoreDSPMethod;
     }
 }
 

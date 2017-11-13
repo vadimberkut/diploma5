@@ -8,7 +8,6 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Accord;
-using Accord.MachineLearning;
 using Accord.Statistics.Distributions.DensityKernels;
 using diploma5_csharp.CustomFormElements;
 using diploma5_csharp.Models;
@@ -538,6 +537,26 @@ namespace diploma5_csharp
             });
             this.textBoxFvmMetric.Text = result.Metrics.FVM.ToString();
         }
+
+        private void buttonRemoveFogUsingMultiCoreDSPMethod_Click(object sender, EventArgs e)
+        {
+            var result = _appState.Fog.RemoveFogUsingMultiCoreDSPMethod(_appState.InputImageBgr, new FogRemovalParams() { ShowWindows = GetCheckBoxValue(checkBoxShowOptionalWindows) });
+            _appState.SetOutputImage(result.EnhancementResult);
+            _appState.SetShadowMaskImage(result.DetectionResult);
+            this.DisplayImageInPictureBox(pictureBox3, result.EnhancementResult.Bitmap);
+            this.DisplayImageInPictureBox(pictureBox2, result.DetectionResult.Bitmap);
+
+            // save metrics
+            _methodInfoStore.AddOrUpdate(new EnhanceMethodInfoModel
+            {
+                ImageFileName = _appState.InputImageFileName,
+                EnhanceMethodName = nameof(Fog.RemoveFogUsingPhysicsBasedMethod),
+                Metrics = result.Metrics,
+                ExecutionTimeMs = result.ExecutionTimeMs
+            });
+            this.textBoxFvmMetric.Text = result.Metrics.FVM.ToString();
+        }
+
         private void buttonRemoveFogUsingCustomMethod_Click(object sender, EventArgs e)
         {
             var result = _appState.Fog.RemoveFogUsingCustomMethod(_appState.InputImageBgr, new FogRemovalParams() { ShowWindows = GetCheckBoxValue(checkBoxShowOptionalWindows), InputImageFileName = _appState.InputImageFileName });

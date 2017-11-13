@@ -159,6 +159,46 @@ namespace diploma5_csharp
             return airlight;
         }
 
+        /// <summary>
+        /// More elegant code to estimate A
+        /// </summary>
+        /// <param name="DC"></param>
+        /// <param name="inputImage"></param>
+        /// <returns></returns>
+        private int EstimateAirlightI(Image<Gray, Byte> DC, Image<Bgr, Byte> inputImage)
+        {
+            var lab = ImageHelper.ToLab(inputImage);
+            double takePercent = 0.001; // take most dark transmission's pixels
+            double takeAmount = (DC.Rows * DC.Cols) * takePercent;
+            var brightestPixels = ImageHelper.GetImagePixelsWithCoords(DC).OrderByDescending(x => x.Intensity).Take((int)takeAmount);
+            var mostBrightesDCPixelInImage = brightestPixels.OrderByDescending(x => {
+                return lab[x.Coords.Row, x.Coords.Col].X;
+            }).First();
+            var A = lab[mostBrightesDCPixelInImage.Coords.Row, mostBrightesDCPixelInImage.Coords.Col].X; // take most dark
+            return (int)A;
+
+        }
+
+        /// <summary>
+        /// Estimates A from transmission that was obtained without using of Dark Channel
+        /// </summary>
+        /// <param name="T"></param>
+        /// <param name="inputImage"></param>
+        /// <returns></returns>
+        private int EstimateAirlightByTransmission(Image<Gray, Byte> T, Image<Bgr, Byte> inputImage)
+        {
+            var lab = ImageHelper.ToLab(inputImage);
+            double takePercent = 0.001; // take most dark transmission's pixels
+            double takeAmount = (T.Rows * T.Cols) * takePercent;
+            var mostDarkPixels = ImageHelper.GetImagePixelsWithCoords(T).OrderBy(x => x.Intensity).Take((int)takeAmount);
+            var mostBrightesTransmissionPixelInImage = mostDarkPixels.OrderByDescending(x => {
+                return lab[x.Coords.Row, x.Coords.Col].X;
+            }).First();
+            var A = lab[mostBrightesTransmissionPixelInImage.Coords.Row, mostBrightesTransmissionPixelInImage.Coords.Col].X; // take most dark
+            return (int)A;
+
+        }
+
         //estimate transmission map
         private Image<Gray, Byte> EstimateTransmission(Image<Gray, Byte> DC, int airlight) //DC - darkChannel
         {
@@ -1233,6 +1273,128 @@ namespace diploma5_csharp
 
         #endregion
 
+        #region Real Time Image Haze Removal on Multi-core DSP
+
+        public BaseMethodResponse RemoveFogUsingMultiCoreDSPMethod(Image<Bgr, Byte> image, FogRemovalParams _params)
+        {
+            Image<Gray, Byte> transmission;
+            Image<Bgr, Byte> result = new Image<Bgr, Byte>(image.Size);
+
+            var stopwatch = new Stopwatch();
+            stopwatch.Start();
+
+            // down sample input image
+            // more about interpolation types - https://stackoverflow.com/questions/3112364/how-do-i-choose-an-image-interpolation-method-emgu-opencv
+            double scale = 0.75;
+            Inter interpolationType = Inter.Linear;
+            var downsampled = image.Resize(scale, interpolationType);
+
+            // compute dark channel
+            // TODO - there is faster way to compute DC using max-min filter
+            var DC = GetDarkChannel(downsampled, patchSize: 7);
+
+            // estimate airlight
+            int A = EstimateAirlightI(DC, downsampled);
+
+            // compute transmission
+            var T = EstimateTransmission(DC, A);
+
+            // improve T with guided filter
+            //var improvedT = ImageHelper.GuidedFilter(guideImage: downsampled, inputImage: T, radius: 7, eps: 0.02);
+            Image<Gray, byte> improvedT;// = new Image<Gray, byte>(T.Size);
+            try
+            {
+                improvedT = ImageHelper.GuidedFilterBy_clarkzjw(guideImage: downsampled, inputImage: T, radius: 7, eps: 0.02);
+            }
+            catch(Exception ex)
+            {
+                // use default EmguCv implementation
+                improvedT = ImageHelper.GuidedFilterEmguCv(guideImage: downsampled, inputImage: T, radius: 7, eps: 0.02);
+            }
+            transmission = improvedT;
+
+            // get high resolution T (resize to origin size)
+            var upsampledT = improvedT.Resize(image.Width, image.Height, interpolationType);
+
+            // apply formula for fog removal
+            var hazeFree = new Image<Bgr, byte>(image.Size);
+            double t;
+            double t0 = 0.1;
+            Bgr I; double b, g, r;
+            for (int m = 0; m < image.Rows; m++)
+            {
+                for (int n = 0; n < image.Cols; n++)
+                {
+                    t = upsampledT[m, n].Intensity / 255;
+                    t = Math.Max(t, t0);
+                    I = image[m, n];
+
+                    b = (I.Blue - A) / t + A;
+                    g = (I.Green - A) / t + A;
+                    r = (I.Red - A) / t + A;
+
+                    b = b > 255 ? 255 : Math.Abs(b);
+                    g = g > 255 ? 255 : Math.Abs(g);
+                    r = r > 255 ? 255 : Math.Abs(r);
+
+                    hazeFree[m, n] = new Bgr(b, g, r);
+                }
+            }
+
+            // apply color calibration to enhace global intensity, contrast, color (use histogram scratching)
+            var colorCalibrated = new Image<Bgr, byte>(image.Size);
+            double w = 0.95; // 0 < w < 1; adujusts max and min intensity
+            const int MAX_VAL = 255; // the max intensity of channel c in output image, which is set to 255 to maximize the contrast
+            var minMaxResult = ImageHelper.ImageMinMax(hazeFree);
+            double bMin = minMaxResult.MinValues[0], gMin = minMaxResult.MinValues[1], rMin = minMaxResult.MinValues[2];
+            double bMax = minMaxResult.MaxValues[0], gMax = minMaxResult.MaxValues[1], rMax = minMaxResult.MaxValues[2];
+            for (int m = 0; m < image.Rows; m++)
+            {
+                for (int n = 0; n < image.Cols; n++)
+                {
+                    I = hazeFree[m, n];
+
+                    b = ((I.Blue - bMin / w) / (w * bMax - bMin / w)) * MAX_VAL;
+                    g = ((I.Green - gMin / w) / (w * gMax - gMin / w)) * MAX_VAL;
+                    r = ((I.Red - rMin / w) / (w * rMax - rMin / w)) * MAX_VAL;
+
+                    b = b > 255 ? 255 : Math.Abs(b);
+                    g = g > 255 ? 255 : Math.Abs(g);
+                    r = r > 255 ? 255 : Math.Abs(r);
+
+                    colorCalibrated[m, n] = new Bgr(b, g, r);
+                }
+            }
+
+            // obtain result
+            result = colorCalibrated;
+
+            stopwatch.Stop();
+
+            if (_params.ShowWindows)
+            {
+                EmguCvWindowManager.Display(image, "image");
+                EmguCvWindowManager.Display(downsampled, "downsampled");
+                EmguCvWindowManager.Display(T, "T");
+                EmguCvWindowManager.Display(improvedT, "improvedT");
+                EmguCvWindowManager.Display(upsampledT, "upsampledT");
+                EmguCvWindowManager.Display(hazeFree, "hazeFree");
+                EmguCvWindowManager.Display(colorCalibrated, "colorCalibrated");
+                EmguCvWindowManager.Display(result, "result");
+            }
+
+            var Metrics = ImageMetricHelper.ComputeAll(image.Convert<Bgr, double>(), result.Convert<Bgr, double>());
+            return new BaseMethodResponse
+            {
+                EnhancementResult = result,
+                DetectionResult = transmission,
+                Metrics = Metrics,
+                ExecutionTimeMs = stopwatch.ElapsedMilliseconds
+            };
+        }
+
+        #endregion
+
         #region My Fog removal method
 
         public BaseMethodResponse RemoveFogUsingCustomMethod(Image<Bgr, Byte> image, FogRemovalParams _params)
@@ -1350,7 +1512,7 @@ namespace diploma5_csharp
             var preprocessed = image.Clone();
 
             // 1. Compute transmission using FFT
-            var gray = ImageHelper.TotGray(preprocessed); // TODO - get gray image in more smart way
+            var gray = ImageHelper.ToGray(preprocessed); // TODO - get gray image in more smart way
             var hpF = ImageHelper.ButterworthHightPassFilter(gray);
             var lpF = ImageHelper.ButterworthLowPassFilter(gray);
             var T_float = hpF + lpF;
@@ -1435,7 +1597,8 @@ namespace diploma5_csharp
             //var postProcessed = GammaCorrection.Adaptive(processed);
             var postProcessed = processed.Clone();
             // create filter
-            ContrastStretch filter = new ContrastStretch();
+            //AForge.Imaging.Filters.ContrastStretch filter = new AForge.Imaging.Filters.ContrastStretch();
+            Accord.Imaging.Filters.ContrastStretch filter = new Accord.Imaging.Filters.ContrastStretch();
             filter.ApplyInPlace(postProcessed.Bitmap);
             result = postProcessed;
 
@@ -1499,7 +1662,7 @@ namespace diploma5_csharp
             var depthResultPath = Path.Combine(imageFolder, $"{imageFileNameWithoutExtension}_disp{imageFileExtension}");
             //FileInfo depthFile = new FileInfo();
             var depthMapColor = new Image<Bgr, Byte>(depthResultPath);
-            var depthMapGray = ImageHelper.TotGray(depthMapColor);
+            var depthMapGray = ImageHelper.ToGray(depthMapColor);
 
             //var dcpResponse = this.RemoveFogUsingDarkChannelPrior(image, new FogRemovalParams() { ShowWindows = false });
             int patchSize = 7;
@@ -1550,9 +1713,7 @@ namespace diploma5_csharp
             };
         }
 
-
-
-#endregion
+        #endregion
     }
 
     class RobbyTanPixelPhi
