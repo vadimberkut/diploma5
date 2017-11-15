@@ -72,5 +72,10 @@ namespace diploma5_csharp.Helpers
 
             return sd;
         }
+
+        public static double Moda(IEnumerable<double> values)
+        {
+            return values.GroupBy(x => x, (key, g) => new { Value = key, Count = g.Count() }).OrderByDescending(x => x.Count).Select(x => x.Value).FirstOrDefault();
+        }
     }
 }

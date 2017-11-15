@@ -4,6 +4,7 @@ using Emgu.CV;
 using Emgu.CV.Structure;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -14,11 +15,13 @@ namespace diploma5_csharp
    public  class Dust
     {
         // Source: http://www.mecs-press.org/ijisa/ijisa-v8-n8/IJISA-V8-N8-2.pdf
-        public Image<Bgr, Byte> VisibilityEnhancementUsingTunedTriThresholdFuzzyIntensificationOperatorsMethod(
+        public BaseMethodResponse VisibilityEnhancementUsingTunedTriThresholdFuzzyIntensificationOperatorsMethod(
             Image<Bgr, Byte> image, 
             TriThresholdFuzzyIntensificationOperatorsMethodParams _params
         )
         {
+            var stopwatch = new Stopwatch();
+            stopwatch.Start();
 
             //Image<Bgr, Byte> result = image.Clone();
             Image<Bgr, Byte> result = new Image<Bgr, byte>(image.Size);
@@ -72,7 +75,17 @@ namespace diploma5_csharp
                 }
             }
 
-            return result;
+            stopwatch.Stop();
+
+            var Metrics = ImageMetricHelper.ComputeAll(image.Convert<Bgr, double>(), result.Convert<Bgr, double>());
+            return new BaseMethodResponse
+            {
+                EnhancementResult = result,
+                DetectionResult = new Image<Gray, byte>(image.Size),
+                DetailedResults = new List<IInputArray> { image, result },
+                Metrics = Metrics,
+                ExecutionTimeMs = stopwatch.ElapsedMilliseconds
+            };
         }
         private double MembershipFunction(double C, double minC, double maxC)
         {

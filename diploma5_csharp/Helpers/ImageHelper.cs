@@ -1238,6 +1238,70 @@ namespace diploma5_csharp.Helpers
         }
 
         #endregion
+
+        public static Image<Gray, byte> CalibrateColorsWithHistogramScratching(Image<Gray, byte> image, double w = 0.95)
+        {
+            // 0 < w < 1; adujusts max and min intensity
+
+            var colorCalibrated = new Image<Gray, byte>(image.Size);
+            const int MAX_VAL = 255; // the max intensity of channel c in output image, which is set to 255 to maximize the contrast
+            var minMaxResult = ImageHelper.ImageMinMax(image);
+            double min = minMaxResult.MinValues[0];
+            double max = minMaxResult.MaxValues[0];
+            for (int m = 0; m < image.Rows; m++)
+            {
+                for (int n = 0; n < image.Cols; n++)
+                {
+                    var I = image[m, n];
+
+                    var intensity = ((I.Intensity - min / w) / (w * max - min / w)) * MAX_VAL;
+                    intensity = intensity > 255 ? 255 : Math.Abs(intensity);
+                    colorCalibrated[m, n] = new Gray(intensity);
+                }
+            }
+            return colorCalibrated;
+        }
+
+        public static Image<Bgr, byte> CalibrateColorsWithHistogramScratching(Image<Bgr, byte> image, double w = 0.95)
+        {
+            var channels = image.Split();
+            for (int i = 0; i < channels.Length; i++)
+            {
+                channels[i] = CalibrateColorsWithHistogramScratching(channels[i], w);
+            }
+            return new Image<Bgr, byte>(channels);
+        }
+
+        //public static Image<Bgr, byte> AdjustContrast(Image<Bgr, byte> image, double threshold = 10)
+        //{
+        //    Image<Bgr, byte> result = new Image<Bgr, byte>(image.Size);
+        //    for (int i = 0; i < image.Rows; i++)
+        //    {
+        //        for (int j = 0; j < image.Cols; j++)
+        //        {
+        //            var B = image[i, j].Blue;
+        //            var G = image[i, j].Green;
+        //            var R = image[i, j].Red;
+
+        //            double B_ = B;
+        //            double G_ = G;
+        //            double R_ = R;
+
+        //            // ADJUST THE CONTRAST
+        //            var contrast = Math.Pow((100.0 + threshold) / 100.0, 2);
+        //            B_ = ((((B_ / 255.0) - 0.5) * contrast) + 0.5) * 255.0;
+        //            G_ = ((((G_ / 255.0) - 0.5) * contrast) + 0.5) * 255.0;
+        //            R_ = ((((R_ / 255.0) - 0.5) * contrast) + 0.5) * 255.0;
+
+        //            B_ = B_ > 255 ? 255 : Math.Abs(B_);
+        //            G_ = G_ > 255 ? 255 : Math.Abs(G_);
+        //            R_ = R_ > 255 ? 255 : Math.Abs(R_);
+
+        //            result[i, j] = new Bgr(B_, G_, R_);
+        //        }
+        //    }
+        //    return result;
+        //}
     }
 
 

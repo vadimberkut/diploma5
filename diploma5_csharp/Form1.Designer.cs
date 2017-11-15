@@ -53,6 +53,7 @@
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.exportMetricsToCSVToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.windowsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.closeAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -92,6 +93,8 @@
             this.label13 = new System.Windows.Forms.Label();
             this.buttonRemoveFogUsingCustomMethodWithDepthEstimation = new System.Windows.Forms.Button();
             this.buttonRemoveFogUsingMultiCoreDSPMethod = new System.Windows.Forms.Button();
+            this.buttonRunAllMethods = new System.Windows.Forms.Button();
+            this.textBoxRunAllMethods = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).BeginInit();
@@ -331,6 +334,7 @@
             this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.openToolStripMenuItem,
             this.saveToolStripMenuItem,
+            this.exportMetricsToCSVToolStripMenuItem,
             this.exitToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
@@ -339,21 +343,28 @@
             // openToolStripMenuItem
             // 
             this.openToolStripMenuItem.Name = "openToolStripMenuItem";
-            this.openToolStripMenuItem.Size = new System.Drawing.Size(103, 22);
+            this.openToolStripMenuItem.Size = new System.Drawing.Size(187, 22);
             this.openToolStripMenuItem.Text = "Open";
             this.openToolStripMenuItem.Click += new System.EventHandler(this.openToolStripMenuItem_Click);
             // 
             // saveToolStripMenuItem
             // 
             this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            this.saveToolStripMenuItem.Size = new System.Drawing.Size(103, 22);
+            this.saveToolStripMenuItem.Size = new System.Drawing.Size(187, 22);
             this.saveToolStripMenuItem.Text = "Save";
             this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click);
+            // 
+            // exportMetricsToCSVToolStripMenuItem
+            // 
+            this.exportMetricsToCSVToolStripMenuItem.Name = "exportMetricsToCSVToolStripMenuItem";
+            this.exportMetricsToCSVToolStripMenuItem.Size = new System.Drawing.Size(187, 22);
+            this.exportMetricsToCSVToolStripMenuItem.Text = "Export Metrics to CSV";
+            this.exportMetricsToCSVToolStripMenuItem.Click += new System.EventHandler(this.exportMetricsToCSVToolStripMenuItem_Click);
             // 
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(103, 22);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(187, 22);
             this.exitToolStripMenuItem.Text = "Exit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
@@ -579,7 +590,7 @@
             // buttonRobbyTanFogRemovalMethod
             // 
             this.buttonRobbyTanFogRemovalMethod.BackColor = System.Drawing.SystemColors.Control;
-            this.buttonRobbyTanFogRemovalMethod.Location = new System.Drawing.Point(710, 489);
+            this.buttonRobbyTanFogRemovalMethod.Location = new System.Drawing.Point(844, 560);
             this.buttonRobbyTanFogRemovalMethod.Name = "buttonRobbyTanFogRemovalMethod";
             this.buttonRobbyTanFogRemovalMethod.Size = new System.Drawing.Size(121, 32);
             this.buttonRobbyTanFogRemovalMethod.TabIndex = 49;
@@ -590,7 +601,7 @@
             // buttonRemoveFogUsingMedianChannelPrior
             // 
             this.buttonRemoveFogUsingMedianChannelPrior.BackColor = System.Drawing.SystemColors.Control;
-            this.buttonRemoveFogUsingMedianChannelPrior.Location = new System.Drawing.Point(710, 527);
+            this.buttonRemoveFogUsingMedianChannelPrior.Location = new System.Drawing.Point(710, 489);
             this.buttonRemoveFogUsingMedianChannelPrior.Name = "buttonRemoveFogUsingMedianChannelPrior";
             this.buttonRemoveFogUsingMedianChannelPrior.Size = new System.Drawing.Size(121, 32);
             this.buttonRemoveFogUsingMedianChannelPrior.TabIndex = 50;
@@ -601,7 +612,7 @@
             // buttonRemoveFogUsingIdcpWithClahe
             // 
             this.buttonRemoveFogUsingIdcpWithClahe.BackColor = System.Drawing.SystemColors.Control;
-            this.buttonRemoveFogUsingIdcpWithClahe.Location = new System.Drawing.Point(710, 563);
+            this.buttonRemoveFogUsingIdcpWithClahe.Location = new System.Drawing.Point(710, 527);
             this.buttonRemoveFogUsingIdcpWithClahe.Name = "buttonRemoveFogUsingIdcpWithClahe";
             this.buttonRemoveFogUsingIdcpWithClahe.Size = new System.Drawing.Size(121, 32);
             this.buttonRemoveFogUsingIdcpWithClahe.TabIndex = 51;
@@ -633,7 +644,7 @@
             // buttonEnhaceVisibilityUsingRobbyTanMethodForRoads
             // 
             this.buttonEnhaceVisibilityUsingRobbyTanMethodForRoads.BackColor = System.Drawing.SystemColors.Control;
-            this.buttonEnhaceVisibilityUsingRobbyTanMethodForRoads.Location = new System.Drawing.Point(710, 601);
+            this.buttonEnhaceVisibilityUsingRobbyTanMethodForRoads.Location = new System.Drawing.Point(844, 598);
             this.buttonEnhaceVisibilityUsingRobbyTanMethodForRoads.Name = "buttonEnhaceVisibilityUsingRobbyTanMethodForRoads";
             this.buttonEnhaceVisibilityUsingRobbyTanMethodForRoads.Size = new System.Drawing.Size(121, 40);
             this.buttonEnhaceVisibilityUsingRobbyTanMethodForRoads.TabIndex = 54;
@@ -644,7 +655,7 @@
             // buttonRemoveFogUsingDCPAndDFT
             // 
             this.buttonRemoveFogUsingDCPAndDFT.BackColor = System.Drawing.SystemColors.Control;
-            this.buttonRemoveFogUsingDCPAndDFT.Location = new System.Drawing.Point(710, 647);
+            this.buttonRemoveFogUsingDCPAndDFT.Location = new System.Drawing.Point(710, 565);
             this.buttonRemoveFogUsingDCPAndDFT.Name = "buttonRemoveFogUsingDCPAndDFT";
             this.buttonRemoveFogUsingDCPAndDFT.Size = new System.Drawing.Size(121, 32);
             this.buttonRemoveFogUsingDCPAndDFT.TabIndex = 55;
@@ -655,7 +666,7 @@
             // buttonRemoveFogUsingCustomMethod
             // 
             this.buttonRemoveFogUsingCustomMethod.BackColor = System.Drawing.SystemColors.Control;
-            this.buttonRemoveFogUsingCustomMethod.Location = new System.Drawing.Point(710, 723);
+            this.buttonRemoveFogUsingCustomMethod.Location = new System.Drawing.Point(710, 641);
             this.buttonRemoveFogUsingCustomMethod.Name = "buttonRemoveFogUsingCustomMethod";
             this.buttonRemoveFogUsingCustomMethod.Size = new System.Drawing.Size(121, 32);
             this.buttonRemoveFogUsingCustomMethod.TabIndex = 56;
@@ -666,7 +677,7 @@
             // buttonRemoveFogUsingLocalExtremaMethod
             // 
             this.buttonRemoveFogUsingLocalExtremaMethod.BackColor = System.Drawing.SystemColors.Control;
-            this.buttonRemoveFogUsingLocalExtremaMethod.Location = new System.Drawing.Point(710, 685);
+            this.buttonRemoveFogUsingLocalExtremaMethod.Location = new System.Drawing.Point(844, 644);
             this.buttonRemoveFogUsingLocalExtremaMethod.Name = "buttonRemoveFogUsingLocalExtremaMethod";
             this.buttonRemoveFogUsingLocalExtremaMethod.Size = new System.Drawing.Size(121, 32);
             this.buttonRemoveFogUsingLocalExtremaMethod.TabIndex = 57;
@@ -677,7 +688,7 @@
             // buttonRemoveFogUsingPhysicsBasedMethod
             // 
             this.buttonRemoveFogUsingPhysicsBasedMethod.BackColor = System.Drawing.SystemColors.Control;
-            this.buttonRemoveFogUsingPhysicsBasedMethod.Location = new System.Drawing.Point(837, 685);
+            this.buttonRemoveFogUsingPhysicsBasedMethod.Location = new System.Drawing.Point(844, 682);
             this.buttonRemoveFogUsingPhysicsBasedMethod.Name = "buttonRemoveFogUsingPhysicsBasedMethod";
             this.buttonRemoveFogUsingPhysicsBasedMethod.Size = new System.Drawing.Size(121, 32);
             this.buttonRemoveFogUsingPhysicsBasedMethod.TabIndex = 58;
@@ -704,9 +715,9 @@
             // buttonRemoveFogUsingCustomMethodWithDepthEstimation
             // 
             this.buttonRemoveFogUsingCustomMethodWithDepthEstimation.BackColor = System.Drawing.SystemColors.Control;
-            this.buttonRemoveFogUsingCustomMethodWithDepthEstimation.Location = new System.Drawing.Point(837, 723);
+            this.buttonRemoveFogUsingCustomMethodWithDepthEstimation.Location = new System.Drawing.Point(710, 679);
             this.buttonRemoveFogUsingCustomMethodWithDepthEstimation.Name = "buttonRemoveFogUsingCustomMethodWithDepthEstimation";
-            this.buttonRemoveFogUsingCustomMethodWithDepthEstimation.Size = new System.Drawing.Size(131, 32);
+            this.buttonRemoveFogUsingCustomMethodWithDepthEstimation.Size = new System.Drawing.Size(121, 32);
             this.buttonRemoveFogUsingCustomMethodWithDepthEstimation.TabIndex = 61;
             this.buttonRemoveFogUsingCustomMethodWithDepthEstimation.Text = "Custom With Depth Est";
             this.buttonRemoveFogUsingCustomMethodWithDepthEstimation.UseVisualStyleBackColor = false;
@@ -715,7 +726,7 @@
             // buttonRemoveFogUsingMultiCoreDSPMethod
             // 
             this.buttonRemoveFogUsingMultiCoreDSPMethod.BackColor = System.Drawing.SystemColors.Control;
-            this.buttonRemoveFogUsingMultiCoreDSPMethod.Location = new System.Drawing.Point(964, 685);
+            this.buttonRemoveFogUsingMultiCoreDSPMethod.Location = new System.Drawing.Point(710, 603);
             this.buttonRemoveFogUsingMultiCoreDSPMethod.Name = "buttonRemoveFogUsingMultiCoreDSPMethod";
             this.buttonRemoveFogUsingMultiCoreDSPMethod.Size = new System.Drawing.Size(121, 32);
             this.buttonRemoveFogUsingMultiCoreDSPMethod.TabIndex = 62;
@@ -723,11 +734,30 @@
             this.buttonRemoveFogUsingMultiCoreDSPMethod.UseVisualStyleBackColor = false;
             this.buttonRemoveFogUsingMultiCoreDSPMethod.Click += new System.EventHandler(this.buttonRemoveFogUsingMultiCoreDSPMethod_Click);
             // 
+            // buttonRunAllMethods
+            // 
+            this.buttonRunAllMethods.Location = new System.Drawing.Point(15, 682);
+            this.buttonRunAllMethods.Name = "buttonRunAllMethods";
+            this.buttonRunAllMethods.Size = new System.Drawing.Size(121, 27);
+            this.buttonRunAllMethods.TabIndex = 63;
+            this.buttonRunAllMethods.Text = "Run All Methods";
+            this.buttonRunAllMethods.UseVisualStyleBackColor = true;
+            this.buttonRunAllMethods.Click += new System.EventHandler(this.buttonRunAllMethods_Click);
+            // 
+            // textBoxRunAllMethods
+            // 
+            this.textBoxRunAllMethods.Location = new System.Drawing.Point(142, 686);
+            this.textBoxRunAllMethods.Name = "textBoxRunAllMethods";
+            this.textBoxRunAllMethods.Size = new System.Drawing.Size(126, 20);
+            this.textBoxRunAllMethods.TabIndex = 64;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1235, 758);
+            this.Controls.Add(this.textBoxRunAllMethods);
+            this.Controls.Add(this.buttonRunAllMethods);
             this.Controls.Add(this.buttonRemoveFogUsingMultiCoreDSPMethod);
             this.Controls.Add(this.buttonRemoveFogUsingCustomMethodWithDepthEstimation);
             this.Controls.Add(this.label13);
@@ -864,6 +894,9 @@
         private System.Windows.Forms.Label label13;
         private System.Windows.Forms.Button buttonRemoveFogUsingCustomMethodWithDepthEstimation;
         private System.Windows.Forms.Button buttonRemoveFogUsingMultiCoreDSPMethod;
+        private System.Windows.Forms.ToolStripMenuItem exportMetricsToCSVToolStripMenuItem;
+        private System.Windows.Forms.Button buttonRunAllMethods;
+        private System.Windows.Forms.TextBox textBoxRunAllMethods;
     }
 }
 

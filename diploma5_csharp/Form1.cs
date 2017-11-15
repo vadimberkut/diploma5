@@ -18,6 +18,7 @@ using Emgu.CV.UI;
 using Accord.Imaging.Converters;
 using Accord.Math;
 using diploma5_csharp.Helpers;
+using System.IO;
 
 namespace diploma5_csharp
 {
@@ -253,6 +254,13 @@ namespace diploma5_csharp
             {
                 _appState.OutputImageBgr.Save(saveFileDialog1.FileName);
             }
+        }
+
+        // Export metrics to CSV
+        private void exportMetricsToCSVToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            string folderPath = "";
+            this._methodInfoStore.SaveToCsv(folderPath);
         }
 
         //Exit
@@ -550,7 +558,7 @@ namespace diploma5_csharp
             _methodInfoStore.AddOrUpdate(new EnhanceMethodInfoModel
             {
                 ImageFileName = _appState.InputImageFileName,
-                EnhanceMethodName = nameof(Fog.RemoveFogUsingPhysicsBasedMethod),
+                EnhanceMethodName = nameof(Fog.RemoveFogUsingMultiCoreDSPMethod),
                 Metrics = result.Metrics,
                 ExecutionTimeMs = result.ExecutionTimeMs
             });
@@ -574,6 +582,8 @@ namespace diploma5_csharp
                 ExecutionTimeMs = result.ExecutionTimeMs
             });
             this.textBoxFvmMetric.Text = result.Metrics.FVM.ToString();
+
+            GC.Collect();
         }
 
         private void buttonRemoveFogUsingCustomMethodWithDepthEstimation_Click(object sender, EventArgs e)
@@ -605,8 +615,22 @@ namespace diploma5_csharp
                 _params.Dzeta = double.Parse(textBoxTriThresholdFuzzyIntensificationOperatorsMethod_Dzeta.Text);
 
             var result = _appState.Dust.VisibilityEnhancementUsingTunedTriThresholdFuzzyIntensificationOperatorsMethod(_appState.InputImageBgr, _params);
-            _appState.SetOutputImage(result);
-            this.DisplayImageInPictureBox(pictureBox3, result.Bitmap);
+            _appState.SetOutputImage(result.EnhancementResult);
+            _appState.SetShadowMaskImage(result.DetectionResult);
+            this.DisplayImageInPictureBox(pictureBox3, result.EnhancementResult.Bitmap);
+            this.DisplayImageInPictureBox(pictureBox2, result.DetectionResult.Bitmap);
+
+            // save metrics
+            _methodInfoStore.AddOrUpdate(new EnhanceMethodInfoModel
+            {
+                ImageFileName = _appState.InputImageFileName,
+                EnhanceMethodName = nameof(Dust.VisibilityEnhancementUsingTunedTriThresholdFuzzyIntensificationOperatorsMethod),
+                Metrics = result.Metrics,
+                ExecutionTimeMs = result.ExecutionTimeMs
+            });
+            this.textBoxFvmMetric.Text = result.Metrics.FVM.ToString();
+
+            GC.Collect();
         }
         private void buttonRecoveringOfWeatherDegradedImagesBasedOnRGBResponseRatioConstancyMethod_Click(object sender, EventArgs e)
         {
@@ -659,6 +683,231 @@ namespace diploma5_csharp
             EmguCvWindowManager.Display(gauss, "0 gauss");
         }
 
-        
+
+        // Run All Methods On All Test Images and save results
+        private void buttonRunAllMethods_Click(object sender, EventArgs e)
+        {
+            string imagesPath = @"D:\Google Drive\Diploma5\Images";
+            string fogImagesPath = @"FogImagesConverted";
+            string dustImagesPath = @"DustImagesConverted";
+            string rainImagesPath = @"RainImagesConverted";
+            string snowImagesPath = @"SnowImagesConverted";
+
+            string resultsDestPath = Path.Combine(imagesPath, @"Results");
+            string fogImagesDestPath = Path.Combine(imagesPath, @"Results", @"Fog");
+            string dustImagesDestPath = Path.Combine(imagesPath, @"Results", @"Dust");
+
+            if (!Directory.Exists(resultsDestPath)) Directory.CreateDirectory(resultsDestPath);
+            if (!Directory.Exists(fogImagesDestPath)) Directory.CreateDirectory(fogImagesDestPath);
+            if (!Directory.Exists(dustImagesDestPath)) Directory.CreateDirectory(dustImagesDestPath);
+
+            // Method_[Fog|Dust|Rain|Snow]_OriginFileName_DetailedResultNumber.Extension
+            const string IMAGE_FILENAME_TEMPLATE = "{0}_{1}_{2}_{3}{4}";
+
+            // fog (also test on dust, rain, snow images)
+            List<string> fogFiles = new List<string>();
+            fogFiles.AddRange(Directory.EnumerateFiles(Path.Combine(imagesPath, fogImagesPath)));
+            fogFiles.AddRange(Directory.EnumerateFiles(Path.Combine(imagesPath, dustImagesPath)));
+            fogFiles.AddRange(Directory.EnumerateFiles(Path.Combine(imagesPath, rainImagesPath)));
+            fogFiles.AddRange(Directory.EnumerateFiles(Path.Combine(imagesPath, snowImagesPath)));
+
+            List<string> dustFiles = new List<string>();
+            dustFiles.AddRange(Directory.EnumerateFiles(Path.Combine(imagesPath, fogImagesPath)));
+            dustFiles.AddRange(Directory.EnumerateFiles(Path.Combine(imagesPath, dustImagesPath)));
+            dustFiles.AddRange(Directory.EnumerateFiles(Path.Combine(imagesPath, rainImagesPath)));
+            dustFiles.AddRange(Directory.EnumerateFiles(Path.Combine(imagesPath, snowImagesPath)));
+
+            int totalFilesToProcess = fogFiles.Count + dustFiles.Count;
+            int filesProcessed = 0;
+
+            
+
+            Image<Bgr, byte> image;
+            FogRemovalParams _params;
+            string method;
+            BaseMethodResponse result;
+            string imageType;
+            IInputArray img;
+            string imgPath;
+            foreach (var imageFileName in fogFiles)
+            {
+                if (imageFileName.ToLower().Contains("fog")) imageType = "Fog";
+                else if (imageFileName.ToLower().Contains("dust")) imageType = "Dust";
+                else if (imageFileName.ToLower().Contains("rain")) imageType = "Rain";
+                else if (imageFileName.ToLower().Contains("snow")) imageType = "Snow";
+                else imageType = "Unknown";
+
+                image = new Image<Bgr, byte>(imageFileName);
+                _params = new FogRemovalParams { ShowWindows = false, InputImageFileName = imageFileName };
+
+                // DCP
+                method = "DCP"; // TODO map class method name to readable name
+                result = this._appState.Fog.RemoveFogUsingDarkChannelPrior(image, _params);
+                _methodInfoStore.AddOrUpdate(new EnhanceMethodInfoModel
+                {
+                    ImageFileName = imageFileName,
+                    EnhanceMethodName = nameof(Fog.RemoveFogUsingDarkChannelPrior),
+                    Metrics = result.Metrics,
+                    ExecutionTimeMs = result.ExecutionTimeMs
+                });
+                for (int i = result.DetailedResults.Count() - 1; i >= 0; i -= 1)
+                {
+                    img = result.DetailedResults[i];
+                    imgPath = Path.Combine(fogImagesDestPath, String.Format(IMAGE_FILENAME_TEMPLATE, method, imageType, Path.GetFileNameWithoutExtension(imageFileName), i, Path.GetExtension(imageFileName)));
+                    CvInvoke.Imwrite(imgPath, img);
+                }
+                result.EnhancementResult.Dispose();
+                result.DetectionResult.Dispose();
+                GC.Collect();
+
+                // MCP
+                method = "MCP";
+                result = this._appState.Fog.RemoveFogUsingMedianChannelPrior(image, _params);
+                _methodInfoStore.AddOrUpdate(new EnhanceMethodInfoModel
+                {
+                    ImageFileName = imageFileName,
+                    EnhanceMethodName = nameof(Fog.RemoveFogUsingDarkChannelPrior),
+                    Metrics = result.Metrics,
+                    ExecutionTimeMs = result.ExecutionTimeMs
+                });
+                for (int i = result.DetailedResults.Count() - 1; i >= 0; i -= 1)
+                {
+                    img = result.DetailedResults[i];
+                    imgPath = Path.Combine(fogImagesDestPath, String.Format(IMAGE_FILENAME_TEMPLATE, method, imageType, Path.GetFileNameWithoutExtension(imageFileName), i, Path.GetExtension(imageFileName)));
+                    CvInvoke.Imwrite(imgPath, img);
+                }
+                result.EnhancementResult.Dispose();
+                result.DetectionResult.Dispose();
+                GC.Collect();
+
+                // DCP and CLAHE
+                method = "DCPAndCLAHE";
+                result = this._appState.Fog.RemoveFogUsingIdcpWithClahe(image, _params);
+                _methodInfoStore.AddOrUpdate(new EnhanceMethodInfoModel
+                {
+                    ImageFileName = imageFileName,
+                    EnhanceMethodName = nameof(Fog.RemoveFogUsingDarkChannelPrior),
+                    Metrics = result.Metrics,
+                    ExecutionTimeMs = result.ExecutionTimeMs
+                });
+                for (int i = result.DetailedResults.Count() - 1; i >= 0; i -= 1)
+                {
+                    img = result.DetailedResults[i];
+                    imgPath = Path.Combine(fogImagesDestPath, String.Format(IMAGE_FILENAME_TEMPLATE, method, imageType, Path.GetFileNameWithoutExtension(imageFileName), i, Path.GetExtension(imageFileName)));
+                    CvInvoke.Imwrite(imgPath, img);
+                }
+                result.EnhancementResult.Dispose();
+                result.DetectionResult.Dispose();
+                GC.Collect();
+
+                // DCP and DFT
+                method = "DCPAndDFT";
+                result = this._appState.Fog.RemoveFogUsingDCPAndDFT(image, _params);
+                _methodInfoStore.AddOrUpdate(new EnhanceMethodInfoModel
+                {
+                    ImageFileName = imageFileName,
+                    EnhanceMethodName = nameof(Fog.RemoveFogUsingDarkChannelPrior),
+                    Metrics = result.Metrics,
+                    ExecutionTimeMs = result.ExecutionTimeMs
+                });
+                for (int i = result.DetailedResults.Count() - 1; i >= 0; i -= 1)
+                {
+                    img = result.DetailedResults[i];
+                    imgPath = Path.Combine(fogImagesDestPath, String.Format(IMAGE_FILENAME_TEMPLATE, method, imageType, Path.GetFileNameWithoutExtension(imageFileName), i, Path.GetExtension(imageFileName)));
+                    CvInvoke.Imwrite(imgPath, img);
+                }
+                result.EnhancementResult.Dispose();
+                result.DetectionResult.Dispose();
+                GC.Collect();
+
+                method = "MultiCoreDSP";
+                result = this._appState.Fog.RemoveFogUsingMultiCoreDSPMethod(image, _params);
+                _methodInfoStore.AddOrUpdate(new EnhanceMethodInfoModel
+                {
+                    ImageFileName = imageFileName,
+                    EnhanceMethodName = nameof(Fog.RemoveFogUsingDarkChannelPrior),
+                    Metrics = result.Metrics,
+                    ExecutionTimeMs = result.ExecutionTimeMs
+                });
+                for (int i = result.DetailedResults.Count() - 1; i >= 0; i -= 1)
+                {
+                    img = result.DetailedResults[i];
+                    imgPath = Path.Combine(fogImagesDestPath, String.Format(IMAGE_FILENAME_TEMPLATE, method, imageType, Path.GetFileNameWithoutExtension(imageFileName), i, Path.GetExtension(imageFileName)));
+                    CvInvoke.Imwrite(imgPath, img);
+                }
+                result.EnhancementResult.Dispose();
+                result.DetectionResult.Dispose();
+                GC.Collect();
+
+                method = "Custom";
+                result = this._appState.Fog.RemoveFogUsingCustomMethod(image, _params);
+                _methodInfoStore.AddOrUpdate(new EnhanceMethodInfoModel
+                {
+                    ImageFileName = imageFileName,
+                    EnhanceMethodName = nameof(Fog.RemoveFogUsingDarkChannelPrior),
+                    Metrics = result.Metrics,
+                    ExecutionTimeMs = result.ExecutionTimeMs
+                });
+                for (int i = result.DetailedResults.Count() - 1; i >= 0; i -= 1)
+                {
+                    img = result.DetailedResults[i];
+                    imgPath = Path.Combine(fogImagesDestPath, String.Format(IMAGE_FILENAME_TEMPLATE, method, imageType, Path.GetFileNameWithoutExtension(imageFileName), i, Path.GetExtension(imageFileName)));
+                    CvInvoke.Imwrite(imgPath, img);
+                }
+                result.EnhancementResult.Dispose();
+                result.DetectionResult.Dispose();
+                GC.Collect();
+
+                // TODO depth
+
+                // update counter
+                filesProcessed += 1;
+                this.textBoxRunAllMethods.Text = $"{filesProcessed}/{totalFilesToProcess}";
+
+                image.Dispose();
+                GC.Collect();
+
+                //long maxMemory = 2 * 1024 * 1024 * 1024; // 4 Gb
+                // long memoryBytes = GC.GetTotalMemory(true);
+            }
+
+            // dust (also test on fog, rain, snow images)
+            foreach (var imageFileName in dustFiles)
+            {
+                if (imageFileName.ToLower().Contains("fog")) imageType = "Fog";
+                else if (imageFileName.ToLower().Contains("dust")) imageType = "Dust";
+                else if (imageFileName.ToLower().Contains("rain")) imageType = "Rain";
+                else if (imageFileName.ToLower().Contains("snow")) imageType = "Snow";
+                else imageType = "Unknown";
+
+                image = new Image<Bgr, byte>(imageFileName);
+
+                method = "FuzzyOperators";
+                var result2 = this._appState.Dust.VisibilityEnhancementUsingTunedTriThresholdFuzzyIntensificationOperatorsMethod(image, new TriThresholdFuzzyIntensificationOperatorsMethodParams { Dzeta = null });
+                _methodInfoStore.AddOrUpdate(new EnhanceMethodInfoModel
+                {
+                    ImageFileName = imageFileName,
+                    EnhanceMethodName = nameof(Fog.RemoveFogUsingDarkChannelPrior),
+                    Metrics = result2.Metrics,
+                    ExecutionTimeMs = result2.ExecutionTimeMs
+                });
+                for (int i = result2.DetailedResults.Count() - 1; i >= 0; i -= 1)
+                {
+                    img = result2.DetailedResults[i];
+                    imgPath = Path.Combine(dustImagesDestPath, String.Format(IMAGE_FILENAME_TEMPLATE, method, imageType, Path.GetFileNameWithoutExtension(imageFileName), i, Path.GetExtension(imageFileName)));
+                    CvInvoke.Imwrite(imgPath, img);
+                }
+                result2.EnhancementResult.Dispose();
+                result2.DetectionResult.Dispose();
+                GC.Collect();
+
+                // update counter
+                filesProcessed += 1;
+                this.textBoxRunAllMethods.Text = $"{filesProcessed}/{totalFilesToProcess}";
+
+                image.Dispose();
+                GC.Collect();
+            }
+        }
     }
 }

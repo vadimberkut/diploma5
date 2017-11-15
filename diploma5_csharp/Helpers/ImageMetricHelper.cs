@@ -330,8 +330,6 @@ namespace diploma5_csharp.Helpers
             return result;
         }
 
-
-
         /// <summary>
         /// Average Difference (AD)
         /// </summary>
@@ -584,6 +582,11 @@ namespace diploma5_csharp.Helpers
             else
                 return Math.Exp(x) - 1.0;
         }
+
+
+
+
+        // TODO - RMSE, BER
 
         #endregion
 

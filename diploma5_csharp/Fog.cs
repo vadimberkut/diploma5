@@ -21,52 +21,38 @@ namespace diploma5_csharp
 
         public BaseMethodResponse RemoveFogUsingDarkChannelPrior(Image<Bgr, Byte> image, FogRemovalParams _params)
         {
-            Image<Gray, Byte> imgDarkChannel = new Image<Gray, byte>(image.Size);
-            Image<Gray, Byte> T = new Image<Gray, byte>(image.Size);
-            Image<Gray, Byte> transmission;
-            Image<Bgr, Byte> result = image.Clone();
-
             var stopwatch = new Stopwatch();
             stopwatch.Start();
 
-            int Airlight;
-
-            //int patchSize = 5;
             int patchSize = 7;
-            imgDarkChannel = GetDarkChannel(image, patchSize);
-            Airlight = EstimateAirlight(imgDarkChannel, image);
-            T = EstimateTransmission(imgDarkChannel, Airlight);
-            result = RemoveFog(image, T, Airlight);
+            //var DC = GetDarkChannel(image, patchSize);
+            //int Airlight = EstimateAirlight(DC, image);
+            //var T = EstimateTransmission(DC, Airlight);
+            //var result = RemoveFog(image, T, Airlight);
 
-            // try vendor
-            var darkChannel2 = DehazeDarkChannel.getMedianDarkChannel(image, 5);
-            var Airlight2 = DehazeDarkChannel.estimateA(darkChannel2);
-            var T2 = DehazeDarkChannel.estimateTransmission(darkChannel2, Airlight2);
-            var ad = Airlight2;
-            var fogfree2 = DehazeDarkChannel.getDehazed(image, T2, Airlight2);
-
-            //Return out params
-            transmission = T;
+            // try vendor (better results)
+            var DC = DehazeDarkChannel.getMedianDarkChannel(image, patchSize);
+            //int Airlight = DehazeDarkChannel.estimateA(DC);
+            int Airlight = EstimateAirlight(DC, image);
+            var T = DehazeDarkChannel.estimateTransmission(DC, Airlight);
+            var result = DehazeDarkChannel.getDehazed(image, T, Airlight);
 
             stopwatch.Stop();
 
             if (_params.ShowWindows)
             {
-                EmguCvWindowManager.Display(imgDarkChannel, "1 imgDarkChannel darkChannel MDCP");
-                EmguCvWindowManager.Display(T, "2 estimateTransmission");
                 EmguCvWindowManager.Display(image, "3 image");
+                EmguCvWindowManager.Display(DC, "1 DC");
+                EmguCvWindowManager.Display(T, "2 T");
                 EmguCvWindowManager.Display(result, "4 result");
-
-                EmguCvWindowManager.Display(darkChannel2, "1 darkChannel2");
-                EmguCvWindowManager.Display(T2, "2 T2");
-                EmguCvWindowManager.Display(fogfree2, "4 fogfree2");
             }
 
             var Metrics = ImageMetricHelper.ComputeAll(image.Convert<Bgr, double>(), result.Convert<Bgr, double>());
             return new BaseMethodResponse
             {
                 EnhancementResult = result,
-                DetectionResult = transmission,
+                DetectionResult = T,
+                DetailedResults = new List<IInputArray> { image, DC, T, result },
                 Metrics = Metrics,
                 ExecutionTimeMs = stopwatch.ElapsedMilliseconds
             };
@@ -89,83 +75,82 @@ namespace diploma5_csharp
                 }
             }
             CvInvoke.MedianBlur(rgbMinImg, MDCP, patchSize);
+
+            rgbMinImg.Dispose();
+
             return MDCP;
         }
 
         //estimate airlight by the 0.1% brightest pixels in dark channel
-        private int EstimateAirlight(Image<Gray, Byte> DC, Image<Bgr, Byte> inputImage)
-        {
-            Image<Gray, Byte> rgbMinImg = new Image<Gray, byte>(inputImage.Size);
-            Image<Gray, Byte> MDCP = new Image<Gray, byte>(inputImage.Size);
-            Image<Lab, Byte> inputImageLab = new Image<Lab, byte>(inputImage.Size);
+//        private int EstimateAirlight(Image<Gray, Byte> DC, Image<Bgr, Byte> inputImage)
+//        {
+//            Image<Lab, Byte> inputImageLab = new Image<Lab, byte>(inputImage.Size);
 
-            double minDC = 0;
-            double maxDC = 0;
-            System.Drawing.Point minDCLoc = new Point();
-            System.Drawing.Point maxDCLoc = new Point();
-            int size = DC.Rows * DC.Cols;
-            double requiredPercent = 0.001; //0.1%
-            double requiredAmount = size * requiredPercent; //
+//            double minDC = 0;
+//            double maxDC = 0;
+//            Point minDCLoc = new Point();
+//            Point maxDCLoc = new Point();
+//            int size = DC.Rows * DC.Cols;
+//            double requiredPercent = 0.001; //0.1%
+//            double requiredAmount = size * requiredPercent; //
 
-            ////////////////////
-            CvInvoke.MinMaxLoc(DC, ref minDC, ref maxDC, ref minDCLoc, ref maxDCLoc);
-            double max = maxDC;
-//            std::vector<int*> brightestDarkChannelPixels;
-            List<List<int>> brightestDarkChannelPixels = new List<List<int>>();
-            for (int k = 0; k < requiredAmount && max >= 0; max--)
-            {
-                for (int i = 0; i < DC.Rows; i++)
-                {
-                    bool _break = false;
-                    for (int j = 0; j < DC.Cols; j++)
-                    {
-//                        uchar val = DC.at<uchar>(i, j);
-                        Gray val = DC[i, j];
-                        if (val.Intensity == max)
-                            brightestDarkChannelPixels.Add(new List<int>() { i, j });
+//            CvInvoke.MinMaxLoc(DC, ref minDC, ref maxDC, ref minDCLoc, ref maxDCLoc);
+//            double max = maxDC;
+//            List<List<int>> brightestDarkChannelPixels = new List<List<int>>();
+//            for (int k = 0; k < requiredAmount && max >= 0; max--)
+//            {
+//                for (int i = 0; i < DC.Rows; i++)
+//                {
+//                    bool _break = false;
+//                    for (int j = 0; j < DC.Cols; j++)
+//                    {
+////                        uchar val = DC.at<uchar>(i, j);
+//                        Gray val = DC[i, j];
+//                        if (val.Intensity == max)
+//                            brightestDarkChannelPixels.Add(new List<int>() { i, j });
 
-                        if (brightestDarkChannelPixels.Count >= requiredAmount - 1)
-                        {
-                            _break = true;
-                            break;
-                        }
-                    }
-                    if (_break)
-                        break;
-                }
+//                        if (brightestDarkChannelPixels.Count >= requiredAmount - 1)
+//                        {
+//                            _break = true;
+//                            break;
+//                        }
+//                    }
+//                    if (_break)
+//                        break;
+//                }
 
-                if (brightestDarkChannelPixels.Count >= requiredAmount)
-                    break;
-            }
+//                if (brightestDarkChannelPixels.Count >= requiredAmount)
+//                    break;
+//            }
 
-            //take pixels with highest intensity in the input image
-            CvInvoke.CvtColor(inputImage, inputImageLab, ColorConversion.Bgr2Lab);
-            int airlight = -1;
-            for (int r = 0; r != brightestDarkChannelPixels.Count; r++)
-            {
-                int i = brightestDarkChannelPixels[r][0];
-                int j = brightestDarkChannelPixels[r][1];
+//            //take pixels with highest intensity in the input image
+//            CvInvoke.CvtColor(inputImage, inputImageLab, ColorConversion.Bgr2Lab);
+//            int airlight = -1;
+//            for (int r = 0; r != brightestDarkChannelPixels.Count; r++)
+//            {
+//                int i = brightestDarkChannelPixels[r][0];
+//                int j = brightestDarkChannelPixels[r][1];
 
-                Lab pixel = inputImageLab[i, j];
+//                Lab pixel = inputImageLab[i, j];
 
-                double L = pixel.X;
-                double intensity = L; //take Lab L as insetsity
-                if (intensity > airlight)
-                    airlight = (int)intensity;
-            }
+//                double L = pixel.X;
+//                double intensity = L; //take Lab L as insetsity
+//                if (intensity > airlight)
+//                    airlight = (int)intensity;
+//            }
 
-            /////////////////
+//            /////////////////
 
-            return airlight;
-        }
+//            return airlight;
+//        }
 
         /// <summary>
-        /// More elegant code to estimate A
+        /// More elegant (and propeer) code to estimate A
         /// </summary>
         /// <param name="DC"></param>
         /// <param name="inputImage"></param>
         /// <returns></returns>
-        private int EstimateAirlightI(Image<Gray, Byte> DC, Image<Bgr, Byte> inputImage)
+        private int EstimateAirlight(Image<Gray, Byte> DC, Image<Bgr, Byte> inputImage)
         {
             var lab = ImageHelper.ToLab(inputImage);
             double takePercent = 0.001; // take most dark transmission's pixels
@@ -175,6 +160,9 @@ namespace diploma5_csharp
                 return lab[x.Coords.Row, x.Coords.Col].X;
             }).First();
             var A = lab[mostBrightesDCPixelInImage.Coords.Row, mostBrightesDCPixelInImage.Coords.Col].X; // take most dark
+
+            lab.Dispose();
+
             return (int)A;
 
         }
@@ -195,6 +183,9 @@ namespace diploma5_csharp
                 return lab[x.Coords.Row, x.Coords.Col].X;
             }).First();
             var A = lab[mostBrightesTransmissionPixelInImage.Coords.Row, mostBrightesTransmissionPixelInImage.Coords.Col].X; // take most dark
+
+            lab.Dispose();
+
             return (int)A;
 
         }
@@ -204,15 +195,13 @@ namespace diploma5_csharp
         {
             double w = 0.75;
             // double w = 0.95;
-            Image<Gray, Byte> transmission = DC.Clone();
-            MCvScalar intensity;
+            Image<Gray, Byte> transmission = new Image<Gray, Byte>(DC.Size);
 
             for (int m = 0; m < DC.Rows; m++)
             {
                 for (int n = 0; n < DC.Cols; n++)
                 {
-                    intensity = DC[m, n].MCvScalar;
-                    transmission[m, n] = new Gray((1 - w * (intensity.V0 / airlight)) * 255);
+                    transmission[m, n] = new Gray((1 - w * (DC[m, n].Intensity / airlight)) * 255);
                 }
             }
             return transmission;
@@ -221,34 +210,24 @@ namespace diploma5_csharp
         //dehazing foggy image
         private Image<Bgr, Byte> RemoveFog(Image<Bgr, Byte> sourceImg, Image<Gray, Byte> transmissionImg, int airlight)
         {
+            double t;
             double t0 = 0.1; // 0.28;
-            double tmax;
 
             int A = airlight;//airlight
-            Gray t; //transmission
             Bgr I; //I(x) - source image pixel
             Image<Bgr, Byte> dehazed = new Image<Bgr, Byte>(sourceImg.Size);
-
-            var min = ImageHelper.Min(transmissionImg) / 255.0;
 
             for (int i = 0; i < sourceImg.Rows; i++)
             {
                 for (int j = 0; j < sourceImg.Cols; j++)
                 {
-                    t = transmissionImg[i, j];
+                    t = transmissionImg[i, j].Intensity / 255;
+                    t = Math.Max(t, t0);
                     I = sourceImg[i, j];
-                    if((t.Intensity / 255) < t0)
-                    {
-                        tmax = t0;
-                    }
-                    else
-                    {
-                        tmax = (t.Intensity / 255);
-                    }
 
-                    double B = (I.Blue - A) / tmax + A;
-                    double G = (I.Green - A) / tmax + A;
-                    double R = (I.Red - A) / tmax + A;
+                    double B = (I.Blue - A) / t + A;
+                    double G = (I.Green - A) / t + A;
+                    double R = (I.Red - A) / t + A;
 
                     B = B > 255 ? 255 : Math.Abs(B);
                     G = G > 255 ? 255 : Math.Abs(G);
@@ -465,9 +444,6 @@ namespace diploma5_csharp
         // Source - http://onlinepresent.org/proceedings/vol98_2015/31.pdf
         public BaseMethodResponse RemoveFogUsingMedianChannelPrior(Image<Bgr, Byte> image, FogRemovalParams _params)
         {
-            Image<Bgr, Byte> imgFog = image.Clone();
-            Image<Gray, Byte> imgDarkChannel = new Image<Gray, byte>(image.Size);
-            Image<Gray, Byte> transmission = new Image<Gray, byte>(image.Size);
             Image<Bgr, Byte> result = new Image<Bgr, byte>(image.Size);
 
             var stopwatch = new Stopwatch();
@@ -523,7 +499,6 @@ namespace diploma5_csharp
                     T[m, n] = new Gray(transmission_ * 255);
                 }
             }
-            transmission = T; // pass transmission out of function
 
             // 4 - recover image
             double A = Airlight;
@@ -560,7 +535,8 @@ namespace diploma5_csharp
             return new BaseMethodResponse
             {
                 EnhancementResult = result,
-                DetectionResult = transmission,
+                DetectionResult = T,
+                DetailedResults = new List<IInputArray> { image, T, result },
                 Metrics = Metrics,
                 ExecutionTimeMs = stopwatch.ElapsedMilliseconds
             };
@@ -573,44 +549,37 @@ namespace diploma5_csharp
         // Source - http://iraj.in/journal/journal_file/journal_pdf/4-54-140014656845-51.pdf
         public BaseMethodResponse RemoveFogUsingIdcpWithClahe(Image<Bgr, Byte> image, FogRemovalParams _params)
         {
-            Image<Lab, Byte> lab;
-            Image<Bgr, Byte> clahe = new Image<Bgr, byte>(image.Size);
-            Image<Bgr, Byte> resultAdaptiveGammaCorrect;
-            Image<Bgr, Byte> resultEqualizeHist;
-            Image<Bgr, Byte> resultGammaCorrectt;
-            Image<Gray, Byte> transmission = new Image<Gray, byte>(image.Size);
-            Image<Bgr, Byte> result = new Image<Bgr, byte>(image.Size);
-
             var stopwatch = new Stopwatch();
             stopwatch.Start();
 
             // 1 - apply CLAHE
-            lab = ImageHelper.ToLab(image); // convert to LAB
+            var lab = ImageHelper.ToLab(image); // convert to LAB
             Image <Gray, Byte>[] parts = lab.Split(); // split channels
             Image<Gray, Byte> LChannel = parts[0]; // get L channel
             Image<Gray, Byte> claheLChannel = new Image<Gray, byte>(image.Size); // CLAHE result
             CvInvoke.CLAHE(src: LChannel, clipLimit: 2, tileGridSize: new Size(8, 8), dst: claheLChannel);
             parts[0] = claheLChannel; // replace L with CLAHE
+            lab.Dispose();
             lab = new Image<Lab, Byte>(parts); // save image
-            clahe = ImageHelper.ToBgr(lab);
+            var clahe = ImageHelper.ToBgr(lab);
 
             // 2 - apply DCP
             var resultDCP = RemoveFogUsingDarkChannelPrior(clahe, new FogRemovalParams() { ShowWindows = false });
-            transmission = resultDCP.DetectionResult;
+            var transmission = resultDCP.DetectionResult;
 
             // 3 - apply adaptive gamma correction
-            resultAdaptiveGammaCorrect = GammaCorrection.Adaptive(resultDCP.EnhancementResult);
+            var resultAdaptiveGammaCorrect = GammaCorrection.Adaptive(resultDCP.EnhancementResult);
 
-            // aplly gamma correction
-            resultGammaCorrectt = resultDCP.EnhancementResult.Clone();
-            resultGammaCorrectt._GammaCorrect(1.9);
+            //// aplly gamma correction
+            //var resultGammaCorrectt = resultDCP.EnhancementResult.Clone();
+            //resultGammaCorrectt._GammaCorrect(1.9);
 
-            // apply histogram equalization
-            resultEqualizeHist = resultDCP.EnhancementResult.Clone();
-            resultEqualizeHist._EqualizeHist();
+            //// apply histogram equalization
+            //var resultEqualizeHist = resultDCP.EnhancementResult.Clone();
+            //resultEqualizeHist._EqualizeHist();
 
 
-            result = resultAdaptiveGammaCorrect;
+            var result = resultAdaptiveGammaCorrect;
 
             stopwatch.Stop();
 
@@ -618,18 +587,25 @@ namespace diploma5_csharp
             {
                 EmguCvWindowManager.Display(image, "1 image");
                 EmguCvWindowManager.Display(clahe, "2 clahe");
-                EmguCvWindowManager.Display(resultDCP.EnhancementResult, "3 resultDCP");
+                EmguCvWindowManager.Display(transmission, "3 transmission");
+                EmguCvWindowManager.Display(resultDCP.EnhancementResult, "4 resultDCP");
                 EmguCvWindowManager.Display(resultAdaptiveGammaCorrect, "5 resultAdaptiveGammaCorrect");
-                EmguCvWindowManager.Display(resultGammaCorrectt, "5.2 resultGammaCorrectt");
-                EmguCvWindowManager.Display(resultEqualizeHist, "5.3 resultEqualizeHist");
+                //EmguCvWindowManager.Display(resultGammaCorrectt, "5.2 resultGammaCorrectt");
+                //EmguCvWindowManager.Display(resultEqualizeHist, "5.3 resultEqualizeHist");
                 EmguCvWindowManager.Display(result, "5 result");
             }
+
+            lab.Dispose();
+            parts.ToList().ForEach(x => x.Dispose());
+            LChannel.Dispose();
+            claheLChannel.Dispose();
 
             var Metrics = ImageMetricHelper.ComputeAll(image.Convert<Bgr, double>(), result.Convert<Bgr, double>());
             return new BaseMethodResponse
             {
                 EnhancementResult = result,
                 DetectionResult = transmission,
+                DetailedResults = new List<IInputArray> { image, clahe, transmission, resultDCP.EnhancementResult, result },
                 Metrics = Metrics,
                 ExecutionTimeMs = stopwatch.ElapsedMilliseconds
             };
@@ -780,94 +756,26 @@ namespace diploma5_csharp
         // Source - http://www.sciencedirect.com/science/article/pii/S1877050915013812
         public BaseMethodResponse RemoveFogUsingDCPAndDFT(Image<Bgr, Byte> image, FogRemovalParams _params)
         {
-            Image<Gray, Byte> DC;
-            Image<Gray, float> DFT = new Image<Gray, float>(image.Size);
-            Image<Gray, float> DFT_inverse = new Image<Gray, float>(image.Size);
-            
-            Image<Gray, float> transmission_ = new Image<Gray, float>(image.Size);
-            Image<Gray, Byte> transmission;
-            Image<Bgr, Byte> result = new Image<Bgr, Byte>(image.Size);
-
             var stopwatch = new Stopwatch();
             stopwatch.Start();
 
-            // compute DCP
-            DC = GetDarkChannel(image, patchSize: 7);
-
-            // apply fast fourier transform (FFT)
-            // for digital images use discrete fourier transform (DFT)
-            CvInvoke.Dft(src: DC.Convert<Gray, float>(), dst: DFT, flags: DxtType.Forward, nonzeroRows: -1);
-            CvInvoke.Dft(src: DFT, dst: DFT_inverse, flags: DxtType.Inverse, nonzeroRows: -1);
-            EmguCvWindowManager.Display(DC, "DFT before");
-            EmguCvWindowManager.Display(DFT, "DFT1");
-            EmguCvWindowManager.Display(DFT.Convert<Gray, Byte>(), "DFT2");
-            EmguCvWindowManager.Display(DFT_inverse, "DFT_inverse1");
-            EmguCvWindowManager.Display(DFT_inverse.Convert<Gray, Byte>(), "DFT_inverse2");
-
-
-            Image<Gray, float> DFT_lowPassFilter = new Image<Gray, float>(image.Size);
-            Image<Gray, float> DFT_highPassFilter = new Image<Gray, float>(image.Size);
-            Image<Gray, float> DFT_sum = new Image<Gray, float>(image.Size);
-            float[,] lowPassMatrixKernel = new float[3, 3] {
-                    { 1.0f / 9.0f, 1.0f / 9.0f, 1.0f / 9.0f},
-                    { 1.0f / 9.0f, 1.0f / 9.0f, 1.0f / 9.0f},
-                    { 1.0f / 9.0f, 1.0f / 9.0f, 1.0f / 9.0f},
-                };
-            ConvolutionKernelF lowPassMatrix = new ConvolutionKernelF(lowPassMatrixKernel);
-            float[,] highPassMatrixKernel = new float[3, 3] {
-                    { 0, - 1.0f / 4.0f , 0},
-                    { - 1.0f / 4.0f, 2 , - 1.0f / 4.0f},
-                    { 0,  - 1.0f / 4.0f, 0},
-                };
-            ConvolutionKernelF highPassMatrix = new ConvolutionKernelF(highPassMatrixKernel);
-            CvInvoke.Filter2D(src: DFT, dst: DFT_lowPassFilter, kernel: lowPassMatrix, anchor: new Point(-1, -1));
-            CvInvoke.Filter2D(src: DFT, dst: DFT_highPassFilter, kernel: highPassMatrix, anchor: new Point(-1, -1));
-            DFT_sum = DFT_lowPassFilter + DFT_highPassFilter;
-
-            for (int m = 0; m < DFT.Rows; m++)
-            {
-                for (int n = 0; n < DFT.Cols; n++)
-                {
-                    double sum = DFT_lowPassFilter[m, n].Intensity + DFT_highPassFilter[m, n].Intensity;
-                    transmission_[m, n] = new Gray(sum);
-                }
-            }
-            EmguCvWindowManager.Display(DFT_lowPassFilter, "5.1 DFT_lowPassFilter1");
-            EmguCvWindowManager.Display(DFT_lowPassFilter.Convert<Gray, Byte>(), "5.1 DFT_lowPassFilter2");
-            EmguCvWindowManager.Display(DFT_highPassFilter, "5.2 DFT_highPassFilter1");
-            EmguCvWindowManager.Display(DFT_highPassFilter.Convert<Gray, Byte>(), "5.2 DFT_highPassFilter2");
-            EmguCvWindowManager.Display(DFT_sum, "5.3 DFT_sum1");
-            EmguCvWindowManager.Display(DFT_sum.Convert<Gray, Byte>(), "5.3 DFT_sum2");
-
-            //var fft = ImageHelper.FFT(ImageHelper.TotGray(image));
-            //EmguCvWindowManager.Display(fft, "fft");
-
-            // var gray = ImageHelper.TotGray(image);
+            var DC = GetDarkChannel(image, patchSize: 7);
             var gray = DC;
 
-            var idealLowPassFilter = ImageHelper.IdealLowPassFilter(gray);
-            var idealHightPassFilter = ImageHelper.IdealHightPassFilter(gray);
-            var idealPassFiltersSum = idealLowPassFilter + idealHightPassFilter;
-            EmguCvWindowManager.Display(idealLowPassFilter.Convert<Gray, Byte>(), "idealLowPassFilter");
-            EmguCvWindowManager.Display(idealHightPassFilter.Convert<Gray, Byte>(), "idealHightPassFilter");
-            EmguCvWindowManager.Display(idealPassFiltersSum.Convert<Gray, Byte>(), "passFiltersSum");
+            //var idealLowPassFilter = ImageHelper.IdealLowPassFilter(gray);
+            //var idealHightPassFilter = ImageHelper.IdealHightPassFilter(gray);
+            //var idealPassFiltersSum = idealLowPassFilter + idealHightPassFilter;
 
             var butterworthLowPassFilter = ImageHelper.ButterworthLowPassFilter(gray);
             var butterworthHightPassFilter = ImageHelper.ButterworthHightPassFilter(gray);
             var butterworthPassFiltersSum = butterworthLowPassFilter + butterworthHightPassFilter;
-            EmguCvWindowManager.Display(butterworthLowPassFilter.Convert<Gray, Byte>(), "butterworthLowPassFilter");
-            EmguCvWindowManager.Display(butterworthHightPassFilter.Convert<Gray, Byte>(), "butterworthHightPassFilter");
-            EmguCvWindowManager.Display(butterworthPassFiltersSum.Convert<Gray, Byte>(), "butterworthPassFiltersSum");
 
-            var gaussianLowPassFilter = ImageHelper.GaussianLowPassFilter(gray);
-            var gaussianHightPassFilter = ImageHelper.GaussianHightPassFilter(gray);
-            var gaussianPassFiltersSum = gaussianLowPassFilter + gaussianHightPassFilter;
-            EmguCvWindowManager.Display(gaussianLowPassFilter.Convert<Gray, Byte>(), "gaussianLowPassFilter");
-            EmguCvWindowManager.Display(gaussianHightPassFilter.Convert<Gray, Byte>(), "gaussianHightPassFilter");
-            EmguCvWindowManager.Display(gaussianPassFiltersSum.Convert<Gray, Byte>(), "gaussianPassFiltersSum");
-
+            //var gaussianLowPassFilter = ImageHelper.GaussianLowPassFilter(gray);
+            //var gaussianHightPassFilter = ImageHelper.GaussianHightPassFilter(gray);
+            //var gaussianPassFiltersSum = gaussianLowPassFilter + gaussianHightPassFilter;
+            
             // compute transmission map
-            transmission = butterworthPassFiltersSum.Convert<Gray, Byte>().Resize(image.Width, image.Height, Inter.Linear);
+            var transmission = butterworthPassFiltersSum.Convert<Gray, Byte>().Resize(image.Width, image.Height, Inter.Linear);
 
             // inverse
             transmission = ImageHelper.Inverse(transmission);
@@ -878,80 +786,55 @@ namespace diploma5_csharp
             // estimate airlight
             int airlight = EstimateAirlight(DC, image);
 
-            // compute DC transmission map
-            var transmissionDC = EstimateTransmission(DC, airlight);
-
             // restore image with DC
             var dcResult = RemoveFog(image, transmission, airlight);
-            result = dcResult;
+            var result = dcResult;
 
-            // apply DC to colors and FFT to intensity
+            // use custom improvement
             var lab = ImageHelper.ToLab(image);
             var channels = lab.Split();
             var l = channels[0]; var lRes = new Image<Gray, Byte>(lab.Size);
-            var a = channels[1]; var aRes = new Image<Gray, Byte>(lab.Size);
-            var b = channels[2]; var bRes = new Image<Gray, Byte>(lab.Size);
+            var a = channels[1];
+            var b = channels[2];
             for (int i = 0; i < image.Rows; i++)
             {
                 for (int j = 0; j < image.Cols; j++)
                 {
-                    var LT = transmission[i, j].Intensity;
-                    var abT = transmissionDC[i, j].Intensity;
+                    var t = transmission[i, j].Intensity / 255.0;
+                    t = Math.Max(t, 0.2);
 
-                    var l_ = l[i, j].Intensity;
-                    var a_ = a[i, j].Intensity;
-                    var b_ = b[i, j].Intensity;
-
-                    var LTmax = Math.Max(LT / 255.0, 0.2);
-                    var abTmax = Math.Max(abT / 255.0, 0.2);
-
-                    double L = (l_ - airlight) / LTmax + airlight;
-                    //double A = (a_ - airlight) / abTmax + airlight;
-                    //double B = (b_ - airlight) / abTmax + airlight;
-                    double A = (a_ - airlight) / LTmax + airlight;
-                    double B = (b_ - airlight) / LTmax + airlight;
-
-
-                    //if(L < 0 || L > 255)
-                    //{
-                    //    L = (l_ - airlight) / (1 - LTmax) + airlight;
-                    //}
-
-                    //L = L % 255;
-                    //A = A % 255;
-                    //B = B % 255;
-
+                    double L = (l[i, j].Intensity - airlight) / t + airlight;
                     L = L > 255 ? 255 : Math.Abs(L);
-                    A = A > 255 ? 255 : Math.Abs(A);
-                    B = B > 255 ? 255 : Math.Abs(B);
-
                     lRes[i, j] = new Gray(L);
-                    //aRes[i, j] = new Gray(A);
-                    //bRes[i, j] = new Gray(B);
-
-                    //lRes[i, j] = new Gray(l_);
-                    aRes[i, j] = new Gray(a_);
-                    bRes[i, j] = new Gray(b_);
                 }
             }
-            var labRes = new Image<Lab, Byte>(new Image<Gray, Byte>[]{ lRes, aRes, bRes });
-            var bgrRes = ImageHelper.ToBgr(labRes);
-            EmguCvWindowManager.Display(image, "image");
-            EmguCvWindowManager.Display(lab, "lab");
-            EmguCvWindowManager.Display(labRes, "labRes");
-            EmguCvWindowManager.Display(bgrRes, "bgrRes");
+
+            var labRes = new Image<Lab, Byte>(new Image<Gray, Byte>[]{ lRes, a, b });
+            var resultImproved = ImageHelper.ToBgr(labRes);
+
+            // calibrate colors
+            resultImproved = ImageHelper.CalibrateColorsWithHistogramScratching(resultImproved);
 
             stopwatch.Stop();
 
             if (_params.ShowWindows)
             {
-                EmguCvWindowManager.Display(image, "1 image");
-                EmguCvWindowManager.Display(DC, "2 DC");
-                
-                
-                EmguCvWindowManager.Display(transmission_.Convert<Gray, Byte>(), "6 transmission_");
-                EmguCvWindowManager.Display(transmission, "6 transmission");
-                EmguCvWindowManager.Display(result, "9 result");
+                //EmguCvWindowManager.Display(idealLowPassFilter.Convert<Gray, Byte>(), "idealLowPassFilter");
+                //EmguCvWindowManager.Display(idealHightPassFilter.Convert<Gray, Byte>(), "idealHightPassFilter");
+                //EmguCvWindowManager.Display(idealPassFiltersSum.Convert<Gray, Byte>(), "passFiltersSum");
+
+                EmguCvWindowManager.Display(butterworthLowPassFilter.Convert<Gray, Byte>(), "butterworthLowPassFilter");
+                EmguCvWindowManager.Display(butterworthHightPassFilter.Convert<Gray, Byte>(), "butterworthHightPassFilter");
+                EmguCvWindowManager.Display(butterworthPassFiltersSum.Convert<Gray, Byte>(), "butterworthPassFiltersSum");
+
+                //EmguCvWindowManager.Display(gaussianLowPassFilter.Convert<Gray, Byte>(), "gaussianLowPassFilter");
+                //EmguCvWindowManager.Display(gaussianHightPassFilter.Convert<Gray, Byte>(), "gaussianHightPassFilter");
+                //EmguCvWindowManager.Display(gaussianPassFiltersSum.Convert<Gray, Byte>(), "gaussianPassFiltersSum");
+
+                EmguCvWindowManager.Display(image, "image");
+                EmguCvWindowManager.Display(transmission, "transmission");
+                EmguCvWindowManager.Display(result, "result");
+                EmguCvWindowManager.Display(resultImproved, "resultImproved");
             }
 
             var Metrics = ImageMetricHelper.ComputeAll(image.Convert<Bgr, double>(), result.Convert<Bgr, double>());
@@ -959,6 +842,7 @@ namespace diploma5_csharp
             {
                 EnhancementResult = result,
                 DetectionResult = transmission,
+                DetailedResults = new List<IInputArray> { image, transmission, result, resultImproved },
                 Metrics = Metrics,
                 ExecutionTimeMs = stopwatch.ElapsedMilliseconds
             };
@@ -1277,9 +1161,6 @@ namespace diploma5_csharp
 
         public BaseMethodResponse RemoveFogUsingMultiCoreDSPMethod(Image<Bgr, Byte> image, FogRemovalParams _params)
         {
-            Image<Gray, Byte> transmission;
-            Image<Bgr, Byte> result = new Image<Bgr, Byte>(image.Size);
-
             var stopwatch = new Stopwatch();
             stopwatch.Start();
 
@@ -1294,14 +1175,13 @@ namespace diploma5_csharp
             var DC = GetDarkChannel(downsampled, patchSize: 7);
 
             // estimate airlight
-            int A = EstimateAirlightI(DC, downsampled);
+            int A = EstimateAirlight(DC, downsampled);
 
             // compute transmission
             var T = EstimateTransmission(DC, A);
 
             // improve T with guided filter
-            //var improvedT = ImageHelper.GuidedFilter(guideImage: downsampled, inputImage: T, radius: 7, eps: 0.02);
-            Image<Gray, byte> improvedT;// = new Image<Gray, byte>(T.Size);
+            Image<Gray, byte> improvedT;
             try
             {
                 improvedT = ImageHelper.GuidedFilterBy_clarkzjw(guideImage: downsampled, inputImage: T, radius: 7, eps: 0.02);
@@ -1311,7 +1191,7 @@ namespace diploma5_csharp
                 // use default EmguCv implementation
                 improvedT = ImageHelper.GuidedFilterEmguCv(guideImage: downsampled, inputImage: T, radius: 7, eps: 0.02);
             }
-            transmission = improvedT;
+            var transmission = improvedT;
 
             // get high resolution T (resize to origin size)
             var upsampledT = improvedT.Resize(image.Width, image.Height, interpolationType);
@@ -1342,32 +1222,10 @@ namespace diploma5_csharp
             }
 
             // apply color calibration to enhace global intensity, contrast, color (use histogram scratching)
-            var colorCalibrated = new Image<Bgr, byte>(image.Size);
-            double w = 0.95; // 0 < w < 1; adujusts max and min intensity
-            const int MAX_VAL = 255; // the max intensity of channel c in output image, which is set to 255 to maximize the contrast
-            var minMaxResult = ImageHelper.ImageMinMax(hazeFree);
-            double bMin = minMaxResult.MinValues[0], gMin = minMaxResult.MinValues[1], rMin = minMaxResult.MinValues[2];
-            double bMax = minMaxResult.MaxValues[0], gMax = minMaxResult.MaxValues[1], rMax = minMaxResult.MaxValues[2];
-            for (int m = 0; m < image.Rows; m++)
-            {
-                for (int n = 0; n < image.Cols; n++)
-                {
-                    I = hazeFree[m, n];
-
-                    b = ((I.Blue - bMin / w) / (w * bMax - bMin / w)) * MAX_VAL;
-                    g = ((I.Green - gMin / w) / (w * gMax - gMin / w)) * MAX_VAL;
-                    r = ((I.Red - rMin / w) / (w * rMax - rMin / w)) * MAX_VAL;
-
-                    b = b > 255 ? 255 : Math.Abs(b);
-                    g = g > 255 ? 255 : Math.Abs(g);
-                    r = r > 255 ? 255 : Math.Abs(r);
-
-                    colorCalibrated[m, n] = new Bgr(b, g, r);
-                }
-            }
+            var colorCalibrated = ImageHelper.CalibrateColorsWithHistogramScratching(hazeFree);
 
             // obtain result
-            result = colorCalibrated;
+            var result = colorCalibrated;
 
             stopwatch.Stop();
 
@@ -1380,7 +1238,6 @@ namespace diploma5_csharp
                 EmguCvWindowManager.Display(upsampledT, "upsampledT");
                 EmguCvWindowManager.Display(hazeFree, "hazeFree");
                 EmguCvWindowManager.Display(colorCalibrated, "colorCalibrated");
-                EmguCvWindowManager.Display(result, "result");
             }
 
             var Metrics = ImageMetricHelper.ComputeAll(image.Convert<Bgr, double>(), result.Convert<Bgr, double>());
@@ -1388,6 +1245,7 @@ namespace diploma5_csharp
             {
                 EnhancementResult = result,
                 DetectionResult = transmission,
+                DetailedResults = new List<IInputArray> { image, downsampled, T, improvedT, upsampledT, hazeFree, colorCalibrated },
                 Metrics = Metrics,
                 ExecutionTimeMs = stopwatch.ElapsedMilliseconds
             };
@@ -1508,7 +1366,8 @@ namespace diploma5_csharp
 
             //// Method 2
 
-            // 0. Preprocessing - use color alignment algorithm from github
+            // 0. Preprocessing - ADJUST THE CONTRAST
+            //var preprocessed = ImageHelper.AdjustContrast(image);
             var preprocessed = image.Clone();
 
             // 1. Compute transmission using FFT
@@ -1517,24 +1376,20 @@ namespace diploma5_csharp
             var lpF = ImageHelper.ButterworthLowPassFilter(gray);
             var T_float = hpF + lpF;
             var T = T_float.Convert<Gray, byte>();
-            // inverse
-            T = ImageHelper.Inverse(T);
-            // smooth with median filter
-            T = T.SmoothMedian(5);
+            T = ImageHelper.Inverse(T); // inverse
+            T = T.SmoothMedian(5); // smooth with median filter
+            
             // stretch to [0;1]
             double[] minValues, maxValues; Point[] minLocations, maxLocations;
             T.MinMax(out minValues, out maxValues, out minLocations, out maxLocations);
             double Tmin = minValues[0];
             double Tmax = maxValues[0];
-            //Tmin = 0.2 * 255;
-            //Tmax = 255;
             for (int i = 0; i < T.Rows; i++)
             {
                 for (int j = 0; j < T.Cols; j++)
                 {
 
                     var newT = ((T[i, j].Intensity - Tmin) / (Tmax - Tmin)) * 255;
-                    // newT += 0.2 * 255;
                     T[i, j] = new Gray(newT);
                 }
             }
@@ -1545,21 +1400,14 @@ namespace diploma5_csharp
             //var A = EstimateAirlight(DC, preprocessed);
 
             // 1.3 etimate airlight using T
-            double takePercent = 0.001; // take most dark transmission's pixels
-            double takeAmount = (T.Rows * T.Cols) * takePercent;
-            var mostDarkPixels = ImageHelper.GetImagePixelsWithCoords(T).OrderBy(x => x.Intensity).Take((int)takeAmount);
-            var mostBrightesTransmissionPixelInImage = mostDarkPixels.OrderByDescending(x => {
-                return lab[x.Coords.Row, x.Coords.Col].X;
-            }).First();
-            var A = lab[mostBrightesTransmissionPixelInImage.Coords.Row, mostBrightesTransmissionPixelInImage.Coords.Col].X; // take most dark
+            int A = EstimateAirlightByTransmission(T, image);
 
             // 2. Apply fog removal using modifiend fog model
             var processed = new Image<Bgr, byte>(image.Size);
             
-            // BGR
-            for (int i = 0; i < image.Rows; i++)
+            for (int i = 0; i < preprocessed.Rows; i++)
             {
-                for (int j = 0; j < image.Cols; j++)
+                for (int j = 0; j < preprocessed.Cols; j++)
                 {
                     var t = T[i, j].Intensity / 255.0;
                     t = Math.Max(t, 0.1);
@@ -1572,7 +1420,7 @@ namespace diploma5_csharp
                     double G_ = G;
                     double R_ = R;
 
-                    // ADJUST THE CONTRAST
+                    //// ADJUST THE CONTRAST
                     var threshold = 10;
                     var contrast = Math.Pow((100.0 + threshold) / 100.0, 2);
                     B_ = ((((B_ / 255.0) - 0.5) * contrast) + 0.5) * 255.0;
@@ -1581,9 +1429,9 @@ namespace diploma5_csharp
 
                     // 1st working way - too vivid colors
                     double c = 2.5;
-                    B_ = (1 - ((Math.Abs(B - A) / (255.0 * c)) / t)) * B_;
-                    G_ = (1 - ((Math.Abs(G - A) / (255.0 * c)) / t)) * G_;
-                    R_ = (1 - ((Math.Abs(R - A) / (255.0 * c)) / t)) * R_;
+                    B_ = (1 - ((Math.Abs(B_ - A) / (255.0 * c)) / t)) * B_;
+                    G_ = (1 - ((Math.Abs(G_ - A) / (255.0 * c)) / t)) * G_;
+                    R_ = (1 - ((Math.Abs(R_ - A) / (255.0 * c)) / t)) * R_;
 
                     B_ = B_ > 255 ? 255 : Math.Abs(B_);
                     G_ = G_ > 255 ? 255 : Math.Abs(G_);
@@ -1594,13 +1442,21 @@ namespace diploma5_csharp
             }
 
             // 3. Postprocessing - use AGC or somithing similar to balance brightness & colors
-            //var postProcessed = GammaCorrection.Adaptive(processed);
-            var postProcessed = processed.Clone();
-            // create filter
-            //AForge.Imaging.Filters.ContrastStretch filter = new AForge.Imaging.Filters.ContrastStretch();
-            Accord.Imaging.Filters.ContrastStretch filter = new Accord.Imaging.Filters.ContrastStretch();
-            filter.ApplyInPlace(postProcessed.Bitmap);
+            ////var postProcessed = GammaCorrection.Adaptive(processed);
+            //// create filter
+            ////AForge.Imaging.Filters.ContrastStretch filter = new AForge.Imaging.Filters.ContrastStretch();
+            //Accord.Imaging.Filters.ContrastStretch filter = new Accord.Imaging.Filters.ContrastStretch();
+            //var bmp = filter.Apply(processed.Bitmap);
+            //var postProcessed = new Image<Bgr, byte>(bmp);
+            //result = postProcessed;
+            var postProcessed = processed;
             result = postProcessed;
+
+            ////use Kaliko.ImageLibrary;
+            //KalikoImage imageK = new KalikoImage(result.Bitmap);
+            //imageK.ApplyFilter(new UnsharpMaskFilter(radius: 2.5f, amount: 0.7f, threshold: 0));
+            //var unharpMask = new Image<Bgr, byte>(imageK.GetAsBitmap());
+            //EmguCvWindowManager.Display(unharpMask, "unsharp mask KalikoImage");
 
             stopwatch.Stop();
 
@@ -1611,7 +1467,6 @@ namespace diploma5_csharp
                 EmguCvWindowManager.Display(T, "T");
                 EmguCvWindowManager.Display(processed, "processed");
                 EmguCvWindowManager.Display(postProcessed, "postProcessed");
-                EmguCvWindowManager.Display(result, "result");
             }
 
             var Metrics = ImageMetricHelper.ComputeAll(image.Convert<Bgr, double>(), result.Convert<Bgr, double>());
@@ -1619,6 +1474,7 @@ namespace diploma5_csharp
             {
                 EnhancementResult = result,
                 DetectionResult = transmission,
+                DetailedResults = new List<IInputArray> { image, preprocessed, T, processed, postProcessed },
                 Metrics = Metrics,
                 ExecutionTimeMs = stopwatch.ElapsedMilliseconds
             };
@@ -1626,11 +1482,6 @@ namespace diploma5_csharp
 
         public BaseMethodResponse RemoveFogUsingCustomMethodWithDepthEstimation(Image<Bgr, Byte> image, FogRemovalParams _params)
         {
-            Image<Bgr, float> convultionResult = new Image<Bgr, float>(image.Size);
-            Image<Bgr, Byte> filter2DResult = new Image<Bgr, Byte>(image.Size);
-            Image<Gray, Byte> transmission = null;
-            Image<Bgr, Byte> result = new Image<Bgr, Byte>(image.Size);
-
             var stopwatch = new Stopwatch();
             stopwatch.Start();
 
@@ -1642,8 +1493,11 @@ namespace diploma5_csharp
             var imageFileNameWithoutExtension = Path.GetFileNameWithoutExtension(_params.InputImageFileName);
             var imageFileExtension = Path.GetExtension(_params.InputImageFileName);
             var imageFolder = Path.GetDirectoryName(_params.InputImageFileName);
-            var cmd = @"""D:\Google Drive\Diploma5\pythonDepthEstimation\monodepth-master\monodepth_simple.py"" --image_path ""{0}"" --checkpoint_path ""D:\Google Drive\Diploma5\pythonDepthEstimation\monodepth-master\models\model_cityscapes""";
-            cmd = String.Format(cmd, _params.InputImageFileName);
+            string modelName = @"model_cityscapes";
+            //string modelName = @"model_kitty";
+            //string modelName = @"model_eigen"; // very bad
+            var cmd = @"""D:\Google Drive\Diploma5\pythonDepthEstimation\monodepth-master\monodepth_simple.py"" --image_path ""{0}"" --checkpoint_path ""D:\Google Drive\Diploma5\pythonDepthEstimation\monodepth-master\models\{1}""";
+            cmd = String.Format(cmd, _params.InputImageFileName, modelName);
             var args = "";
             ProcessStartInfo start = new ProcessStartInfo();
             start.FileName = @"D:\ProgramFiles\Anaconda3\python.exe";
@@ -1660,15 +1514,17 @@ namespace diploma5_csharp
             }
             // when finished read file with depth map
             var depthResultPath = Path.Combine(imageFolder, $"{imageFileNameWithoutExtension}_disp{imageFileExtension}");
-            //FileInfo depthFile = new FileInfo();
+            var depthNpyResultPath = Path.Combine(imageFolder, $"{imageFileNameWithoutExtension}_disp.npy");
             var depthMapColor = new Image<Bgr, Byte>(depthResultPath);
             var depthMapGray = ImageHelper.ToGray(depthMapColor);
 
-            //var dcpResponse = this.RemoveFogUsingDarkChannelPrior(image, new FogRemovalParams() { ShowWindows = false });
+            // delete generated files
+            if (File.Exists(depthResultPath)) File.Delete(depthResultPath);
+            if (File.Exists(depthNpyResultPath)) File.Delete(depthNpyResultPath);
+
             int patchSize = 7;
             var imgDarkChannel = GetDarkChannel(image, patchSize);
             var Airlight = EstimateAirlight(imgDarkChannel, image);
-            //var T = EstimateTransmission(imgDarkChannel, Airlight);
             var T = depthMapGray;
 
             // reduce T
@@ -1677,30 +1533,49 @@ namespace diploma5_csharp
                 for (int n = 0; n < T.Cols; n++)
                 {
                     var pixel = T[m, n];
-                    T[m, n] = new Gray(1.5 * pixel.Intensity);
+                    T[m, n] = new Gray(1.25 * pixel.Intensity);
                 }
             }
 
-            var result0 = RemoveFog(image, T, Airlight);
+            var improvedT = ImageHelper.GuidedFilterBy_clarkzjw(guideImage: image, inputImage: T, radius: 7, eps: 0.02);
 
-            // apply adaptive gamma correction
-            result = GammaCorrection.Adaptive(result0);
+            // Use standart model
+            var result = RemoveFog(image, improvedT, Airlight);
 
-            EmguCvWindowManager.Display(depthMapColor, "depthMapColor");
-            EmguCvWindowManager.Display(depthMapGray, "depthMapGray");
-            EmguCvWindowManager.Display(result0, "result0");
-            EmguCvWindowManager.Display(result, "result");
+            // apply correction only to Lightnes
+            var lab = ImageHelper.ToLab(image);
+            var channels = lab.Split();
+            var l = channels[0]; var lRes = new Image<Gray, Byte>(lab.Size);
+            var a = channels[1];
+            var b = channels[2];
+            for (int i = 0; i < image.Rows; i++)
+            {
+                for (int j = 0; j < image.Cols; j++)
+                {
+                    var t = improvedT[i, j].Intensity / 255.0;
+                    t = Math.Max(t, 0.1);
 
+                    double L = (l[i, j].Intensity - Airlight) / t + Airlight;
+                    L = L > 255 ? 255 : Math.Abs(L);
+                    lRes[i, j] = new Gray(L);
+                }
+            }
+            var labRes = new Image<Lab, Byte>(new Image<Gray, Byte>[] { lRes, a, b });
+            var alternativeResult = ImageHelper.ToBgr(labRes);
 #endregion
 
-            transmission = new Image<Gray, byte>(image.Size);
+            var transmission = improvedT;
 
             stopwatch.Stop();
 
             if (_params.ShowWindows)
             {
-                EmguCvWindowManager.Display(image, "1 image");
-                EmguCvWindowManager.Display(result, "9 result");
+                EmguCvWindowManager.Display(image, "image");
+                EmguCvWindowManager.Display(depthMapColor, "depthMapColor");
+                EmguCvWindowManager.Display(T, "T");
+                EmguCvWindowManager.Display(improvedT, "improvedT");
+                EmguCvWindowManager.Display(result, "result");
+                EmguCvWindowManager.Display(alternativeResult, "alternativeResult");
             }
 
             var Metrics = ImageMetricHelper.ComputeAll(image.Convert<Bgr, double>(), result.Convert<Bgr, double>());
@@ -1708,6 +1583,7 @@ namespace diploma5_csharp
             {
                 EnhancementResult = result,
                 DetectionResult = transmission,
+                DetailedResults = new List<IInputArray> { image, depthMapColor, T, improvedT, result, alternativeResult },
                 Metrics = Metrics,
                 ExecutionTimeMs = stopwatch.ElapsedMilliseconds
             };
