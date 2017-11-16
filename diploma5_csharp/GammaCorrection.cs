@@ -32,7 +32,6 @@ namespace diploma5_csharp
             var hsvChannels = hsvImage.Split();
             grayImage = hsvChannels.ElementAt(2);
 
-
             // Normalize image
             grayImageNormilized = ImageHelper.NormalizeImage(grayImage);
 
@@ -52,7 +51,6 @@ namespace diploma5_csharp
 
                 string QSubclassDark = "Dark";
                 string QSubclassBright = "Bright";
-
 
                 string Q;
                 string QSubclass;
@@ -182,10 +180,6 @@ namespace diploma5_csharp
 
             if (showWindows)
             {
-                // display histograms
-                //HistogramViewer.Show(grayImage);
-                //HistogramViewer.Show(grayImageEnhanced);
-
                 EmguCvWindowManager.Display(image, "AGC_V2_1 image");
                 EmguCvWindowManager.Display(hsvImage, "AGC_V2_2 hsvImage");
                 EmguCvWindowManager.Display(grayImage, "AGC_V2_3 grayImage");

@@ -9,5 +9,6 @@ namespace diploma5_csharp.Models
     public class RGBResponseRatioConstancyMethodParams
     {
         public MeanShiftClusteringAcordParams MeanShiftParams { get; set; }
+        public bool ShowOptionalWindows { get; set; }
     }
 }

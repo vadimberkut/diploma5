@@ -27,10 +27,7 @@ namespace diploma5_csharp
             Store = this.LoadFromFile();
         }
 
-        private string GetSavePath(string filename)
-        {
-            return Path.Combine(DATA_STORE_FOLDER, filename);
-        }
+       
 
         public void AddOrUpdate(EnhanceMethodInfoModel data)
         {
@@ -152,6 +149,27 @@ namespace diploma5_csharp
             }
         }
 
+
+        public void Reset()
+        {
+            // delete store json file
+            if (File.Exists(this.GetSavePath(STORE_FILE_NAME)))
+            {
+                File.Delete(this.GetSavePath(STORE_FILE_NAME));
+            }
+
+            // delete all csv
+            var allFiles = Directory.GetFiles(DATA_STORE_FOLDER);
+            foreach (var file in allFiles)
+            {
+                if (Path.GetExtension(file) == ".csv")
+                {
+                    if (File.Exists(file)) File.Delete(file);
+                }
+            }
+
+        }
+
         // loads stroe from file
         private List<EnhanceMethodInfoModel> LoadFromFile()
         {
@@ -173,6 +191,11 @@ namespace diploma5_csharp
                 var store = JsonConvert.DeserializeObject<List<EnhanceMethodInfoModel>>(text);
                 return store;
             }
+        }
+
+        private string GetSavePath(string filename)
+        {
+            return Path.Combine(DATA_STORE_FOLDER, filename);
         }
     }
 

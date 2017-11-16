@@ -106,11 +106,14 @@ namespace diploma5_csharp
 
         // Universal method for dust, mist, fog
         // Source: http://colorimaginglab.ugr.es/pages/pdfs/ao_2015_B222/!
-        public Image<Bgr, Byte> RecoveringOfWeatherDegradedImagesBasedOnRGBResponseRatioConstancyMethod(
+        public BaseMethodResponse RecoveringOfWeatherDegradedImagesBasedOnRGBResponseRatioConstancyMethod(
             Image<Bgr, Byte> image, 
             RGBResponseRatioConstancyMethodParams _params
         )
         {
+            var stopwatch = new Stopwatch();
+            stopwatch.Start();
+
             //Image<Bgr, Byte> result = image.Clone();
             Image<Bgr, Byte> result = new Image<Bgr, byte>(image.Size);
             Image<Bgr, Byte> resultToAll = new Image<Bgr, byte>(image.Size);
@@ -184,7 +187,7 @@ namespace diploma5_csharp
                 }
             }
 
-            if (true)
+            if (_params.ShowOptionalWindows)
             {
                 EmguCvWindowManager.Display(image, "1. image");
                 EmguCvWindowManager.Display(msResult.Image, "2. MS");
@@ -192,7 +195,17 @@ namespace diploma5_csharp
                 EmguCvWindowManager.Display(result, "4. result");
             }
 
-            return result;
+            stopwatch.Stop();
+
+            var Metrics = ImageMetricHelper.ComputeAll(image.Convert<Bgr, double>(), result.Convert<Bgr, double>());
+            return new BaseMethodResponse
+            {
+                EnhancementResult = result,
+                DetectionResult = new Image<Gray, byte>(image.Size),
+                DetailedResults = new List<IInputArray> { image, msResult.Image, resultToAll, result },
+                Metrics = Metrics,
+                ExecutionTimeMs = stopwatch.ElapsedMilliseconds
+            };
         }
 
         // !!!!!!!!!!

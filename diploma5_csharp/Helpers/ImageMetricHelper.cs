@@ -15,6 +15,8 @@ namespace diploma5_csharp.Helpers
     // Metrics described here - http://research.ijcaonline.org/volume99/number10/pxc3897996.pdf
     public static class ImageMetricHelper
     {
+        public const int DECIMALS = 4;
+
         #region Public members
 
         public static MetricsResult ComputeAll(Image<Bgr, double> image1, Image<Bgr, double> image2)
@@ -28,12 +30,12 @@ namespace diploma5_csharp.Helpers
 
             return new MetricsResult
             {
-                MSE = MSE,
-                NAE = NAE,
-                SC = SC,
-                PSNR = PSNR,
-                AD = AD,
-                FVM = FVM
+                AD = Math.Round(AD, DECIMALS),
+                FVM = Math.Round(FVM, DECIMALS),
+                MSE = Math.Round(MSE, DECIMALS),
+                NAE = Math.Round(NAE, DECIMALS),
+                SC = Math.Round(SC, DECIMALS),
+                PSNR = Math.Round(PSNR, DECIMALS)
             };
         }
 

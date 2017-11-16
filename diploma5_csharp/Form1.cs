@@ -109,75 +109,20 @@ namespace diploma5_csharp
             catch { }
             return result;
         }
+
+        private void DisplayImageMetrics(MetricsResult data)
+        {
+            this.textBoxAdMetric.Text = data.AD.ToString();
+            this.textBoxFvmMetric.Text = data.FVM.ToString();
+            this.textBoxMseMetric.Text = data.MSE.ToString();
+            this.textBoxNaeMetric.Text = data.NAE.ToString();
+            this.textBoxScMetric.Text = data.SC.ToString();
+            this.textBoxPsnrMEtric.Text = data.PSNR.ToString();
+        }
+
         #endregion GENERAL METHODS
 
         #region EVENT HANDLES
-
-        private void button1_Click(object sender, EventArgs e)
-        {
-            //            String win1 = "Test Window"; //The name of the window
-            //            CvInvoke.NamedWindow(win1); //Create the window using the specific name
-
-            //            Mat img = new Mat(200, 400, DepthType.Cv8U, 3); //Create a 3 channel image of 400x200
-            //            img.SetTo(new Bgr(255, 0, 0).MCvScalar); // set it to Blue color
-
-            //            //Draw "Hello, world." on the image using the specific font
-            //            CvInvoke.PutText(
-            //               img,
-            //               "Hello, world",
-            //               new System.Drawing.Point(10, 80),
-            //               FontFace.HersheyComplex,
-            //               1.0,
-            //               new Bgr(0, 255, 0).MCvScalar);
-
-
-            ////            CvInvoke.Imshow(win1, img); //Show the image
-            ////            CvInvoke.WaitKey(0);  //Wait for the key pressing event
-            ////            CvInvoke.DestroyWindow(win1); //Destroy the window if key is pressed
-
-            //            Image<Bgr, Byte> imgeOrigenal = img.ToImage<Bgr, Byte>();
-            //            Mat im2 = imgeOrigenal.Mat;
-            ////            pictureBox1.Image = imgeOrigenal.Bitmap;
-            //            this.DisplayImageInPictureBox(pictureBox1, imgeOrigenal.Bitmap);
-
-
-            //            //////////////////MEAN SHIFT
-            //            // Use a fixed seed for reproducibility
-            //            Accord.Math.Random.Generator.Seed = 0;
-
-            //            // Declare some data to be clustered
-            //            double[][] input =
-            //            {
-            //                new double[] { -5, -2, -4 },
-            //                new double[] { -5, -5, -6 },
-            //                new double[] {  2,  1,  1 },
-            //                new double[] {  1,  1,  2 },
-            //                new double[] {  1,  2,  2 },
-            //                new double[] {  3,  1,  2 },
-            //                new double[] { 11,  5,  4 },
-            //                new double[] { 15,  5,  6 },
-            //                new double[] { 10,  5,  6 },
-            //            };
-
-            //            // Create a uniform kernel density function
-            //            UniformKernel kernel = new UniformKernel();
-
-            //            // Create a new Mean-Shift algorithm for 3 dimensional samples
-            //            MeanShift meanShift = new MeanShift(dimension: 3, kernel: kernel, bandwidth: 2);
-
-            //            // Learn a data partitioning using the Mean Shift algorithm
-            //            MeanShiftClusterCollection clustering = meanShift.Learn(input);
-
-            //            // Predict group labels for each point
-            //            int[] labels = clustering.Decide(input);
-
-            //            // As a result, the first two observations should belong to the
-            //            //  same cluster (thus having the same label). The same should
-            //            //  happen to the next four observations and to the last three.
-            //            int aasd = 0;
-
-            
-        }
 
         private void buttonMSTest_Click(object sender, EventArgs e)
         {
@@ -273,6 +218,11 @@ namespace diploma5_csharp
         private void closeAllToolStripMenuItem_Click(object sender, EventArgs e)
         {
             EmguCvWindowManager.CloseAll();
+        }
+
+        private void resetMethodsStatisticsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            this._methodInfoStore.Reset();
         }
 
         #endregion
@@ -410,7 +360,7 @@ namespace diploma5_csharp
                 Metrics = result.Metrics,
                 ExecutionTimeMs = result.ExecutionTimeMs
             });
-            this.textBoxFvmMetric.Text = result.Metrics.FVM.ToString();
+            DisplayImageMetrics(result.Metrics);
         }
 
         private void buttonRobbyTanFogRemovalMethod_Click(object sender, EventArgs e)
@@ -429,7 +379,7 @@ namespace diploma5_csharp
                 Metrics = result.Metrics,
                 ExecutionTimeMs = result.ExecutionTimeMs
             });
-            this.textBoxFvmMetric.Text = result.Metrics.FVM.ToString();
+            DisplayImageMetrics(result.Metrics);
         }
 
         private void buttonRemoveFogUsingMedianChannelPrior_Click(object sender, EventArgs e)
@@ -448,7 +398,7 @@ namespace diploma5_csharp
                 Metrics = result.Metrics,
                 ExecutionTimeMs = result.ExecutionTimeMs
             });
-            this.textBoxFvmMetric.Text = result.Metrics.FVM.ToString();
+            DisplayImageMetrics(result.Metrics);
         }
 
         private void buttonRemoveFogUsingIdcpWithClahe_Click(object sender, EventArgs e)
@@ -467,7 +417,7 @@ namespace diploma5_csharp
                 Metrics = result.Metrics,
                 ExecutionTimeMs = result.ExecutionTimeMs
             });
-            this.textBoxFvmMetric.Text = result.Metrics.FVM.ToString();
+            DisplayImageMetrics(result.Metrics);
         }
 
         private void buttonEnhaceVisibilityUsingRobbyTanMethodForRoads_Click(object sender, EventArgs e)
@@ -486,7 +436,7 @@ namespace diploma5_csharp
                 Metrics = result.Metrics,
                 ExecutionTimeMs = result.ExecutionTimeMs
             });
-            this.textBoxFvmMetric.Text = result.Metrics.FVM.ToString();
+            DisplayImageMetrics(result.Metrics);
         }
 
         private void buttonRemoveFogUsingDCPAndDFT_Click(object sender, EventArgs e)
@@ -505,7 +455,7 @@ namespace diploma5_csharp
                 Metrics = result.Metrics,
                 ExecutionTimeMs = result.ExecutionTimeMs
             });
-            this.textBoxFvmMetric.Text = result.Metrics.FVM.ToString();
+            DisplayImageMetrics(result.Metrics);
         }
 
         private void buttonRemoveFogUsingLocalExtremaMethod_Click(object sender, EventArgs e)
@@ -524,7 +474,7 @@ namespace diploma5_csharp
                 Metrics = result.Metrics,
                 ExecutionTimeMs = result.ExecutionTimeMs
             });
-            this.textBoxFvmMetric.Text = result.Metrics.FVM.ToString();
+            DisplayImageMetrics(result.Metrics);
         }
 
         private void buttonRemoveFogUsingPhysicsBasedMethod_Click(object sender, EventArgs e)
@@ -543,7 +493,7 @@ namespace diploma5_csharp
                 Metrics = result.Metrics,
                 ExecutionTimeMs = result.ExecutionTimeMs
             });
-            this.textBoxFvmMetric.Text = result.Metrics.FVM.ToString();
+            DisplayImageMetrics(result.Metrics);
         }
 
         private void buttonRemoveFogUsingMultiCoreDSPMethod_Click(object sender, EventArgs e)
@@ -562,7 +512,7 @@ namespace diploma5_csharp
                 Metrics = result.Metrics,
                 ExecutionTimeMs = result.ExecutionTimeMs
             });
-            this.textBoxFvmMetric.Text = result.Metrics.FVM.ToString();
+            DisplayImageMetrics(result.Metrics);
         }
 
         private void buttonRemoveFogUsingCustomMethod_Click(object sender, EventArgs e)
@@ -581,9 +531,7 @@ namespace diploma5_csharp
                 Metrics = result.Metrics,
                 ExecutionTimeMs = result.ExecutionTimeMs
             });
-            this.textBoxFvmMetric.Text = result.Metrics.FVM.ToString();
-
-            GC.Collect();
+            DisplayImageMetrics(result.Metrics);
         }
 
         private void buttonRemoveFogUsingCustomMethodWithDepthEstimation_Click(object sender, EventArgs e)
@@ -602,7 +550,7 @@ namespace diploma5_csharp
                 Metrics = result.Metrics,
                 ExecutionTimeMs = result.ExecutionTimeMs
             });
-            this.textBoxFvmMetric.Text = result.Metrics.FVM.ToString();
+            DisplayImageMetrics(result.Metrics);
         }
 
         //
@@ -628,7 +576,7 @@ namespace diploma5_csharp
                 Metrics = result.Metrics,
                 ExecutionTimeMs = result.ExecutionTimeMs
             });
-            this.textBoxFvmMetric.Text = result.Metrics.FVM.ToString();
+            DisplayImageMetrics(result.Metrics);
 
             GC.Collect();
         }
@@ -647,10 +595,25 @@ namespace diploma5_csharp
                     Sigma = double.Parse(sigma)
                 };
             }
+            _params.ShowOptionalWindows = GetCheckBoxValue(checkBoxShowOptionalWindows);
 
             var result = _appState.Dust.RecoveringOfWeatherDegradedImagesBasedOnRGBResponseRatioConstancyMethod(_appState.InputImageBgr, _params);
-            _appState.SetOutputImage(result);
-            this.DisplayImageInPictureBox(pictureBox3, result.Bitmap);
+            _appState.SetOutputImage(result.EnhancementResult);
+            _appState.SetShadowMaskImage(result.DetectionResult);
+            this.DisplayImageInPictureBox(pictureBox3, result.EnhancementResult.Bitmap);
+            this.DisplayImageInPictureBox(pictureBox2, result.DetectionResult.Bitmap);
+
+            // save metrics
+            _methodInfoStore.AddOrUpdate(new EnhanceMethodInfoModel
+            {
+                ImageFileName = _appState.InputImageFileName,
+                EnhanceMethodName = nameof(Dust.RecoveringOfWeatherDegradedImagesBasedOnRGBResponseRatioConstancyMethod),
+                Metrics = result.Metrics,
+                ExecutionTimeMs = result.ExecutionTimeMs
+            });
+            DisplayImageMetrics(result.Metrics);
+
+            GC.Collect();
         }
 
         //RESTORE RESULT IMAGE
@@ -663,7 +626,7 @@ namespace diploma5_csharp
         // AGC
         private void buttonApplyAGC_Click(object sender, EventArgs e)
         {
-            var result = GammaCorrection.Adaptive(_appState.InputImageBgr, showWindows: true);
+            var result = GammaCorrection.Adaptive(_appState.InputImageBgr, showWindows: GetCheckBoxValue(checkBoxShowOptionalWindows));
             _appState.SetOutputImage(result);
             this.DisplayImageInPictureBox(pictureBox3, result.Bitmap);
         }
@@ -766,7 +729,7 @@ namespace diploma5_csharp
                 _methodInfoStore.AddOrUpdate(new EnhanceMethodInfoModel
                 {
                     ImageFileName = imageFileName,
-                    EnhanceMethodName = nameof(Fog.RemoveFogUsingDarkChannelPrior),
+                    EnhanceMethodName = nameof(Fog.RemoveFogUsingMedianChannelPrior),
                     Metrics = result.Metrics,
                     ExecutionTimeMs = result.ExecutionTimeMs
                 });
@@ -786,7 +749,7 @@ namespace diploma5_csharp
                 _methodInfoStore.AddOrUpdate(new EnhanceMethodInfoModel
                 {
                     ImageFileName = imageFileName,
-                    EnhanceMethodName = nameof(Fog.RemoveFogUsingDarkChannelPrior),
+                    EnhanceMethodName = nameof(Fog.RemoveFogUsingIdcpWithClahe),
                     Metrics = result.Metrics,
                     ExecutionTimeMs = result.ExecutionTimeMs
                 });
@@ -806,7 +769,7 @@ namespace diploma5_csharp
                 _methodInfoStore.AddOrUpdate(new EnhanceMethodInfoModel
                 {
                     ImageFileName = imageFileName,
-                    EnhanceMethodName = nameof(Fog.RemoveFogUsingDarkChannelPrior),
+                    EnhanceMethodName = nameof(Fog.RemoveFogUsingDCPAndDFT),
                     Metrics = result.Metrics,
                     ExecutionTimeMs = result.ExecutionTimeMs
                 });
@@ -825,7 +788,7 @@ namespace diploma5_csharp
                 _methodInfoStore.AddOrUpdate(new EnhanceMethodInfoModel
                 {
                     ImageFileName = imageFileName,
-                    EnhanceMethodName = nameof(Fog.RemoveFogUsingDarkChannelPrior),
+                    EnhanceMethodName = nameof(Fog.RemoveFogUsingMultiCoreDSPMethod),
                     Metrics = result.Metrics,
                     ExecutionTimeMs = result.ExecutionTimeMs
                 });
@@ -844,7 +807,7 @@ namespace diploma5_csharp
                 _methodInfoStore.AddOrUpdate(new EnhanceMethodInfoModel
                 {
                     ImageFileName = imageFileName,
-                    EnhanceMethodName = nameof(Fog.RemoveFogUsingDarkChannelPrior),
+                    EnhanceMethodName = nameof(Fog.RemoveFogUsingCustomMethod),
                     Metrics = result.Metrics,
                     ExecutionTimeMs = result.ExecutionTimeMs
                 });
@@ -862,7 +825,6 @@ namespace diploma5_csharp
 
                 // update counter
                 filesProcessed += 1;
-                this.textBoxRunAllMethods.Text = $"{filesProcessed}/{totalFilesToProcess}";
 
                 image.Dispose();
                 GC.Collect();
@@ -887,7 +849,26 @@ namespace diploma5_csharp
                 _methodInfoStore.AddOrUpdate(new EnhanceMethodInfoModel
                 {
                     ImageFileName = imageFileName,
-                    EnhanceMethodName = nameof(Fog.RemoveFogUsingDarkChannelPrior),
+                    EnhanceMethodName = nameof(Dust.VisibilityEnhancementUsingTunedTriThresholdFuzzyIntensificationOperatorsMethod),
+                    Metrics = result2.Metrics,
+                    ExecutionTimeMs = result2.ExecutionTimeMs
+                });
+                for (int i = result2.DetailedResults.Count() - 1; i >= 0; i -= 1)
+                {
+                    img = result2.DetailedResults[i];
+                    imgPath = Path.Combine(dustImagesDestPath, String.Format(IMAGE_FILENAME_TEMPLATE, method, imageType, Path.GetFileNameWithoutExtension(imageFileName), i, Path.GetExtension(imageFileName)));
+                    CvInvoke.Imwrite(imgPath, img);
+                }
+                result2.EnhancementResult.Dispose();
+                result2.DetectionResult.Dispose();
+                GC.Collect();
+
+                method = "RGBResponseRatioConstancy";
+                result2 = this._appState.Dust.RecoveringOfWeatherDegradedImagesBasedOnRGBResponseRatioConstancyMethod(image, new RGBResponseRatioConstancyMethodParams { ShowOptionalWindows = false });
+                _methodInfoStore.AddOrUpdate(new EnhanceMethodInfoModel
+                {
+                    ImageFileName = imageFileName,
+                    EnhanceMethodName = nameof(Dust.RecoveringOfWeatherDegradedImagesBasedOnRGBResponseRatioConstancyMethod),
                     Metrics = result2.Metrics,
                     ExecutionTimeMs = result2.ExecutionTimeMs
                 });
@@ -903,11 +884,12 @@ namespace diploma5_csharp
 
                 // update counter
                 filesProcessed += 1;
-                this.textBoxRunAllMethods.Text = $"{filesProcessed}/{totalFilesToProcess}";
 
                 image.Dispose();
                 GC.Collect();
             }
         }
+
+        
     }
 }

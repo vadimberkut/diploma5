@@ -28,7 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.button1 = new System.Windows.Forms.Button();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.pictureBox2 = new System.Windows.Forms.PictureBox();
             this.pictureBox3 = new System.Windows.Forms.PictureBox();
@@ -94,23 +93,22 @@
             this.buttonRemoveFogUsingCustomMethodWithDepthEstimation = new System.Windows.Forms.Button();
             this.buttonRemoveFogUsingMultiCoreDSPMethod = new System.Windows.Forms.Button();
             this.buttonRunAllMethods = new System.Windows.Forms.Button();
-            this.textBoxRunAllMethods = new System.Windows.Forms.TextBox();
+            this.label14 = new System.Windows.Forms.Label();
+            this.textBoxMseMetric = new System.Windows.Forms.TextBox();
+            this.label15 = new System.Windows.Forms.Label();
+            this.textBoxNaeMetric = new System.Windows.Forms.TextBox();
+            this.label16 = new System.Windows.Forms.Label();
+            this.textBoxScMetric = new System.Windows.Forms.TextBox();
+            this.label17 = new System.Windows.Forms.Label();
+            this.textBoxPsnrMEtric = new System.Windows.Forms.TextBox();
+            this.label18 = new System.Windows.Forms.Label();
+            this.textBoxAdMetric = new System.Windows.Forms.TextBox();
+            this.resetMethodsStatisticsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).BeginInit();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // button1
-            // 
-            this.button1.Location = new System.Drawing.Point(12, 461);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 23);
-            this.button1.TabIndex = 0;
-            this.button1.Text = "Test";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Visible = false;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // pictureBox1
             // 
@@ -237,7 +235,7 @@
             // 
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.label1.Location = new System.Drawing.Point(220, 428);
+            this.label1.Location = new System.Drawing.Point(234, 428);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(121, 15);
             this.label1.TabIndex = 20;
@@ -247,7 +245,7 @@
             // 
             this.label2.AutoSize = true;
             this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.label2.Location = new System.Drawing.Point(377, 428);
+            this.label2.Location = new System.Drawing.Point(388, 428);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(113, 15);
             this.label2.TabIndex = 21;
@@ -257,7 +255,7 @@
             // 
             this.label3.AutoSize = true;
             this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.label3.Location = new System.Drawing.Point(517, 430);
+            this.label3.Location = new System.Drawing.Point(526, 429);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(175, 15);
             this.label3.TabIndex = 22;
@@ -335,6 +333,7 @@
             this.openToolStripMenuItem,
             this.saveToolStripMenuItem,
             this.exportMetricsToCSVToolStripMenuItem,
+            this.resetMethodsStatisticsToolStripMenuItem,
             this.exitToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
@@ -379,7 +378,7 @@
             // closeAllToolStripMenuItem
             // 
             this.closeAllToolStripMenuItem.Name = "closeAllToolStripMenuItem";
-            this.closeAllToolStripMenuItem.Size = new System.Drawing.Size(118, 22);
+            this.closeAllToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.closeAllToolStripMenuItem.Text = "Close all";
             this.closeAllToolStripMenuItem.Click += new System.EventHandler(this.closeAllToolStripMenuItem_Click);
             // 
@@ -394,7 +393,7 @@
             // restoreToolStripMenuItem
             // 
             this.restoreToolStripMenuItem.Name = "restoreToolStripMenuItem";
-            this.restoreToolStripMenuItem.Size = new System.Drawing.Size(113, 22);
+            this.restoreToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.restoreToolStripMenuItem.Text = "Restore";
             this.restoreToolStripMenuItem.Click += new System.EventHandler(this.restoreToolStripMenuItem_Click);
             // 
@@ -432,13 +431,12 @@
             // 
             // buttonShadowRemovalLabMethod2
             // 
-            this.buttonShadowRemovalLabMethod2.Location = new System.Drawing.Point(6, 568);
+            this.buttonShadowRemovalLabMethod2.Location = new System.Drawing.Point(159, 691);
             this.buttonShadowRemovalLabMethod2.Name = "buttonShadowRemovalLabMethod2";
-            this.buttonShadowRemovalLabMethod2.Size = new System.Drawing.Size(75, 27);
+            this.buttonShadowRemovalLabMethod2.Size = new System.Drawing.Size(75, 23);
             this.buttonShadowRemovalLabMethod2.TabIndex = 32;
             this.buttonShadowRemovalLabMethod2.Text = "LAB2";
             this.buttonShadowRemovalLabMethod2.UseVisualStyleBackColor = true;
-            this.buttonShadowRemovalLabMethod2.Visible = false;
             this.buttonShadowRemovalLabMethod2.Click += new System.EventHandler(this.buttonShadowRemovalLabMethod2_Click);
             // 
             // buttonRecoveringOfWeatherDegradedImagesBasedOnRGBResponseRatioConstancyMethod
@@ -454,41 +452,37 @@
             // 
             // buttonTestEmguCVCudaMeanShift
             // 
-            this.buttonTestEmguCVCudaMeanShift.Location = new System.Drawing.Point(12, 519);
+            this.buttonTestEmguCVCudaMeanShift.Location = new System.Drawing.Point(12, 691);
             this.buttonTestEmguCVCudaMeanShift.Name = "buttonTestEmguCVCudaMeanShift";
-            this.buttonTestEmguCVCudaMeanShift.Size = new System.Drawing.Size(157, 27);
+            this.buttonTestEmguCVCudaMeanShift.Size = new System.Drawing.Size(141, 23);
             this.buttonTestEmguCVCudaMeanShift.TabIndex = 34;
             this.buttonTestEmguCVCudaMeanShift.Text = "TestEmguCVCudaMeanShift";
             this.buttonTestEmguCVCudaMeanShift.UseVisualStyleBackColor = true;
-            this.buttonTestEmguCVCudaMeanShift.Visible = false;
             this.buttonTestEmguCVCudaMeanShift.Click += new System.EventHandler(this.buttonTestEmguCVCudaMeanShift_Click);
             // 
             // buttonMSTest
             // 
-            this.buttonMSTest.Location = new System.Drawing.Point(12, 490);
+            this.buttonMSTest.Location = new System.Drawing.Point(12, 663);
             this.buttonMSTest.Name = "buttonMSTest";
             this.buttonMSTest.Size = new System.Drawing.Size(75, 23);
             this.buttonMSTest.TabIndex = 35;
             this.buttonMSTest.Text = "TestMS";
             this.buttonMSTest.UseVisualStyleBackColor = true;
-            this.buttonMSTest.Visible = false;
             this.buttonMSTest.Click += new System.EventHandler(this.buttonMSTest_Click);
             // 
             // textBoxTestMsKernel
             // 
-            this.textBoxTestMsKernel.Location = new System.Drawing.Point(93, 492);
+            this.textBoxTestMsKernel.Location = new System.Drawing.Point(93, 665);
             this.textBoxTestMsKernel.Name = "textBoxTestMsKernel";
             this.textBoxTestMsKernel.Size = new System.Drawing.Size(28, 20);
             this.textBoxTestMsKernel.TabIndex = 36;
-            this.textBoxTestMsKernel.Visible = false;
             // 
             // textBoxTestMsSigma
             // 
-            this.textBoxTestMsSigma.Location = new System.Drawing.Point(127, 493);
+            this.textBoxTestMsSigma.Location = new System.Drawing.Point(127, 666);
             this.textBoxTestMsSigma.Name = "textBoxTestMsSigma";
             this.textBoxTestMsSigma.Size = new System.Drawing.Size(28, 20);
             this.textBoxTestMsSigma.TabIndex = 37;
-            this.textBoxTestMsSigma.Visible = false;
             // 
             // buttonDetectUsingModifiedRatioOfHueOverIntensityMethod
             // 
@@ -504,22 +498,20 @@
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(90, 476);
+            this.label6.Location = new System.Drawing.Point(90, 649);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(36, 13);
             this.label6.TabIndex = 39;
             this.label6.Text = "kernel";
-            this.label6.Visible = false;
             // 
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(124, 477);
+            this.label7.Location = new System.Drawing.Point(124, 650);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(34, 13);
             this.label7.TabIndex = 40;
             this.label7.Text = "sigma";
-            this.label7.Visible = false;
             // 
             // label8
             // 
@@ -633,7 +625,7 @@
             // 
             // buttonTestFilters
             // 
-            this.buttonTestFilters.Location = new System.Drawing.Point(94, 450);
+            this.buttonTestFilters.Location = new System.Drawing.Point(12, 634);
             this.buttonTestFilters.Name = "buttonTestFilters";
             this.buttonTestFilters.Size = new System.Drawing.Size(75, 23);
             this.buttonTestFilters.TabIndex = 53;
@@ -698,7 +690,7 @@
             // 
             // textBoxFvmMetric
             // 
-            this.textBoxFvmMetric.Location = new System.Drawing.Point(12, 621);
+            this.textBoxFvmMetric.Location = new System.Drawing.Point(1018, 561);
             this.textBoxFvmMetric.Name = "textBoxFvmMetric";
             this.textBoxFvmMetric.Size = new System.Drawing.Size(75, 20);
             this.textBoxFvmMetric.TabIndex = 59;
@@ -706,7 +698,7 @@
             // label13
             // 
             this.label13.AutoSize = true;
-            this.label13.Location = new System.Drawing.Point(12, 605);
+            this.label13.Location = new System.Drawing.Point(974, 564);
             this.label13.Name = "label13";
             this.label13.Size = new System.Drawing.Size(29, 13);
             this.label13.TabIndex = 60;
@@ -736,27 +728,116 @@
             // 
             // buttonRunAllMethods
             // 
-            this.buttonRunAllMethods.Location = new System.Drawing.Point(15, 682);
+            this.buttonRunAllMethods.Location = new System.Drawing.Point(6, 456);
             this.buttonRunAllMethods.Name = "buttonRunAllMethods";
-            this.buttonRunAllMethods.Size = new System.Drawing.Size(121, 27);
+            this.buttonRunAllMethods.Size = new System.Drawing.Size(114, 27);
             this.buttonRunAllMethods.TabIndex = 63;
             this.buttonRunAllMethods.Text = "Run All Methods";
             this.buttonRunAllMethods.UseVisualStyleBackColor = true;
             this.buttonRunAllMethods.Click += new System.EventHandler(this.buttonRunAllMethods_Click);
             // 
-            // textBoxRunAllMethods
+            // label14
             // 
-            this.textBoxRunAllMethods.Location = new System.Drawing.Point(142, 686);
-            this.textBoxRunAllMethods.Name = "textBoxRunAllMethods";
-            this.textBoxRunAllMethods.Size = new System.Drawing.Size(126, 20);
-            this.textBoxRunAllMethods.TabIndex = 64;
+            this.label14.AutoSize = true;
+            this.label14.Location = new System.Drawing.Point(974, 588);
+            this.label14.Name = "label14";
+            this.label14.Size = new System.Drawing.Size(30, 13);
+            this.label14.TabIndex = 65;
+            this.label14.Text = "MSE";
+            // 
+            // textBoxMseMetric
+            // 
+            this.textBoxMseMetric.Location = new System.Drawing.Point(1018, 585);
+            this.textBoxMseMetric.Name = "textBoxMseMetric";
+            this.textBoxMseMetric.Size = new System.Drawing.Size(75, 20);
+            this.textBoxMseMetric.TabIndex = 64;
+            // 
+            // label15
+            // 
+            this.label15.AutoSize = true;
+            this.label15.Location = new System.Drawing.Point(974, 612);
+            this.label15.Name = "label15";
+            this.label15.Size = new System.Drawing.Size(29, 13);
+            this.label15.TabIndex = 67;
+            this.label15.Text = "NAE";
+            // 
+            // textBoxNaeMetric
+            // 
+            this.textBoxNaeMetric.Location = new System.Drawing.Point(1018, 609);
+            this.textBoxNaeMetric.Name = "textBoxNaeMetric";
+            this.textBoxNaeMetric.Size = new System.Drawing.Size(75, 20);
+            this.textBoxNaeMetric.TabIndex = 66;
+            // 
+            // label16
+            // 
+            this.label16.AutoSize = true;
+            this.label16.Location = new System.Drawing.Point(1109, 560);
+            this.label16.Name = "label16";
+            this.label16.Size = new System.Drawing.Size(21, 13);
+            this.label16.TabIndex = 69;
+            this.label16.Text = "SC";
+            // 
+            // textBoxScMetric
+            // 
+            this.textBoxScMetric.Location = new System.Drawing.Point(1152, 556);
+            this.textBoxScMetric.Name = "textBoxScMetric";
+            this.textBoxScMetric.Size = new System.Drawing.Size(75, 20);
+            this.textBoxScMetric.TabIndex = 68;
+            // 
+            // label17
+            // 
+            this.label17.AutoSize = true;
+            this.label17.Location = new System.Drawing.Point(1109, 586);
+            this.label17.Name = "label17";
+            this.label17.Size = new System.Drawing.Size(37, 13);
+            this.label17.TabIndex = 71;
+            this.label17.Text = "PSNR";
+            // 
+            // textBoxPsnrMEtric
+            // 
+            this.textBoxPsnrMEtric.Location = new System.Drawing.Point(1152, 583);
+            this.textBoxPsnrMEtric.Name = "textBoxPsnrMEtric";
+            this.textBoxPsnrMEtric.Size = new System.Drawing.Size(75, 20);
+            this.textBoxPsnrMEtric.TabIndex = 70;
+            // 
+            // label18
+            // 
+            this.label18.AutoSize = true;
+            this.label18.Location = new System.Drawing.Point(1109, 612);
+            this.label18.Name = "label18";
+            this.label18.Size = new System.Drawing.Size(22, 13);
+            this.label18.TabIndex = 73;
+            this.label18.Text = "AD";
+            // 
+            // textBoxAdMetric
+            // 
+            this.textBoxAdMetric.Location = new System.Drawing.Point(1152, 609);
+            this.textBoxAdMetric.Name = "textBoxAdMetric";
+            this.textBoxAdMetric.Size = new System.Drawing.Size(75, 20);
+            this.textBoxAdMetric.TabIndex = 72;
+            // 
+            // resetMethodsStatisticsToolStripMenuItem
+            // 
+            this.resetMethodsStatisticsToolStripMenuItem.Name = "resetMethodsStatisticsToolStripMenuItem";
+            this.resetMethodsStatisticsToolStripMenuItem.Size = new System.Drawing.Size(200, 22);
+            this.resetMethodsStatisticsToolStripMenuItem.Text = "Reset methods statistics";
+            this.resetMethodsStatisticsToolStripMenuItem.Click += new System.EventHandler(this.resetMethodsStatisticsToolStripMenuItem_Click);
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1235, 758);
-            this.Controls.Add(this.textBoxRunAllMethods);
+            this.ClientSize = new System.Drawing.Size(1235, 724);
+            this.Controls.Add(this.label18);
+            this.Controls.Add(this.textBoxAdMetric);
+            this.Controls.Add(this.label17);
+            this.Controls.Add(this.textBoxPsnrMEtric);
+            this.Controls.Add(this.label16);
+            this.Controls.Add(this.textBoxScMetric);
+            this.Controls.Add(this.label15);
+            this.Controls.Add(this.textBoxNaeMetric);
+            this.Controls.Add(this.label14);
+            this.Controls.Add(this.textBoxMseMetric);
             this.Controls.Add(this.buttonRunAllMethods);
             this.Controls.Add(this.buttonRemoveFogUsingMultiCoreDSPMethod);
             this.Controls.Add(this.buttonRemoveFogUsingCustomMethodWithDepthEstimation);
@@ -812,7 +893,6 @@
             this.Controls.Add(this.pictureBox3);
             this.Controls.Add(this.pictureBox2);
             this.Controls.Add(this.pictureBox1);
-            this.Controls.Add(this.button1);
             this.Controls.Add(this.menuStrip1);
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "Form1";
@@ -829,8 +909,6 @@
         }
 
         #endregion
-
-        private System.Windows.Forms.Button button1;
         private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.PictureBox pictureBox2;
         private System.Windows.Forms.PictureBox pictureBox3;
@@ -896,7 +974,17 @@
         private System.Windows.Forms.Button buttonRemoveFogUsingMultiCoreDSPMethod;
         private System.Windows.Forms.ToolStripMenuItem exportMetricsToCSVToolStripMenuItem;
         private System.Windows.Forms.Button buttonRunAllMethods;
-        private System.Windows.Forms.TextBox textBoxRunAllMethods;
+        private System.Windows.Forms.Label label14;
+        private System.Windows.Forms.TextBox textBoxMseMetric;
+        private System.Windows.Forms.Label label15;
+        private System.Windows.Forms.TextBox textBoxNaeMetric;
+        private System.Windows.Forms.Label label16;
+        private System.Windows.Forms.TextBox textBoxScMetric;
+        private System.Windows.Forms.Label label17;
+        private System.Windows.Forms.TextBox textBoxPsnrMEtric;
+        private System.Windows.Forms.Label label18;
+        private System.Windows.Forms.TextBox textBoxAdMetric;
+        private System.Windows.Forms.ToolStripMenuItem resetMethodsStatisticsToolStripMenuItem;
     }
 }
 
