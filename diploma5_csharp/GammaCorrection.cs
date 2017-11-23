@@ -1,9 +1,11 @@
 ﻿using diploma5_csharp.Helpers;
+using diploma5_csharp.Models;
 using Emgu.CV;
 using Emgu.CV.Structure;
 using Emgu.CV.UI;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -189,6 +191,25 @@ namespace diploma5_csharp
             }
 
             return result;
+        }
+
+        public static BaseMethodResponse AdaptiveWithBaseResponse(Image<Bgr, Byte> image, bool showWindows = false)
+        {
+            var stopwatch = new Stopwatch();
+            stopwatch.Start();
+
+            var result = Adaptive(image, showWindows);
+
+            stopwatch.Stop();
+
+            var Metrics = ImageMetricHelper.ComputeAll(image, result);
+            return new BaseMethodResponse
+            {
+                EnhancementResult = result,
+                DetectionResult = new Image<Gray, byte>(image.Size),
+                Metrics = Metrics,
+                ExecutionTimeMs = stopwatch.ElapsedMilliseconds
+            };
         }
     }
 }

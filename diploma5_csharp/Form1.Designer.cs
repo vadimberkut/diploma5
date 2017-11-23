@@ -104,6 +104,10 @@
             this.textBoxPsnrMEtric = new System.Windows.Forms.TextBox();
             this.label18 = new System.Windows.Forms.Label();
             this.textBoxAdMetric = new System.Windows.Forms.TextBox();
+            this.label19 = new System.Windows.Forms.Label();
+            this.textBoxRMSDiff = new System.Windows.Forms.TextBox();
+            this.label20 = new System.Windows.Forms.Label();
+            this.textBoxShannonEntropyDiff = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).BeginInit();
@@ -708,9 +712,9 @@
             // 
             // textBoxFvmMetric
             // 
-            this.textBoxFvmMetric.Location = new System.Drawing.Point(1018, 561);
+            this.textBoxFvmMetric.Location = new System.Drawing.Point(1027, 561);
             this.textBoxFvmMetric.Name = "textBoxFvmMetric";
-            this.textBoxFvmMetric.Size = new System.Drawing.Size(75, 20);
+            this.textBoxFvmMetric.Size = new System.Drawing.Size(60, 20);
             this.textBoxFvmMetric.TabIndex = 59;
             // 
             // label13
@@ -765,9 +769,9 @@
             // 
             // textBoxMseMetric
             // 
-            this.textBoxMseMetric.Location = new System.Drawing.Point(1018, 585);
+            this.textBoxMseMetric.Location = new System.Drawing.Point(1027, 585);
             this.textBoxMseMetric.Name = "textBoxMseMetric";
-            this.textBoxMseMetric.Size = new System.Drawing.Size(75, 20);
+            this.textBoxMseMetric.Size = new System.Drawing.Size(60, 20);
             this.textBoxMseMetric.TabIndex = 64;
             // 
             // label15
@@ -781,9 +785,9 @@
             // 
             // textBoxNaeMetric
             // 
-            this.textBoxNaeMetric.Location = new System.Drawing.Point(1018, 609);
+            this.textBoxNaeMetric.Location = new System.Drawing.Point(1027, 609);
             this.textBoxNaeMetric.Name = "textBoxNaeMetric";
-            this.textBoxNaeMetric.Size = new System.Drawing.Size(75, 20);
+            this.textBoxNaeMetric.Size = new System.Drawing.Size(60, 20);
             this.textBoxNaeMetric.TabIndex = 66;
             // 
             // label16
@@ -797,9 +801,9 @@
             // 
             // textBoxScMetric
             // 
-            this.textBoxScMetric.Location = new System.Drawing.Point(1152, 556);
+            this.textBoxScMetric.Location = new System.Drawing.Point(1161, 556);
             this.textBoxScMetric.Name = "textBoxScMetric";
-            this.textBoxScMetric.Size = new System.Drawing.Size(75, 20);
+            this.textBoxScMetric.Size = new System.Drawing.Size(60, 20);
             this.textBoxScMetric.TabIndex = 68;
             // 
             // label17
@@ -813,9 +817,9 @@
             // 
             // textBoxPsnrMEtric
             // 
-            this.textBoxPsnrMEtric.Location = new System.Drawing.Point(1152, 583);
+            this.textBoxPsnrMEtric.Location = new System.Drawing.Point(1161, 583);
             this.textBoxPsnrMEtric.Name = "textBoxPsnrMEtric";
-            this.textBoxPsnrMEtric.Size = new System.Drawing.Size(75, 20);
+            this.textBoxPsnrMEtric.Size = new System.Drawing.Size(60, 20);
             this.textBoxPsnrMEtric.TabIndex = 70;
             // 
             // label18
@@ -829,16 +833,52 @@
             // 
             // textBoxAdMetric
             // 
-            this.textBoxAdMetric.Location = new System.Drawing.Point(1152, 609);
+            this.textBoxAdMetric.Location = new System.Drawing.Point(1161, 609);
             this.textBoxAdMetric.Name = "textBoxAdMetric";
-            this.textBoxAdMetric.Size = new System.Drawing.Size(75, 20);
+            this.textBoxAdMetric.Size = new System.Drawing.Size(60, 20);
             this.textBoxAdMetric.TabIndex = 72;
+            // 
+            // label19
+            // 
+            this.label19.AutoSize = true;
+            this.label19.Location = new System.Drawing.Point(974, 637);
+            this.label19.Name = "label19";
+            this.label19.Size = new System.Drawing.Size(47, 13);
+            this.label19.TabIndex = 75;
+            this.label19.Text = "RMSDiff";
+            // 
+            // textBoxRMSDiff
+            // 
+            this.textBoxRMSDiff.Location = new System.Drawing.Point(1027, 634);
+            this.textBoxRMSDiff.Name = "textBoxRMSDiff";
+            this.textBoxRMSDiff.Size = new System.Drawing.Size(60, 20);
+            this.textBoxRMSDiff.TabIndex = 74;
+            // 
+            // label20
+            // 
+            this.label20.AutoSize = true;
+            this.label20.Location = new System.Drawing.Point(1108, 639);
+            this.label20.Name = "label20";
+            this.label20.Size = new System.Drawing.Size(50, 39);
+            this.label20.TabIndex = 77;
+            this.label20.Text = "Shannon\r\nEntropy\r\nDiff";
+            // 
+            // textBoxShannonEntropyDiff
+            // 
+            this.textBoxShannonEntropyDiff.Location = new System.Drawing.Point(1161, 636);
+            this.textBoxShannonEntropyDiff.Name = "textBoxShannonEntropyDiff";
+            this.textBoxShannonEntropyDiff.Size = new System.Drawing.Size(60, 20);
+            this.textBoxShannonEntropyDiff.TabIndex = 76;
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1235, 724);
+            this.Controls.Add(this.label20);
+            this.Controls.Add(this.textBoxShannonEntropyDiff);
+            this.Controls.Add(this.label19);
+            this.Controls.Add(this.textBoxRMSDiff);
             this.Controls.Add(this.label18);
             this.Controls.Add(this.textBoxAdMetric);
             this.Controls.Add(this.label17);
@@ -996,6 +1036,10 @@
         private System.Windows.Forms.Label label18;
         private System.Windows.Forms.TextBox textBoxAdMetric;
         private System.Windows.Forms.ToolStripMenuItem resetMethodsStatisticsToolStripMenuItem;
+        private System.Windows.Forms.Label label19;
+        private System.Windows.Forms.TextBox textBoxRMSDiff;
+        private System.Windows.Forms.Label label20;
+        private System.Windows.Forms.TextBox textBoxShannonEntropyDiff;
     }
 }
 

@@ -22,6 +22,32 @@ namespace diploma5_csharp.Helpers
 
         public static MetricsResult ComputeAll(Image<Bgr, double> image1, Image<Bgr, double> image2)
         {
+            var converted1 = image1.Convert<Bgr, byte>();
+            var converted2 = image2.Convert<Bgr, byte>();
+            var result = ComputeAll(converted1, image1, converted2, image2);
+
+            // dispose resources
+            converted1.Dispose();
+            converted2.Dispose();
+
+            return result;
+        }
+
+        public static MetricsResult ComputeAll(Image<Bgr, byte> image1, Image<Bgr, byte> image2)
+        {
+            var converted1 = image1.Convert<Bgr, double>();
+            var converted2 = image2.Convert<Bgr, double>();
+            var result = ComputeAll(image1, converted1, image2, converted2);
+
+            // dispose resources
+            converted1.Dispose();
+            converted2.Dispose();
+
+            return result;
+        }
+
+        private static MetricsResult ComputeAll(Image<Bgr, byte> image1B, Image<Bgr, double> image1, Image<Bgr, byte> image2B, Image<Bgr, double> image2)
+        {
             double MSE = ImageMetricHelper.MSE(image1, image2);
             double NAE = ImageMetricHelper.NAE(image1, image2);
             double SC = ImageMetricHelper.SC(image1, image2);
@@ -29,7 +55,7 @@ namespace diploma5_csharp.Helpers
             double AD = ImageMetricHelper.AD(image1, image2);
             double FVM = ImageMetricHelper.FVM(image1, image2);
             double RMSDiff = ImageMetricHelper.RMSDifference(image1, image2);
-            double ShannonEntropyDiff = ImageMetricHelper.ShannonEntropyDiff(image1, image2);
+            double ShannonEntropyDiff = ImageMetricHelper.ShannonEntropyDiff(image1B, image2B); // !!! - better to calc entripy for byte images
 
             return new MetricsResult
             {
@@ -42,19 +68,6 @@ namespace diploma5_csharp.Helpers
                 RMSDiff = Math.Round(RMSDiff, DECIMALS),
                 ShannonEntropyDiff = ShannonEntropyDiff
             };
-        }
-
-        public static MetricsResult ComputeAll(Image<Bgr, byte> image1, Image<Bgr, byte> image2)
-        {
-            var converted1 = image1.Convert<Bgr, double>();
-            var converted2 = image2.Convert<Bgr, double>();
-            var result = ComputeAll(converted1, converted2);
-
-            // dispose resources
-            converted1.Dispose();
-            converted2.Dispose();
-
-            return result;
         }
 
         //public static void AAA<TColor, TDepth>(Image<TColor, TDepth> image)
@@ -698,13 +711,13 @@ namespace diploma5_csharp.Helpers
         /// <param name="image1"></param>
         /// <param name="image2"></param>
         /// <returns></returns>
-        public static double ShannonEntropyDiff(Image<Gray, double> image1, Image<Gray, double> image2)
-        {
-            var SE1 = new DataEntropyUTF8(image1);
-            var SE2 = new DataEntropyUTF8(image2);
-            double result = SE2.Entropy - SE1.Entropy;
-            return result;
-        }
+        //public static double ShannonEntropyDiff(Image<Gray, byte> image1, Image<Gray, byte> image2)
+        //{
+        //    var SE1 = new DataEntropyUTF8(image1);
+        //    var SE2 = new DataEntropyUTF8(image2);
+        //    double result = SE2.Entropy - SE1.Entropy;
+        //    return result;
+        //}
 
         /// <summary>
         /// Calculates Shannon entropy for image1 and image2. Retuns entropy defference of image2 and image1
@@ -713,11 +726,29 @@ namespace diploma5_csharp.Helpers
         /// <param name="image1"></param>
         /// <param name="image2"></param>
         /// <returns></returns>
-        public static double ShannonEntropyDiff(Image<Bgr, double> image1, Image<Bgr, double> image2)
+        public static double ShannonEntropyDiff(Image<Bgr, byte> image1, Image<Bgr, byte> image2)
         {
-            var SE1 = new DataEntropyUTF8(image1);
-            var SE2 = new DataEntropyUTF8(image2);
-            double result = SE2.Entropy - SE1.Entropy;
+            // compute for while image at once (possible can cause invalid result)
+            //var SE1 = new DataEntropyUTF8(image1);
+            //var SE2 = new DataEntropyUTF8(image2);
+            //double result = SE2.Entropy - SE1.Entropy;
+            //return result;
+
+            // compute for each channel separately
+            var channels1 = image1.Split();
+            var channels2 = image2.Split();
+            double averagedEntropy1 = 0;
+            double averagedEntropy2 = 0;
+            for (int i = 0; i < channels1.Count(); i++)
+            {
+                var SE1 = new DataEntropyUTF8(channels1[i]);
+                var SE2 = new DataEntropyUTF8(channels2[i]);
+                averagedEntropy1 += SE1.Entropy;
+                averagedEntropy2 += SE2.Entropy;
+            }
+            //averagedEntropy1 = averagedEntropy1 / channels1.Count();
+            //averagedEntropy2 = averagedEntropy2 / channels2.Count();
+            double result = averagedEntropy2 - averagedEntropy1;
             return result;
         }
 

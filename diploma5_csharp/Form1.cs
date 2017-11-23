@@ -118,6 +118,8 @@ namespace diploma5_csharp
             this.textBoxNaeMetric.Text = data.NAE.ToString();
             this.textBoxScMetric.Text = data.SC.ToString();
             this.textBoxPsnrMEtric.Text = data.PSNR.ToString();
+            this.textBoxRMSDiff.Text = data.RMSDiff.ToString();
+            this.textBoxShannonEntropyDiff.Text = data.ShannonEntropyDiff.ToString();
         }
 
         #endregion GENERAL METHODS
@@ -626,15 +628,27 @@ namespace diploma5_csharp
         // AGC
         private void buttonApplyAGC_Click(object sender, EventArgs e)
         {
-            var result = GammaCorrection.Adaptive(_appState.InputImageBgr, showWindows: GetCheckBoxValue(checkBoxShowOptionalWindows));
-            _appState.SetOutputImage(result);
-            this.DisplayImageInPictureBox(pictureBox3, result.Bitmap);
+            var result = GammaCorrection.AdaptiveWithBaseResponse(_appState.InputImageBgr, showWindows: GetCheckBoxValue(checkBoxShowOptionalWindows));
+            _appState.SetOutputImage(result.EnhancementResult);
+            _appState.SetShadowMaskImage(result.DetectionResult);
+            this.DisplayImageInPictureBox(pictureBox3, result.EnhancementResult.Bitmap);
+            this.DisplayImageInPictureBox(pictureBox2, result.DetectionResult.Bitmap);
+
+            // save metrics
+            _methodInfoStore.AddOrUpdate(new EnhanceMethodInfoModel
+            {
+                ImageFileName = _appState.InputImageFileName,
+                EnhanceMethodName = nameof(GammaCorrection.Adaptive),
+                Metrics = result.Metrics,
+                ExecutionTimeMs = result.ExecutionTimeMs
+            });
+            DisplayImageMetrics(result.Metrics);
 
             // compare RMS
             double rms1 = ImageMetricHelper.RMS(_appState.InputImageBgr.Convert<Bgr, double>());
-            double rms2 = ImageMetricHelper.RMS(result.Convert<Bgr, double>());
+            double rms2 = ImageMetricHelper.RMS(result.EnhancementResult.Convert<Bgr, double>());
             double diff = rms2 - rms1;
-            var metricRes = ImageMetricHelper.ComputeAll(_appState.InputImageBgr, result);
+            var metricRes = ImageMetricHelper.ComputeAll(_appState.InputImageBgr, result.EnhancementResult);
 
             // compare entropy
         }
