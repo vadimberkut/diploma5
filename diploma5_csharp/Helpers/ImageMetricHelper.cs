@@ -54,7 +54,9 @@ namespace diploma5_csharp.Helpers
             double PSNR = ImageMetricHelper.PSNR(image1, image2);
             double AD = ImageMetricHelper.AD(image1, image2);
             double FVM = ImageMetricHelper.FVM(image1, image2);
+            double RMS = ImageMetricHelper.RMS(image2);
             double RMSDiff = ImageMetricHelper.RMSDifference(image1, image2);
+            double ShannonEntropy = ImageMetricHelper.ShannonEntropy(image2B); // !!! - better to calc entripy for byte images
             double ShannonEntropyDiff = ImageMetricHelper.ShannonEntropyDiff(image1B, image2B); // !!! - better to calc entripy for byte images
 
             return new MetricsResult
@@ -65,8 +67,10 @@ namespace diploma5_csharp.Helpers
                 NAE = Math.Round(NAE, DECIMALS),
                 SC = Math.Round(SC, DECIMALS),
                 PSNR = Math.Round(PSNR, DECIMALS),
+                RMS = Math.Round(RMS, DECIMALS), // for result image
                 RMSDiff = Math.Round(RMSDiff, DECIMALS),
-                ShannonEntropyDiff = ShannonEntropyDiff
+                ShannonEntropy = Math.Round(ShannonEntropy, DECIMALS), // for result image
+                ShannonEntropyDiff = Math.Round(ShannonEntropyDiff, DECIMALS),
             };
         }
 
@@ -703,6 +707,16 @@ namespace diploma5_csharp.Helpers
 
 
 
+        /// <summary>
+        /// Calculates Shannon entropy for one image
+        /// </summary>
+        /// <param name="image"></param>
+        /// <returns></returns>
+        public static double ShannonEntropy(Image<Bgr, byte> image)
+        {
+            var SE = new DataEntropyUTF8(image);
+            return SE.Entropy;
+        }
 
         /// <summary>
         /// Calculates Shannon entropy for image1 and image2. Retuns entropy defference of image2 and image1
@@ -746,8 +760,8 @@ namespace diploma5_csharp.Helpers
                 averagedEntropy1 += SE1.Entropy;
                 averagedEntropy2 += SE2.Entropy;
             }
-            //averagedEntropy1 = averagedEntropy1 / channels1.Count();
-            //averagedEntropy2 = averagedEntropy2 / channels2.Count();
+            averagedEntropy1 = averagedEntropy1 / channels1.Count();
+            averagedEntropy2 = averagedEntropy2 / channels2.Count();
             double result = averagedEntropy2 - averagedEntropy1;
             return result;
         }

@@ -118,7 +118,9 @@ namespace diploma5_csharp
             this.textBoxNaeMetric.Text = data.NAE.ToString();
             this.textBoxScMetric.Text = data.SC.ToString();
             this.textBoxPsnrMEtric.Text = data.PSNR.ToString();
-            this.textBoxRMSDiff.Text = data.RMSDiff.ToString();
+            this.textBoxRMSMetric.Text = data.RMS.ToString();
+            this.textBoxRMSMetricDiff.Text = data.RMSDiff.ToString();
+            this.textBoxShannonEntropy.Text = data.ShannonEntropy.ToString();
             this.textBoxShannonEntropyDiff.Text = data.ShannonEntropyDiff.ToString();
         }
 

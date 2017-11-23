@@ -30,7 +30,9 @@ namespace diploma5_csharp.Models
         public double PSNR { get; set; }
         public double AD { get; set; }
         public double FVM { get; set; }
+        public double RMS { get; set; }
         public double RMSDiff { get; set; }
+        public double ShannonEntropy { get; set; }
         public double ShannonEntropyDiff { get; set; }
     }
 }
