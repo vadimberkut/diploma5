@@ -21,12 +21,13 @@ namespace diploma5_csharp.Helpers
 
         public static MetricsResult ComputeAll(Image<Bgr, double> image1, Image<Bgr, double> image2)
         {
-            double MSE = ImageMetricHelper.MSE(image1.Convert<Bgr, double>(), image2.Convert<Bgr, double>());
-            double NAE = ImageMetricHelper.NAE(image1.Convert<Bgr, double>(), image2.Convert<Bgr, double>());
-            double SC = ImageMetricHelper.SC(image1.Convert<Bgr, double>(), image2.Convert<Bgr, double>());
-            double PSNR = ImageMetricHelper.PSNR(image1.Convert<Bgr, double>(), image2.Convert<Bgr, double>());
-            double AD = ImageMetricHelper.AD(image1.Convert<Bgr, double>(), image2.Convert<Bgr, double>());
-            double FVM = ImageMetricHelper.FVM(image1.Convert<Bgr, double>(), image2.Convert<Bgr, double>());
+            double MSE = ImageMetricHelper.MSE(image1, image2);
+            double NAE = ImageMetricHelper.NAE(image1, image2);
+            double SC = ImageMetricHelper.SC(image1, image2);
+            double PSNR = ImageMetricHelper.PSNR(image1, image2);
+            double AD = ImageMetricHelper.AD(image1, image2);
+            double FVM = ImageMetricHelper.FVM(image1, image2);
+            double RMSDiff = ImageMetricHelper.RMSDifference(image1, image2);
 
             return new MetricsResult
             {
@@ -35,8 +36,22 @@ namespace diploma5_csharp.Helpers
                 MSE = Math.Round(MSE, DECIMALS),
                 NAE = Math.Round(NAE, DECIMALS),
                 SC = Math.Round(SC, DECIMALS),
-                PSNR = Math.Round(PSNR, DECIMALS)
+                PSNR = Math.Round(PSNR, DECIMALS),
+                RMSDiff = Math.Round(RMSDiff, DECIMALS),
             };
+        }
+
+        public static MetricsResult ComputeAll(Image<Bgr, byte> image1, Image<Bgr, byte> image2)
+        {
+            var converted1 = image1.Convert<Bgr, double>();
+            var converted2 = image2.Convert<Bgr, double>();
+            var result = ComputeAll(converted1, converted2);
+
+            // dispose resources
+            converted1.Dispose();
+            converted2.Dispose();
+
+            return result;
         }
 
         //public static void AAA<TColor, TDepth>(Image<TColor, TDepth> image)
@@ -589,6 +604,84 @@ namespace diploma5_csharp.Helpers
 
 
         // TODO - RMSE, BER
+
+
+
+
+
+        /// <summary>
+        /// Root-mean-square (RMS) contrast allows to define the contrast of an image
+        /// </summary>
+        /// <param name="image"></param>
+        /// <returns></returns>
+        public static double RMS(Image<Gray, double> image)
+        {
+            double result = 0;
+            int M = image.Rows;
+            int N = image.Cols;
+
+            double[] pixelValues = ImageHelper.GetImagePixels(image);
+            double[] positivePixelValues = pixelValues.Where(x => x > 0).ToArray(); // filter 0 values to retrieve more accurate results (according to article)
+            double mu = StatisticsHelper.Average(positivePixelValues); // mean of the image intensity
+
+            for (int m = 0; m < M; m++)
+            {
+                for (int n = 0; n < N; n++)
+                {
+                    result += Math.Pow(mu - image.Data[m, n, 0], 2); // |I-K|^2
+                }
+            }
+            result = result * (1.0 / (M * N));
+            result = Math.Sqrt(result);
+            return result;
+        }
+
+        /// <summary>
+        /// Root-mean-square (RMS) contrast allows to define the contrast of an image
+        /// </summary>
+        /// <param name="image"></param>
+        /// <returns></returns>
+        public static double RMS(Image<Bgr, double> image)
+        {
+            var channels = image.Split();
+            double result = 0;
+            for (int i = 0; i < channels.Count(); i++)
+            {
+                result += RMS(channels[i]);
+            }
+            return result / channels.Count();
+        }
+
+        /// <summary>
+        /// Root-mean-square (RMS) contrast allows to define the contrast of an image. Computes difference between RMS of two images.
+        /// Positive value means enchacement of contrast in image2 comparing to image1. Negative - degradation in contrast.
+        /// </summary>
+        /// <param name="image1"></param>
+        /// <param name="image2"></param>
+        /// <returns></returns>
+        public static double RMSDifference(Image<Gray, double> image1, Image<Gray, double> image2)
+        {
+            double rms1 = RMS(image1);
+            double rms2 = RMS(image2);
+            double result = rms2 - rms1;
+            return result;
+        }
+
+        /// <summary>
+        /// Root-mean-square (RMS) contrast allows to define the contrast of an image. Computes difference between RMS of two images.
+        /// Positive value means enchacement of contrast in image2 comparing to image1. Negative - degradation in contrast.
+        /// </summary>
+        /// <param name="image1"></param>
+        /// <param name="image2"></param>
+        /// <returns></returns>
+        public static double RMSDifference(Image<Bgr, double> image1, Image<Bgr, double> image2)
+        {
+            double rms1 = RMS(image1);
+            double rms2 = RMS(image2);
+            double result = rms2 - rms1;
+            return result;
+        }
+
 
         #endregion
 

@@ -629,6 +629,12 @@ namespace diploma5_csharp
             var result = GammaCorrection.Adaptive(_appState.InputImageBgr, showWindows: GetCheckBoxValue(checkBoxShowOptionalWindows));
             _appState.SetOutputImage(result);
             this.DisplayImageInPictureBox(pictureBox3, result.Bitmap);
+
+            // compare RMS
+            double rms1 = ImageMetricHelper.RMS(_appState.InputImageBgr.Convert<Bgr, double>());
+            double rms2 = ImageMetricHelper.RMS(result.Convert<Bgr, double>());
+            double diff = rms2 - rms1;
+            var metricRes = ImageMetricHelper.ComputeAll(_appState.InputImageBgr, result);
         }
 
         private void buttonTestFilters_Click(object sender, EventArgs e)
@@ -670,7 +676,7 @@ namespace diploma5_csharp
             // fog (also test on dust, rain, snow images)
             List<string> fogFiles = new List<string>();
             fogFiles.AddRange(Directory.EnumerateFiles(Path.Combine(imagesPath, fogImagesPath)));
-            fogFiles.AddRange(Directory.EnumerateFiles(Path.Combine(imagesPath, dustImagesPath)));
+            // fogFiles.AddRange(Directory.EnumerateFiles(Path.Combine(imagesPath, dustImagesPath)));
             fogFiles.AddRange(Directory.EnumerateFiles(Path.Combine(imagesPath, rainImagesPath)));
             fogFiles.AddRange(Directory.EnumerateFiles(Path.Combine(imagesPath, snowImagesPath)));
 
@@ -802,6 +808,25 @@ namespace diploma5_csharp
                 result.DetectionResult.Dispose();
                 GC.Collect();
 
+                method = "RobbyTanMethodForRoads";
+                result = this._appState.Fog.EnhaceVisibilityUsingRobbyTanMethodForRoads(image, _params);
+                _methodInfoStore.AddOrUpdate(new EnhanceMethodInfoModel
+                {
+                    ImageFileName = imageFileName,
+                    EnhanceMethodName = nameof(Fog.EnhaceVisibilityUsingRobbyTanMethodForRoads),
+                    Metrics = result.Metrics,
+                    ExecutionTimeMs = result.ExecutionTimeMs
+                });
+                for (int i = result.DetailedResults.Count() - 1; i >= 0; i -= 1)
+                {
+                    img = result.DetailedResults[i];
+                    imgPath = Path.Combine(fogImagesDestPath, String.Format(IMAGE_FILENAME_TEMPLATE, method, imageType, Path.GetFileNameWithoutExtension(imageFileName), i, Path.GetExtension(imageFileName)));
+                    CvInvoke.Imwrite(imgPath, img);
+                }
+                result.EnhancementResult.Dispose();
+                result.DetectionResult.Dispose();
+                GC.Collect();
+
                 method = "Custom";
                 result = this._appState.Fog.RemoveFogUsingCustomMethod(image, _params);
                 _methodInfoStore.AddOrUpdate(new EnhanceMethodInfoModel
@@ -820,8 +845,6 @@ namespace diploma5_csharp
                 result.EnhancementResult.Dispose();
                 result.DetectionResult.Dispose();
                 GC.Collect();
-
-                // TODO depth
 
                 // update counter
                 filesProcessed += 1;

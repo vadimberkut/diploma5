@@ -53,6 +53,7 @@
             this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exportMetricsToCSVToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.resetMethodsStatisticsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.windowsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.closeAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -103,7 +104,6 @@
             this.textBoxPsnrMEtric = new System.Windows.Forms.TextBox();
             this.label18 = new System.Windows.Forms.Label();
             this.textBoxAdMetric = new System.Windows.Forms.TextBox();
-            this.resetMethodsStatisticsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).BeginInit();
@@ -342,28 +342,35 @@
             // openToolStripMenuItem
             // 
             this.openToolStripMenuItem.Name = "openToolStripMenuItem";
-            this.openToolStripMenuItem.Size = new System.Drawing.Size(187, 22);
+            this.openToolStripMenuItem.Size = new System.Drawing.Size(200, 22);
             this.openToolStripMenuItem.Text = "Open";
             this.openToolStripMenuItem.Click += new System.EventHandler(this.openToolStripMenuItem_Click);
             // 
             // saveToolStripMenuItem
             // 
             this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            this.saveToolStripMenuItem.Size = new System.Drawing.Size(187, 22);
+            this.saveToolStripMenuItem.Size = new System.Drawing.Size(200, 22);
             this.saveToolStripMenuItem.Text = "Save";
             this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click);
             // 
             // exportMetricsToCSVToolStripMenuItem
             // 
             this.exportMetricsToCSVToolStripMenuItem.Name = "exportMetricsToCSVToolStripMenuItem";
-            this.exportMetricsToCSVToolStripMenuItem.Size = new System.Drawing.Size(187, 22);
+            this.exportMetricsToCSVToolStripMenuItem.Size = new System.Drawing.Size(200, 22);
             this.exportMetricsToCSVToolStripMenuItem.Text = "Export Metrics to CSV";
             this.exportMetricsToCSVToolStripMenuItem.Click += new System.EventHandler(this.exportMetricsToCSVToolStripMenuItem_Click);
+            // 
+            // resetMethodsStatisticsToolStripMenuItem
+            // 
+            this.resetMethodsStatisticsToolStripMenuItem.Name = "resetMethodsStatisticsToolStripMenuItem";
+            this.resetMethodsStatisticsToolStripMenuItem.Size = new System.Drawing.Size(200, 22);
+            this.resetMethodsStatisticsToolStripMenuItem.Text = "Reset methods statistics";
+            this.resetMethodsStatisticsToolStripMenuItem.Click += new System.EventHandler(this.resetMethodsStatisticsToolStripMenuItem_Click);
             // 
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(187, 22);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(200, 22);
             this.exitToolStripMenuItem.Text = "Exit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
@@ -378,7 +385,7 @@
             // closeAllToolStripMenuItem
             // 
             this.closeAllToolStripMenuItem.Name = "closeAllToolStripMenuItem";
-            this.closeAllToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.closeAllToolStripMenuItem.Size = new System.Drawing.Size(118, 22);
             this.closeAllToolStripMenuItem.Text = "Close all";
             this.closeAllToolStripMenuItem.Click += new System.EventHandler(this.closeAllToolStripMenuItem_Click);
             // 
@@ -393,7 +400,7 @@
             // restoreToolStripMenuItem
             // 
             this.restoreToolStripMenuItem.Name = "restoreToolStripMenuItem";
-            this.restoreToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.restoreToolStripMenuItem.Size = new System.Drawing.Size(113, 22);
             this.restoreToolStripMenuItem.Text = "Restore";
             this.restoreToolStripMenuItem.Click += new System.EventHandler(this.restoreToolStripMenuItem_Click);
             // 
@@ -437,6 +444,7 @@
             this.buttonShadowRemovalLabMethod2.TabIndex = 32;
             this.buttonShadowRemovalLabMethod2.Text = "LAB2";
             this.buttonShadowRemovalLabMethod2.UseVisualStyleBackColor = true;
+            this.buttonShadowRemovalLabMethod2.Visible = false;
             this.buttonShadowRemovalLabMethod2.Click += new System.EventHandler(this.buttonShadowRemovalLabMethod2_Click);
             // 
             // buttonRecoveringOfWeatherDegradedImagesBasedOnRGBResponseRatioConstancyMethod
@@ -458,6 +466,7 @@
             this.buttonTestEmguCVCudaMeanShift.TabIndex = 34;
             this.buttonTestEmguCVCudaMeanShift.Text = "TestEmguCVCudaMeanShift";
             this.buttonTestEmguCVCudaMeanShift.UseVisualStyleBackColor = true;
+            this.buttonTestEmguCVCudaMeanShift.Visible = false;
             this.buttonTestEmguCVCudaMeanShift.Click += new System.EventHandler(this.buttonTestEmguCVCudaMeanShift_Click);
             // 
             // buttonMSTest
@@ -468,6 +477,7 @@
             this.buttonMSTest.TabIndex = 35;
             this.buttonMSTest.Text = "TestMS";
             this.buttonMSTest.UseVisualStyleBackColor = true;
+            this.buttonMSTest.Visible = false;
             this.buttonMSTest.Click += new System.EventHandler(this.buttonMSTest_Click);
             // 
             // textBoxTestMsKernel
@@ -476,6 +486,7 @@
             this.textBoxTestMsKernel.Name = "textBoxTestMsKernel";
             this.textBoxTestMsKernel.Size = new System.Drawing.Size(28, 20);
             this.textBoxTestMsKernel.TabIndex = 36;
+            this.textBoxTestMsKernel.Visible = false;
             // 
             // textBoxTestMsSigma
             // 
@@ -483,6 +494,7 @@
             this.textBoxTestMsSigma.Name = "textBoxTestMsSigma";
             this.textBoxTestMsSigma.Size = new System.Drawing.Size(28, 20);
             this.textBoxTestMsSigma.TabIndex = 37;
+            this.textBoxTestMsSigma.Visible = false;
             // 
             // buttonDetectUsingModifiedRatioOfHueOverIntensityMethod
             // 
@@ -503,6 +515,7 @@
             this.label6.Size = new System.Drawing.Size(36, 13);
             this.label6.TabIndex = 39;
             this.label6.Text = "kernel";
+            this.label6.Visible = false;
             // 
             // label7
             // 
@@ -512,6 +525,7 @@
             this.label7.Size = new System.Drawing.Size(34, 13);
             this.label7.TabIndex = 40;
             this.label7.Text = "sigma";
+            this.label7.Visible = false;
             // 
             // label8
             // 
@@ -582,12 +596,13 @@
             // buttonRobbyTanFogRemovalMethod
             // 
             this.buttonRobbyTanFogRemovalMethod.BackColor = System.Drawing.SystemColors.Control;
-            this.buttonRobbyTanFogRemovalMethod.Location = new System.Drawing.Point(844, 560);
+            this.buttonRobbyTanFogRemovalMethod.Location = new System.Drawing.Point(247, 679);
             this.buttonRobbyTanFogRemovalMethod.Name = "buttonRobbyTanFogRemovalMethod";
             this.buttonRobbyTanFogRemovalMethod.Size = new System.Drawing.Size(121, 32);
             this.buttonRobbyTanFogRemovalMethod.TabIndex = 49;
             this.buttonRobbyTanFogRemovalMethod.Text = "RobbyTan UC";
             this.buttonRobbyTanFogRemovalMethod.UseVisualStyleBackColor = false;
+            this.buttonRobbyTanFogRemovalMethod.Visible = false;
             this.buttonRobbyTanFogRemovalMethod.Click += new System.EventHandler(this.buttonRobbyTanFogRemovalMethod_Click);
             // 
             // buttonRemoveFogUsingMedianChannelPrior
@@ -631,12 +646,13 @@
             this.buttonTestFilters.TabIndex = 53;
             this.buttonTestFilters.Text = "Test filters";
             this.buttonTestFilters.UseVisualStyleBackColor = true;
+            this.buttonTestFilters.Visible = false;
             this.buttonTestFilters.Click += new System.EventHandler(this.buttonTestFilters_Click);
             // 
             // buttonEnhaceVisibilityUsingRobbyTanMethodForRoads
             // 
             this.buttonEnhaceVisibilityUsingRobbyTanMethodForRoads.BackColor = System.Drawing.SystemColors.Control;
-            this.buttonEnhaceVisibilityUsingRobbyTanMethodForRoads.Location = new System.Drawing.Point(844, 598);
+            this.buttonEnhaceVisibilityUsingRobbyTanMethodForRoads.Location = new System.Drawing.Point(837, 556);
             this.buttonEnhaceVisibilityUsingRobbyTanMethodForRoads.Name = "buttonEnhaceVisibilityUsingRobbyTanMethodForRoads";
             this.buttonEnhaceVisibilityUsingRobbyTanMethodForRoads.Size = new System.Drawing.Size(121, 40);
             this.buttonEnhaceVisibilityUsingRobbyTanMethodForRoads.TabIndex = 54;
@@ -669,23 +685,25 @@
             // buttonRemoveFogUsingLocalExtremaMethod
             // 
             this.buttonRemoveFogUsingLocalExtremaMethod.BackColor = System.Drawing.SystemColors.Control;
-            this.buttonRemoveFogUsingLocalExtremaMethod.Location = new System.Drawing.Point(844, 644);
+            this.buttonRemoveFogUsingLocalExtremaMethod.Location = new System.Drawing.Point(501, 679);
             this.buttonRemoveFogUsingLocalExtremaMethod.Name = "buttonRemoveFogUsingLocalExtremaMethod";
             this.buttonRemoveFogUsingLocalExtremaMethod.Size = new System.Drawing.Size(121, 32);
             this.buttonRemoveFogUsingLocalExtremaMethod.TabIndex = 57;
             this.buttonRemoveFogUsingLocalExtremaMethod.Text = "Local Extrema UC";
             this.buttonRemoveFogUsingLocalExtremaMethod.UseVisualStyleBackColor = false;
+            this.buttonRemoveFogUsingLocalExtremaMethod.Visible = false;
             this.buttonRemoveFogUsingLocalExtremaMethod.Click += new System.EventHandler(this.buttonRemoveFogUsingLocalExtremaMethod_Click);
             // 
             // buttonRemoveFogUsingPhysicsBasedMethod
             // 
             this.buttonRemoveFogUsingPhysicsBasedMethod.BackColor = System.Drawing.SystemColors.Control;
-            this.buttonRemoveFogUsingPhysicsBasedMethod.Location = new System.Drawing.Point(844, 682);
+            this.buttonRemoveFogUsingPhysicsBasedMethod.Location = new System.Drawing.Point(374, 679);
             this.buttonRemoveFogUsingPhysicsBasedMethod.Name = "buttonRemoveFogUsingPhysicsBasedMethod";
             this.buttonRemoveFogUsingPhysicsBasedMethod.Size = new System.Drawing.Size(121, 32);
             this.buttonRemoveFogUsingPhysicsBasedMethod.TabIndex = 58;
             this.buttonRemoveFogUsingPhysicsBasedMethod.Text = "Physics Based UC";
             this.buttonRemoveFogUsingPhysicsBasedMethod.UseVisualStyleBackColor = false;
+            this.buttonRemoveFogUsingPhysicsBasedMethod.Visible = false;
             this.buttonRemoveFogUsingPhysicsBasedMethod.Click += new System.EventHandler(this.buttonRemoveFogUsingPhysicsBasedMethod_Click);
             // 
             // textBoxFvmMetric
@@ -815,13 +833,6 @@
             this.textBoxAdMetric.Name = "textBoxAdMetric";
             this.textBoxAdMetric.Size = new System.Drawing.Size(75, 20);
             this.textBoxAdMetric.TabIndex = 72;
-            // 
-            // resetMethodsStatisticsToolStripMenuItem
-            // 
-            this.resetMethodsStatisticsToolStripMenuItem.Name = "resetMethodsStatisticsToolStripMenuItem";
-            this.resetMethodsStatisticsToolStripMenuItem.Size = new System.Drawing.Size(200, 22);
-            this.resetMethodsStatisticsToolStripMenuItem.Text = "Reset methods statistics";
-            this.resetMethodsStatisticsToolStripMenuItem.Click += new System.EventHandler(this.resetMethodsStatisticsToolStripMenuItem_Click);
             // 
             // Form1
             // 

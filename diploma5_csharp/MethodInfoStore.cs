@@ -51,7 +51,7 @@ namespace diploma5_csharp
         public void SaveToFile()
         {
             var text = JsonConvert.SerializeObject(this.Store, Formatting.Indented);
-            File.WriteAllText(STORE_FILE_NAME, text, Encoding.UTF8);
+            File.WriteAllText(this.GetSavePath(STORE_FILE_NAME), text, Encoding.UTF8);
         }
 
         public void SaveToCsv(string folderPath = "")

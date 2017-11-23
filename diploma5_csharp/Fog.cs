@@ -247,9 +247,10 @@ namespace diploma5_csharp
         // Article - http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.329.7924&rep=rep1&type=pdf
         public BaseMethodResponse RemoveUsingRobbyTanMethod(Image<Bgr, Byte> image, FogRemovalParams _params)
         {
-            Image<Bgr, Byte> I = image.Clone();
-            Image<Gray, Byte> transmission = new Image<Gray, byte>(image.Size);
-            Image<Bgr, Byte> result = image.Clone();
+            throw new NotImplementedException("Code is unsafe to run");
+
+            Image<Bgr, Byte> I = image;
+            Image<Bgr, Byte> result = new Image<Bgr, byte>(image.Size);
 
             var stopwatch = new Stopwatch();
             stopwatch.Start();
@@ -364,7 +365,7 @@ namespace diploma5_csharp
             return new BaseMethodResponse
             {
                 EnhancementResult = result,
-                DetectionResult = transmission,
+                DetectionResult = new Image<Gray, byte>(image.Size),
                 Metrics = Metrics,
                 ExecutionTimeMs = stopwatch.ElapsedMilliseconds
             };
@@ -435,6 +436,143 @@ namespace diploma5_csharp
         private double Max(double[,] arr)
         {
             return RowsMax(arr).Max();
+        }
+
+        #endregion
+
+        #region Robby T. Tan - Visibility enhacement for roads with foggy or hazy scenes
+
+        // Source - http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.112.6005&rep=rep1&type=pdf
+        public BaseMethodResponse EnhaceVisibilityUsingRobbyTanMethodForRoads(Image<Bgr, Byte> image, FogRemovalParams _params)
+        {
+            Image<Bgr, Byte> processed = new Image<Bgr, Byte>(image.Size);
+            Image<Bgr, Byte> E = image;
+            Image<Bgr, double> E_normilized = new Image<Bgr, double>(image.Size);
+            Image<Gray, double> F = new Image<Gray, double>(image.Size);
+            Image<Gray, double> e_beta_dx = new Image<Gray, double>(image.Size);
+
+            var stopwatch = new Stopwatch();
+            stopwatch.Start();
+
+            // 1 - compute environmental light (as max values)
+            var minmax = ImageHelper.ImageMinMax(image);
+            double I_b = minmax.MaxValues[0];
+            double I_g = minmax.MaxValues[1];
+            double I_r = minmax.MaxValues[2];
+
+            double Airlight = Math.Max(minmax.MaxValues[0], Math.Max(minmax.MaxValues[1], minmax.MaxValues[2]));
+
+            // compute Г_c
+            //double G_b = I_b / (I_b + I_g + I_r);
+            //double G_g = I_g / (I_b + I_g + I_r);
+            //double G_r = I_r / (I_b + I_g + I_r);
+
+            double G_b = I_b / 255;
+            double G_g = I_g / 255;
+            double G_r = I_r / 255;
+
+            //double G_b = I_b / Airlight;
+            //double G_g = I_g / Airlight;
+            //double G_r = I_r / Airlight;
+
+            // compute normilized input images E'_c
+            for (int m = 0; m < E.Rows; m++)
+            {
+                for (int n = 0; n < E.Cols; n++)
+                {
+                    Bgr e = E[m, n];
+
+                    double B = E[m, n].Blue / G_b;
+                    double G = E[m, n].Green / G_g;
+                    double R = E[m, n].Red / G_r;
+
+                    //double B = E[m, n].Blue * G_b;
+                    //double G = E[m, n].Green * G_g;
+                    //double R = E[m, n].Red * G_r;
+
+                    // take mod to cut hight value (my assumption)
+                    B = B % 255;
+                    G = G % 255;
+                    R = R % 255;
+
+                    E_normilized[m, n] = new Bgr(B, G, R);
+                }
+            }
+
+            // compute F based on the intensity value of the YIQ color model
+            for (int m = 0; m < E_normilized.Rows; m++)
+            {
+                for (int n = 0; n < E_normilized.Cols; n++)
+                {
+                    //double Y = 0.257 * E_normilized[m, n].Blue + 0.504 * E_normilized[m, n].Green + 0.098 * E_normilized[m, n].Red;
+                    double Y = 0.257 * E_normilized[m, n].Red + 0.504 * E_normilized[m, n].Green + 0.098 * E_normilized[m, n].Blue;
+                    F[m, n] = new Gray(Y);
+                }
+            }
+
+            // values of Y are approximated values, thus to create
+            // a better approximation, we diffuse these values by using
+            // Gaussian blur
+            F = F.SmoothGaussian(5);
+
+            // estimate the approximated value of (1 - e^(-beta*d(x))) by using Eq. (7)
+            // Eq. (7): F = (I_r+I_g+I_b)(1 - e^(-beta*d(x))) =>
+            // (1 - e^(-beta*d(x))) = F / (I_r+I_g+I_b) =>
+            // e^(-beta*d(x)) = 1 - F / (I_r+I_g+I_b)
+            for (int m = 0; m < E_normilized.Rows; m++)
+            {
+                for (int n = 0; n < E_normilized.Cols; n++)
+                {
+                    //double e_beta_dx_ = 1 - (F[m,n].Intensity / (I_b + I_g + I_r));
+                    double e_beta_dx_ = Math.Pow(1 - (F[m, n].Intensity / 255), -1);
+                    e_beta_dx[m, n] = new Gray(e_beta_dx_);
+                }
+            }
+
+            // enhance the visibility of the input image
+            for (int m = 0; m < E_normilized.Rows; m++)
+            {
+                for (int n = 0; n < E_normilized.Cols; n++)
+                {
+                    double B = (E[m, n].Blue - F[m, n].Intensity * G_b) * e_beta_dx[m, n].Intensity;
+                    double G = (E[m, n].Green - F[m, n].Intensity * G_g) * e_beta_dx[m, n].Intensity;
+                    double R = (E[m, n].Red - F[m, n].Intensity * G_r) * e_beta_dx[m, n].Intensity;
+
+                    //if(B < 0 || B > 255 || G < 0 || G > 255 || R < 0 || R > 255)
+                    //{
+                    //    int a = 1;
+                    //}
+
+                    B = B > 255 ? 255 : B < 0 ? 0 : B;
+                    G = G > 255 ? 255 : G < 0 ? 0 : G;
+                    R = R > 255 ? 255 : R < 0 ? 0 : R;
+
+                    processed[m, n] = new Bgr(B, G, R);
+                }
+            }
+
+            // my modification
+            var postProcessed = ImageHelper.AdjustContrast(processed);
+
+            stopwatch.Stop();
+
+            if (_params.ShowWindows)
+            {
+                EmguCvWindowManager.Display(image, "1 image");
+                EmguCvWindowManager.Display(E_normilized.Convert<Bgr, Byte>(), "2 E_normilized");
+                EmguCvWindowManager.Display(F, "3 F");
+                EmguCvWindowManager.Display(postProcessed, "postProcessed");
+            }
+
+            var Metrics = ImageMetricHelper.ComputeAll(image.Convert<Bgr, double>(), postProcessed.Convert<Bgr, double>());
+            return new BaseMethodResponse
+            {
+                EnhancementResult = postProcessed,
+                DetectionResult = new Image<Gray, Byte>(image.Size),
+                DetailedResults = new List<IInputArray> { image, E_normilized.Convert<Bgr, Byte>(), processed, postProcessed },
+                Metrics = Metrics,
+                ExecutionTimeMs = stopwatch.ElapsedMilliseconds
+            };
         }
 
         #endregion
@@ -613,143 +751,7 @@ namespace diploma5_csharp
 
         #endregion
 
-        #region Robby T. Tan - Visibility enhacement for roads with foggy or hazy scenes
-        
-        // Source - http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.112.6005&rep=rep1&type=pdf
-        public BaseMethodResponse EnhaceVisibilityUsingRobbyTanMethodForRoads(Image<Bgr, Byte> image, FogRemovalParams _params)
-        {
-            Image<Bgr, Byte> E = image;
-            Image<Bgr, double> E_normilized = new Image<Bgr, double>(image.Size);
-            Image<Gray, double> F = new Image<Gray, double>(image.Size);
-            Image<Gray, double> e_beta_dx = new Image<Gray, double>(image.Size);
-            Image<Gray, Byte> transmission = new Image<Gray, Byte>(image.Size);
-            Image<Bgr, Byte> result = new Image<Bgr, Byte>(image.Size);
-
-            var stopwatch = new Stopwatch();
-            stopwatch.Start();
-
-            // 1 - compute environmental light (as max values)
-            double I_b, I_g, I_r;
-            double[] minValues = new double[3];
-            double[] maxValues = new double[3];
-            Point[] minLocations = new Point[3];
-            Point[] maxLocations = new Point[3];
-            image.MinMax(out minValues, out maxValues, out minLocations, out maxLocations);
-            I_b = maxValues[0];
-            I_g = maxValues[1];
-            I_r = maxValues[2];
-
-            double Airlight = Math.Max(maxValues[0], Math.Max(maxValues[1], maxValues[2]));
-            //double Airlight = (maxValues[0] + maxValues[1] + maxValues[2]) / 3.0;
-
-            // compute Г_c
-            //double G_b = I_b / (I_b + I_g + I_r);
-            //double G_g = I_g / (I_b + I_g + I_r);
-            //double G_r = I_r / (I_b + I_g + I_r);
-
-            double G_b = I_b / 255;
-            double G_g = I_g / 255;
-            double G_r = I_r / 255;
-
-            //double G_b = I_b / Airlight;
-            //double G_g = I_g / Airlight;
-            //double G_r = I_r / Airlight;
-
-            // compute normilized input images E'_c
-            for (int m = 0; m < E.Rows; m++)
-            {
-                for (int n = 0; n < E.Cols; n++)
-                {
-                    Bgr e = E[m, n];
-
-                    double B = E[m, n].Blue / G_b;
-                    double G = E[m, n].Green / G_g;
-                    double R = E[m, n].Red / G_r;
-
-                    //double B = E[m, n].Blue * G_b;
-                    //double G = E[m, n].Green * G_g;
-                    //double R = E[m, n].Red * G_r;
-
-                    // take mod to cut hight value (my assumption)
-                    B = B % 255;
-                    G = G % 255;
-                    R = R % 255;
-
-                    E_normilized[m, n] = new Bgr(B, G, R);
-                }
-            }
-
-            // compute F based on the intensity value of the YIQ color model
-            for (int m = 0; m < E_normilized.Rows; m++)
-            {
-                for (int n = 0; n < E_normilized.Cols; n++)
-                {
-                    //double Y = 0.257 * E_normilized[m, n].Blue + 0.504 * E_normilized[m, n].Green + 0.098 * E_normilized[m, n].Red;
-                    double Y = 0.257 * E_normilized[m, n].Red + 0.504 * E_normilized[m, n].Green + 0.098 * E_normilized[m, n].Blue;
-                    F[m, n] = new Gray(Y);
-                }
-            }
-
-            // values of Y are approximated values, thus to create
-            // a better approximation, we diffuse these values by using
-            // Gaussian blur
-            F = F.SmoothGaussian(3);
-
-            // estimate the approximated value of (1 - e^(-beta*d(x))) by using Eq. (7)
-            // Eq. (7): F = (I_r+I_g+I_b)(1 - e^(-beta*d(x))) =>
-            // (1 - e^(-beta*d(x))) = F / (I_r+I_g+I_b) =>
-            // e^(-beta*d(x)) = 1 - F / (I_r+I_g+I_b)
-            for (int m = 0; m < E_normilized.Rows; m++)
-            {
-                for (int n = 0; n < E_normilized.Cols; n++)
-                {
-                    //double e_beta_dx_ = 1 - (F[m,n].Intensity / (I_b + I_g + I_r));
-                    double e_beta_dx_ = Math.Pow(1 - (F[m, n].Intensity / 255), -1);
-                    e_beta_dx[m, n] = new Gray(e_beta_dx_);
-                }
-            }
-
-            // enhance the visibility of the input image
-            for (int m = 0; m < E_normilized.Rows; m++)
-            {
-                for (int n = 0; n < E_normilized.Cols; n++)
-                {
-                    double B = (E[m,n].Blue - F[m,n].Intensity * G_b) * e_beta_dx[m,n].Intensity;
-                    double G = (E[m,n].Green - F[m,n].Intensity * G_g) * e_beta_dx[m,n].Intensity;
-                    double R = (E[m,n].Red - F[m,n].Intensity * G_r) * e_beta_dx[m,n].Intensity;
-
-                    result[m, n] = new Bgr(B, G, R);
-                }
-            }
-
-            var result2 = GammaCorrection.Adaptive(result);
-            var result3 = result.Clone();
-            result3._EqualizeHist();
-
-            stopwatch.Stop();
-
-            if (_params.ShowWindows)
-            {
-                EmguCvWindowManager.Display(image, "1 image");
-                EmguCvWindowManager.Display(E_normilized.Convert<Bgr, Byte>(), "2 E_normilized");
-                EmguCvWindowManager.Display(F.Convert<Bgr, Byte>(), "3 F");
-                EmguCvWindowManager.Display(e_beta_dx.Convert<Bgr, Byte>(), "4 e_beta_dx");
-                EmguCvWindowManager.Display(result, "5 result");
-                EmguCvWindowManager.Display(result2, "5.2 result2");
-                EmguCvWindowManager.Display(result3, "5.3 result3");
-            }
-
-            var Metrics = ImageMetricHelper.ComputeAll(image.Convert<Bgr, double>(), result.Convert<Bgr, double>());
-            return new BaseMethodResponse
-            {
-                EnhancementResult = result,
-                DetectionResult = transmission,
-                Metrics = Metrics,
-                ExecutionTimeMs = stopwatch.ElapsedMilliseconds
-            };
-        }
-
-        #endregion
+       
 
         #region An approach which is based on Fast Fourier Transform
 
@@ -939,10 +941,6 @@ namespace diploma5_csharp
                     double v = V[m, n].Intensity / 255.0;
                     //double v = V[m, n].Intensity;
 
-                    //double B_ = I[m, n].Blue;
-                    //double G_ = I[m, n].Green;
-                    //double R_ = I[m, n].Red;
-
                     double B_ = I[m, n].Blue / 255.0;
                     double G_ = I[m, n].Green / 255.0;
                     double R_ = I[m, n].Red / 255.0;
@@ -974,8 +972,6 @@ namespace diploma5_csharp
                     //G = (G * 255);
                     //R = (R * 255);
 
-
-
                     if (B > 255) B = 255;
                     if (G > 255) G = 255;
                     if (R > 255) R = 255;
@@ -987,7 +983,8 @@ namespace diploma5_csharp
                     R_image[m, n] = new Bgr(B, G, R);
                 }
             }
-            result = GammaCorrection.Adaptive(R_image);
+            // result = GammaCorrection.Adaptive(R_image);
+            result = R_image;
 
             stopwatch.Stop();
 
