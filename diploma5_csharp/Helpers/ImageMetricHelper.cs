@@ -1,4 +1,5 @@
-﻿using diploma5_csharp.Extensions;
+﻿using diploma5_csharp.DataEntropy;
+using diploma5_csharp.Extensions;
 using diploma5_csharp.Models;
 using Emgu.CV;
 using Emgu.CV.CvEnum;
@@ -28,6 +29,7 @@ namespace diploma5_csharp.Helpers
             double AD = ImageMetricHelper.AD(image1, image2);
             double FVM = ImageMetricHelper.FVM(image1, image2);
             double RMSDiff = ImageMetricHelper.RMSDifference(image1, image2);
+            double ShannonEntropyDiff = ImageMetricHelper.ShannonEntropyDiff(image1, image2);
 
             return new MetricsResult
             {
@@ -38,6 +40,7 @@ namespace diploma5_csharp.Helpers
                 SC = Math.Round(SC, DECIMALS),
                 PSNR = Math.Round(PSNR, DECIMALS),
                 RMSDiff = Math.Round(RMSDiff, DECIMALS),
+                ShannonEntropyDiff = ShannonEntropyDiff
             };
         }
 
@@ -679,6 +682,42 @@ namespace diploma5_csharp.Helpers
             double rms1 = RMS(image1);
             double rms2 = RMS(image2);
             double result = rms2 - rms1;
+            return result;
+        }
+
+
+
+
+
+
+
+        /// <summary>
+        /// Calculates Shannon entropy for image1 and image2. Retuns entropy defference of image2 and image1
+        /// Positive value means enchacement (of contrast, visibility etc) in image2 comparing to image1. Negative - degradation.
+        /// </summary>
+        /// <param name="image1"></param>
+        /// <param name="image2"></param>
+        /// <returns></returns>
+        public static double ShannonEntropyDiff(Image<Gray, double> image1, Image<Gray, double> image2)
+        {
+            var SE1 = new DataEntropyUTF8(image1);
+            var SE2 = new DataEntropyUTF8(image2);
+            double result = SE2.Entropy - SE1.Entropy;
+            return result;
+        }
+
+        /// <summary>
+        /// Calculates Shannon entropy for image1 and image2. Retuns entropy defference of image2 and image1
+        /// Positive value means enchacement (of contrast, visibility etc) in image2 comparing to image1. Negative - degradation.
+        /// </summary>
+        /// <param name="image1"></param>
+        /// <param name="image2"></param>
+        /// <returns></returns>
+        public static double ShannonEntropyDiff(Image<Bgr, double> image1, Image<Bgr, double> image2)
+        {
+            var SE1 = new DataEntropyUTF8(image1);
+            var SE2 = new DataEntropyUTF8(image2);
+            double result = SE2.Entropy - SE1.Entropy;
             return result;
         }
 

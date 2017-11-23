@@ -142,6 +142,7 @@
     <Compile Include="ColorDifference\CIE76.cs" />
     <Compile Include="CustomFormElements\Prompt.cs" />
     <Compile Include="CustomFormElements\SaveImagePrompt.cs" />
+    <Compile Include="DataEntropy\DataEntropyUTF8.cs" />
     <Compile Include="DehazeDarkChannel.cs" />
     <Compile Include="Dust.cs" />
     <Compile Include="Extensions\EmguCvMatExtensions.cs" />

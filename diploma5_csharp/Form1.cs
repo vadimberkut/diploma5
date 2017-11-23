@@ -635,6 +635,8 @@ namespace diploma5_csharp
             double rms2 = ImageMetricHelper.RMS(result.Convert<Bgr, double>());
             double diff = rms2 - rms1;
             var metricRes = ImageMetricHelper.ComputeAll(_appState.InputImageBgr, result);
+
+            // compare entropy
         }
 
         private void buttonTestFilters_Click(object sender, EventArgs e)
