@@ -110,8 +110,9 @@ namespace diploma5_csharp
             return result;
         }
 
-        private void DisplayImageMetrics(MetricsResult data)
+        private void DisplayImageMetrics(double executionTimeMs, MetricsResult data)
         {
+            this.textBoxMEthodExecTime.Text = executionTimeMs.ToString();
             this.textBoxAdMetric.Text = data.AD.ToString();
             this.textBoxFvmMetric.Text = data.FVM.ToString();
             this.textBoxMseMetric.Text = data.MSE.ToString();
@@ -364,7 +365,7 @@ namespace diploma5_csharp
                 Metrics = result.Metrics,
                 ExecutionTimeMs = result.ExecutionTimeMs
             });
-            DisplayImageMetrics(result.Metrics);
+            DisplayImageMetrics(result.ExecutionTimeMs, result.Metrics);
         }
 
         private void buttonRobbyTanFogRemovalMethod_Click(object sender, EventArgs e)
@@ -383,7 +384,7 @@ namespace diploma5_csharp
                 Metrics = result.Metrics,
                 ExecutionTimeMs = result.ExecutionTimeMs
             });
-            DisplayImageMetrics(result.Metrics);
+            DisplayImageMetrics(result.ExecutionTimeMs, result.Metrics);
         }
 
         private void buttonRemoveFogUsingMedianChannelPrior_Click(object sender, EventArgs e)
@@ -402,7 +403,7 @@ namespace diploma5_csharp
                 Metrics = result.Metrics,
                 ExecutionTimeMs = result.ExecutionTimeMs
             });
-            DisplayImageMetrics(result.Metrics);
+            DisplayImageMetrics(result.ExecutionTimeMs, result.Metrics);
         }
 
         private void buttonRemoveFogUsingIdcpWithClahe_Click(object sender, EventArgs e)
@@ -421,7 +422,7 @@ namespace diploma5_csharp
                 Metrics = result.Metrics,
                 ExecutionTimeMs = result.ExecutionTimeMs
             });
-            DisplayImageMetrics(result.Metrics);
+            DisplayImageMetrics(result.ExecutionTimeMs, result.Metrics);
         }
 
         private void buttonEnhaceVisibilityUsingRobbyTanMethodForRoads_Click(object sender, EventArgs e)
@@ -440,7 +441,7 @@ namespace diploma5_csharp
                 Metrics = result.Metrics,
                 ExecutionTimeMs = result.ExecutionTimeMs
             });
-            DisplayImageMetrics(result.Metrics);
+            DisplayImageMetrics(result.ExecutionTimeMs, result.Metrics);
         }
 
         private void buttonRemoveFogUsingDCPAndDFT_Click(object sender, EventArgs e)
@@ -459,7 +460,7 @@ namespace diploma5_csharp
                 Metrics = result.Metrics,
                 ExecutionTimeMs = result.ExecutionTimeMs
             });
-            DisplayImageMetrics(result.Metrics);
+            DisplayImageMetrics(result.ExecutionTimeMs, result.Metrics);
         }
 
         private void buttonRemoveFogUsingLocalExtremaMethod_Click(object sender, EventArgs e)
@@ -478,7 +479,7 @@ namespace diploma5_csharp
                 Metrics = result.Metrics,
                 ExecutionTimeMs = result.ExecutionTimeMs
             });
-            DisplayImageMetrics(result.Metrics);
+            DisplayImageMetrics(result.ExecutionTimeMs, result.Metrics);
         }
 
         private void buttonRemoveFogUsingPhysicsBasedMethod_Click(object sender, EventArgs e)
@@ -497,7 +498,7 @@ namespace diploma5_csharp
                 Metrics = result.Metrics,
                 ExecutionTimeMs = result.ExecutionTimeMs
             });
-            DisplayImageMetrics(result.Metrics);
+            DisplayImageMetrics(result.ExecutionTimeMs, result.Metrics);
         }
 
         private void buttonRemoveFogUsingMultiCoreDSPMethod_Click(object sender, EventArgs e)
@@ -516,7 +517,7 @@ namespace diploma5_csharp
                 Metrics = result.Metrics,
                 ExecutionTimeMs = result.ExecutionTimeMs
             });
-            DisplayImageMetrics(result.Metrics);
+            DisplayImageMetrics(result.ExecutionTimeMs, result.Metrics);
         }
 
         private void buttonRemoveFogUsingCustomMethod_Click(object sender, EventArgs e)
@@ -535,7 +536,7 @@ namespace diploma5_csharp
                 Metrics = result.Metrics,
                 ExecutionTimeMs = result.ExecutionTimeMs
             });
-            DisplayImageMetrics(result.Metrics);
+            DisplayImageMetrics(result.ExecutionTimeMs, result.Metrics);
         }
 
         private void buttonRemoveFogUsingCustomMethodWithDepthEstimation_Click(object sender, EventArgs e)
@@ -554,7 +555,7 @@ namespace diploma5_csharp
                 Metrics = result.Metrics,
                 ExecutionTimeMs = result.ExecutionTimeMs
             });
-            DisplayImageMetrics(result.Metrics);
+            DisplayImageMetrics(result.ExecutionTimeMs, result.Metrics);
         }
 
         //
@@ -580,7 +581,7 @@ namespace diploma5_csharp
                 Metrics = result.Metrics,
                 ExecutionTimeMs = result.ExecutionTimeMs
             });
-            DisplayImageMetrics(result.Metrics);
+            DisplayImageMetrics(result.ExecutionTimeMs, result.Metrics);
 
             GC.Collect();
         }
@@ -615,7 +616,7 @@ namespace diploma5_csharp
                 Metrics = result.Metrics,
                 ExecutionTimeMs = result.ExecutionTimeMs
             });
-            DisplayImageMetrics(result.Metrics);
+            DisplayImageMetrics(result.ExecutionTimeMs, result.Metrics);
 
             GC.Collect();
         }
@@ -644,7 +645,7 @@ namespace diploma5_csharp
                 Metrics = result.Metrics,
                 ExecutionTimeMs = result.ExecutionTimeMs
             });
-            DisplayImageMetrics(result.Metrics);
+            DisplayImageMetrics(result.ExecutionTimeMs, result.Metrics);
 
             // compare RMS
             double rms1 = ImageMetricHelper.RMS(_appState.InputImageBgr.Convert<Bgr, double>());
@@ -687,6 +688,21 @@ namespace diploma5_csharp
             if (!Directory.Exists(resultsDestPath)) Directory.CreateDirectory(resultsDestPath);
             if (!Directory.Exists(fogImagesDestPath)) Directory.CreateDirectory(fogImagesDestPath);
             if (!Directory.Exists(dustImagesDestPath)) Directory.CreateDirectory(dustImagesDestPath);
+
+
+            // delete all files in target directories
+            foreach (var file in Directory.GetFiles(resultsDestPath))
+            {
+               File.Delete(file);
+            }
+            foreach (var file in Directory.GetFiles(Path.Combine(resultsDestPath, fogImagesDestPath)))
+            {
+               File.Delete(file);
+            }
+            foreach (var file in Directory.GetFiles(Path.Combine(resultsDestPath, dustImagesDestPath)))
+            {
+               File.Delete(file);
+            }
 
             // Method_[Fog|Dust|Rain|Snow]_OriginFileName_DetailedResultNumber.Extension
             const string IMAGE_FILENAME_TEMPLATE = "{0}_{1}_{2}_{3}{4}";
@@ -929,6 +945,9 @@ namespace diploma5_csharp
                 image.Dispose();
                 GC.Collect();
             }
+
+
+         MessageBox.Show("Done");
         }
 
         

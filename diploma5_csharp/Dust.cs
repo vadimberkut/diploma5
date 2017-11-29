@@ -173,6 +173,7 @@ namespace diploma5_csharp
             Point[] minLocations2;
             Point[] maxLocations2;
             image.MinMax(out minValues2, out maxValues2, out minLocations2, out maxLocations2);
+            //maxValues2 = new double[] { 200, 200, 200 };
             for (int m = 0; m < image.Rows; m++)
             {
                 for (int n = 0; n < image.Cols; n++)
@@ -194,6 +195,7 @@ namespace diploma5_csharp
                 EmguCvWindowManager.Display(resultToAll, "3. resultToAll");
                 EmguCvWindowManager.Display(result, "4. result");
             }
+
 
             stopwatch.Stop();
 

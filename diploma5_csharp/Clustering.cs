@@ -108,7 +108,8 @@ namespace diploma5_csharp
                 {
                     Bgr pixel = msResult.Image[m, n];
 
-                    int index = msResult.Image.Width * m + n;
+                    //int index = msResult.Image.Width * m + n;
+                    int index = msResult.Image.Rows * m + n;
                     int label = msResult.Labels[index];
 
                     int regionNumber = label;

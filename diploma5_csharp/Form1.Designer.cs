@@ -112,6 +112,8 @@
             this.textBoxRMSMetric = new System.Windows.Forms.TextBox();
             this.label22 = new System.Windows.Forms.Label();
             this.textBoxShannonEntropy = new System.Windows.Forms.TextBox();
+            this.label23 = new System.Windows.Forms.Label();
+            this.textBoxMEthodExecTime = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).BeginInit();
@@ -699,7 +701,6 @@
             this.buttonRemoveFogUsingLocalExtremaMethod.TabIndex = 57;
             this.buttonRemoveFogUsingLocalExtremaMethod.Text = "Local Extrema UC";
             this.buttonRemoveFogUsingLocalExtremaMethod.UseVisualStyleBackColor = false;
-            this.buttonRemoveFogUsingLocalExtremaMethod.Visible = false;
             this.buttonRemoveFogUsingLocalExtremaMethod.Click += new System.EventHandler(this.buttonRemoveFogUsingLocalExtremaMethod_Click);
             // 
             // buttonRemoveFogUsingPhysicsBasedMethod
@@ -906,11 +907,29 @@
             this.textBoxShannonEntropy.Size = new System.Drawing.Size(60, 20);
             this.textBoxShannonEntropy.TabIndex = 80;
             // 
+            // label23
+            // 
+            this.label23.AutoSize = true;
+            this.label23.Location = new System.Drawing.Point(975, 537);
+            this.label23.Name = "label23";
+            this.label23.Size = new System.Drawing.Size(30, 13);
+            this.label23.TabIndex = 83;
+            this.label23.Text = "Time";
+            // 
+            // textBoxMEthodExecTime
+            // 
+            this.textBoxMEthodExecTime.Location = new System.Drawing.Point(1028, 534);
+            this.textBoxMEthodExecTime.Name = "textBoxMEthodExecTime";
+            this.textBoxMEthodExecTime.Size = new System.Drawing.Size(60, 20);
+            this.textBoxMEthodExecTime.TabIndex = 82;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1235, 724);
+            this.Controls.Add(this.label23);
+            this.Controls.Add(this.textBoxMEthodExecTime);
             this.Controls.Add(this.label22);
             this.Controls.Add(this.textBoxShannonEntropy);
             this.Controls.Add(this.label21);
@@ -1084,6 +1103,8 @@
         private System.Windows.Forms.TextBox textBoxRMSMetric;
         private System.Windows.Forms.Label label22;
         private System.Windows.Forms.TextBox textBoxShannonEntropy;
+        private System.Windows.Forms.Label label23;
+        private System.Windows.Forms.TextBox textBoxMEthodExecTime;
     }
 }
 

@@ -182,12 +182,12 @@ namespace diploma5_csharp
                 // create empty file
                 var emptyStore = new List<EnhanceMethodInfoModel>();
                 var text = JsonConvert.SerializeObject(emptyStore);
-                File.WriteAllText(STORE_FILE_NAME, text);
+                File.WriteAllText(this.GetSavePath(STORE_FILE_NAME), text);
                 return emptyStore;
             }
             else
             {
-                var text = File.ReadAllText(STORE_FILE_NAME, Encoding.UTF8);
+                var text = File.ReadAllText(this.GetSavePath(STORE_FILE_NAME), Encoding.UTF8);
                 var store = JsonConvert.DeserializeObject<List<EnhanceMethodInfoModel>>(text);
                 return store;
             }

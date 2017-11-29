@@ -880,14 +880,15 @@ namespace diploma5_csharp.Helpers
             return retimg1;
         }
 
-        #endregion
+      #endregion
 
 
-        // Source - http://efundies.com/adjust-the-contrast-of-an-image-in-c/
-        public static Image<Bgr, byte> AdjustContrast(Image<Bgr, byte> image, double threshold = 10)
+      // Source - http://efundies.com/adjust-the-contrast-of-an-image-in-c/
+      // And Here - https://softwarebydefault.com/2013/04/20/image-contrast/
+      public static Image<Bgr, byte> AdjustContrast(Image<Bgr, byte> image, double threshold = 10)
         {
             Image<Bgr, byte> result = new Image<Bgr, byte>(image.Size);
-            var contrast = Math.Pow((100.0 + threshold) / 100.0, 2);
+            var contrastLevel = Math.Pow((100.0 + threshold) / 100.0, 2);
             for (int m = 0; m < image.Rows; m++)
             {
                 for (int n = 0; n < image.Cols; n++)
@@ -898,11 +899,28 @@ namespace diploma5_csharp.Helpers
                     double G = pixel.Green;
                     double R = pixel.Red;
 
-                    B = ((((B / 255.0) - 0.5) * contrast) + 0.5) * 255.0;
-                    G = ((((G / 255.0) - 0.5) * contrast) + 0.5) * 255.0;
-                    R = ((((R / 255.0) - 0.5) * contrast) + 0.5) * 255.0;
+                    B = ((((B / 255.0) - 0.5) * contrastLevel) + 0.5) * 255.0;
+                    G = ((((G / 255.0) - 0.5) * contrastLevel) + 0.5) * 255.0;
+                    R = ((((R / 255.0) - 0.5) * contrastLevel) + 0.5) * 255.0;
 
-                    result[m, n] = new Bgr(B, G, R);
+                  if (B > 255)
+                  { B = 255; }
+                  else if (B < 0)
+                  { B = 0; }
+
+
+                  if (G > 255)
+                  { G = 255; }
+                  else if (G < 0)
+                  { G = 0; }
+
+
+                  if (R > 255)
+                  { R = 255; }
+                  else if (R < 0)
+                  { R = 0; }
+
+               result[m, n] = new Bgr(B, G, R);
                 }
             }
             return result;

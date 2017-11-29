@@ -642,6 +642,7 @@ namespace diploma5_csharp.Helpers
 
             double[] pixelValues = ImageHelper.GetImagePixels(image);
             double[] positivePixelValues = pixelValues.Where(x => x > 0).ToArray(); // filter 0 values to retrieve more accurate results (according to article)
+            //double[] positivePixelValues = pixelValues;
             double mu = StatisticsHelper.Average(positivePixelValues); // mean of the image intensity
 
             for (int m = 0; m < M; m++)

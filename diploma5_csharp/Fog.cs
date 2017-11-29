@@ -47,7 +47,7 @@ namespace diploma5_csharp
                 EmguCvWindowManager.Display(result, "4 result");
             }
 
-            var Metrics = ImageMetricHelper.ComputeAll(image.Convert<Bgr, double>(), result.Convert<Bgr, double>());
+            var Metrics = ImageMetricHelper.ComputeAll(image, result);
             return new BaseMethodResponse
             {
                 EnhancementResult = result,
@@ -361,7 +361,7 @@ namespace diploma5_csharp
                 EmguCvWindowManager.Display(result, "100 result");
             }
 
-            var Metrics = ImageMetricHelper.ComputeAll(image.Convert<Bgr, double>(), result.Convert<Bgr, double>());
+            var Metrics = ImageMetricHelper.ComputeAll(image, result);
             return new BaseMethodResponse
             {
                 EnhancementResult = result,
@@ -564,7 +564,7 @@ namespace diploma5_csharp
                 EmguCvWindowManager.Display(postProcessed, "postProcessed");
             }
 
-            var Metrics = ImageMetricHelper.ComputeAll(image.Convert<Bgr, double>(), postProcessed.Convert<Bgr, double>());
+            var Metrics = ImageMetricHelper.ComputeAll(image, postProcessed);
             return new BaseMethodResponse
             {
                 EnhancementResult = postProcessed,
@@ -669,7 +669,7 @@ namespace diploma5_csharp
                 EmguCvWindowManager.Display(result, "4 result");
             }
 
-            var Metrics = ImageMetricHelper.ComputeAll(image.Convert<Bgr, double>(), result.Convert<Bgr, double>());
+            var Metrics = ImageMetricHelper.ComputeAll(image, result);
             return new BaseMethodResponse
             {
                 EnhancementResult = result,
@@ -738,7 +738,7 @@ namespace diploma5_csharp
             LChannel.Dispose();
             claheLChannel.Dispose();
 
-            var Metrics = ImageMetricHelper.ComputeAll(image.Convert<Bgr, double>(), result.Convert<Bgr, double>());
+            var Metrics = ImageMetricHelper.ComputeAll(image, result);
             return new BaseMethodResponse
             {
                 EnhancementResult = result,
@@ -768,16 +768,17 @@ namespace diploma5_csharp
             //var idealHightPassFilter = ImageHelper.IdealHightPassFilter(gray);
             //var idealPassFiltersSum = idealLowPassFilter + idealHightPassFilter;
 
-            var butterworthLowPassFilter = ImageHelper.ButterworthLowPassFilter(gray);
-            var butterworthHightPassFilter = ImageHelper.ButterworthHightPassFilter(gray);
-            var butterworthPassFiltersSum = butterworthLowPassFilter + butterworthHightPassFilter;
+            //var butterworthLowPassFilter = ImageHelper.ButterworthLowPassFilter(gray);
+            //var butterworthHightPassFilter = ImageHelper.ButterworthHightPassFilter(gray);
+            //var butterworthPassFiltersSum = butterworthLowPassFilter + butterworthHightPassFilter;
 
-            //var gaussianLowPassFilter = ImageHelper.GaussianLowPassFilter(gray);
-            //var gaussianHightPassFilter = ImageHelper.GaussianHightPassFilter(gray);
-            //var gaussianPassFiltersSum = gaussianLowPassFilter + gaussianHightPassFilter;
-            
+            var gaussianLowPassFilter = ImageHelper.GaussianLowPassFilter(gray);
+            var gaussianHightPassFilter = ImageHelper.GaussianHightPassFilter(gray);
+            var gaussianPassFiltersSum = gaussianLowPassFilter + gaussianHightPassFilter;
+
             // compute transmission map
-            var transmission = butterworthPassFiltersSum.Convert<Gray, Byte>().Resize(image.Width, image.Height, Inter.Linear);
+            //var transmission = butterworthPassFiltersSum.Convert<Gray, Byte>().Resize(image.Width, image.Height, Inter.Linear);
+            var transmission = gaussianPassFiltersSum.Convert<Gray, Byte>().Resize(image.Width, image.Height, Inter.Linear);
 
             // inverse
             transmission = ImageHelper.Inverse(transmission);
@@ -825,13 +826,13 @@ namespace diploma5_csharp
                 //EmguCvWindowManager.Display(idealHightPassFilter.Convert<Gray, Byte>(), "idealHightPassFilter");
                 //EmguCvWindowManager.Display(idealPassFiltersSum.Convert<Gray, Byte>(), "passFiltersSum");
 
-                EmguCvWindowManager.Display(butterworthLowPassFilter.Convert<Gray, Byte>(), "butterworthLowPassFilter");
-                EmguCvWindowManager.Display(butterworthHightPassFilter.Convert<Gray, Byte>(), "butterworthHightPassFilter");
-                EmguCvWindowManager.Display(butterworthPassFiltersSum.Convert<Gray, Byte>(), "butterworthPassFiltersSum");
+                //EmguCvWindowManager.Display(butterworthLowPassFilter.Convert<Gray, Byte>(), "butterworthLowPassFilter");
+                //EmguCvWindowManager.Display(butterworthHightPassFilter.Convert<Gray, Byte>(), "butterworthHightPassFilter");
+                //EmguCvWindowManager.Display(butterworthPassFiltersSum.Convert<Gray, Byte>(), "butterworthPassFiltersSum");
 
-                //EmguCvWindowManager.Display(gaussianLowPassFilter.Convert<Gray, Byte>(), "gaussianLowPassFilter");
-                //EmguCvWindowManager.Display(gaussianHightPassFilter.Convert<Gray, Byte>(), "gaussianHightPassFilter");
-                //EmguCvWindowManager.Display(gaussianPassFiltersSum.Convert<Gray, Byte>(), "gaussianPassFiltersSum");
+                EmguCvWindowManager.Display(gaussianLowPassFilter.Convert<Gray, Byte>(), "gaussianLowPassFilter");
+                EmguCvWindowManager.Display(gaussianHightPassFilter.Convert<Gray, Byte>(), "gaussianHightPassFilter");
+                EmguCvWindowManager.Display(gaussianPassFiltersSum.Convert<Gray, Byte>(), "gaussianPassFiltersSum");
 
                 EmguCvWindowManager.Display(image, "image");
                 EmguCvWindowManager.Display(transmission, "transmission");
@@ -839,10 +840,10 @@ namespace diploma5_csharp
                 EmguCvWindowManager.Display(resultImproved, "resultImproved");
             }
 
-            var Metrics = ImageMetricHelper.ComputeAll(image.Convert<Bgr, double>(), result.Convert<Bgr, double>());
+            var Metrics = ImageMetricHelper.ComputeAll(image, result);
             return new BaseMethodResponse
             {
-                EnhancementResult = result,
+                EnhancementResult = resultImproved,
                 DetectionResult = transmission,
                 DetailedResults = new List<IInputArray> { image, transmission, result, resultImproved },
                 Metrics = Metrics,
@@ -998,7 +999,7 @@ namespace diploma5_csharp
                 EmguCvWindowManager.Display(result, "9 result");
             }
 
-            var Metrics = ImageMetricHelper.ComputeAll(image.Convert<Bgr, double>(), result.Convert<Bgr, double>());
+            var Metrics = ImageMetricHelper.ComputeAll(image, result);
             return new BaseMethodResponse
             {
                 EnhancementResult = result,
@@ -1142,7 +1143,7 @@ namespace diploma5_csharp
                 EmguCvWindowManager.Display(result, "9 result");
             }
 
-            var Metrics = ImageMetricHelper.ComputeAll(image.Convert<Bgr, double>(), result.Convert<Bgr, double>());
+            var Metrics = ImageMetricHelper.ComputeAll(image, result);
             return new BaseMethodResponse
             {
                 EnhancementResult = result,
@@ -1155,6 +1156,7 @@ namespace diploma5_csharp
         #endregion
 
         #region Real Time Image Haze Removal on Multi-core DSP
+        // Source: http://www.sciencedirect.com/science/article/pii/S1877705814036467
 
         public BaseMethodResponse RemoveFogUsingMultiCoreDSPMethod(Image<Bgr, Byte> image, FogRemovalParams _params)
         {
@@ -1164,12 +1166,16 @@ namespace diploma5_csharp
             // down sample input image
             // more about interpolation types - https://stackoverflow.com/questions/3112364/how-do-i-choose-an-image-interpolation-method-emgu-opencv
             double scale = 0.75;
+            if (image.Width * image.Height < 600 * 600) scale = 0.5;
+            else scale = 0.33;
             Inter interpolationType = Inter.Linear;
             var downsampled = image.Resize(scale, interpolationType);
 
             // compute dark channel
             // TODO - there is faster way to compute DC using max-min filter
-            var DC = GetDarkChannel(downsampled, patchSize: 7);
+            //int patchSize = 15; // used in article
+            int patchSize = 7;
+            var DC = GetDarkChannel(downsampled, patchSize: patchSize);
 
             // estimate airlight
             int A = EstimateAirlight(DC, downsampled);
@@ -1179,14 +1185,16 @@ namespace diploma5_csharp
 
             // improve T with guided filter
             Image<Gray, byte> improvedT;
+            //int guidedRadius = 30; // used in article
+            int guidedRadius = 7;
             try
             {
-                improvedT = ImageHelper.GuidedFilterBy_clarkzjw(guideImage: downsampled, inputImage: T, radius: 7, eps: 0.02);
+                improvedT = ImageHelper.GuidedFilterBy_clarkzjw(guideImage: downsampled, inputImage: T, radius: guidedRadius, eps: 0.02);
             }
             catch(Exception ex)
             {
                 // use default EmguCv implementation
-                improvedT = ImageHelper.GuidedFilterEmguCv(guideImage: downsampled, inputImage: T, radius: 7, eps: 0.02);
+                improvedT = ImageHelper.GuidedFilterEmguCv(guideImage: downsampled, inputImage: T, radius: guidedRadius, eps: 0.02);
             }
             var transmission = improvedT;
 
@@ -1237,7 +1245,7 @@ namespace diploma5_csharp
                 EmguCvWindowManager.Display(colorCalibrated, "colorCalibrated");
             }
 
-            var Metrics = ImageMetricHelper.ComputeAll(image.Convert<Bgr, double>(), result.Convert<Bgr, double>());
+            var Metrics = ImageMetricHelper.ComputeAll(image, result);
             return new BaseMethodResponse
             {
                 EnhancementResult = result,
@@ -1254,12 +1262,6 @@ namespace diploma5_csharp
 
         public BaseMethodResponse RemoveFogUsingCustomMethod(Image<Bgr, Byte> image, FogRemovalParams _params)
         {
-            Image<Lab, byte> lab = ImageHelper.ToLab(image);
-            Image<Bgr, float> convultionResult = new Image<Bgr, float>(image.Size);
-            Image<Bgr, Byte> filter2DResult = new Image<Bgr, Byte>(image.Size);
-            Image<Gray, Byte> transmission = null;
-            Image<Bgr, Byte> result = new Image<Bgr, Byte>(image.Size);
-
             var stopwatch = new Stopwatch();
             stopwatch.Start();
 
@@ -1365,7 +1367,7 @@ namespace diploma5_csharp
 
             // 0. Preprocessing - ADJUST THE CONTRAST
             //var preprocessed = ImageHelper.AdjustContrast(image);
-            var preprocessed = image.Clone();
+            var preprocessed = image;
 
             // 1. Compute transmission using FFT
             var gray = ImageHelper.ToGray(preprocessed); // TODO - get gray image in more smart way
@@ -1375,7 +1377,7 @@ namespace diploma5_csharp
             var T = T_float.Convert<Gray, byte>();
             T = ImageHelper.Inverse(T); // inverse
             T = T.SmoothMedian(5); // smooth with median filter
-            
+
             // stretch to [0;1]
             double[] minValues, maxValues; Point[] minLocations, maxLocations;
             T.MinMax(out minValues, out maxValues, out minLocations, out maxLocations);
@@ -1390,7 +1392,21 @@ namespace diploma5_csharp
                     T[i, j] = new Gray(newT);
                 }
             }
-            transmission = T;
+
+            // improve T with guided filter
+            //Image<Gray, byte> improvedT;
+            ////int guidedRadius = 30; // used in article
+            //int guidedRadius = 7;
+            //try
+            //{
+            //    improvedT = ImageHelper.GuidedFilterBy_clarkzjw(guideImage: image.Min(image), inputImage: T, radius: guidedRadius, eps: 0.02);
+            //}
+            //catch (Exception ex)
+            //{
+            //    // use default EmguCv implementation
+            //    improvedT = ImageHelper.GuidedFilterEmguCv(guideImage: image.Min(image), inputImage: T, radius: guidedRadius, eps: 0.02);
+            //}
+            //T = improvedT;
 
             // 1.2 etimate airlight using DC
             //var DC = GetDarkChannel(preprocessed, patchSize: 7);
@@ -1400,8 +1416,51 @@ namespace diploma5_csharp
             int A = EstimateAirlightByTransmission(T, image);
 
             // 2. Apply fog removal using modifiend fog model
-            var processed = new Image<Bgr, byte>(image.Size);
+            //var processed = new Image<Bgr, byte>(image.Size);
             
+            //for (int i = 0; i < preprocessed.Rows; i++)
+            //{
+            //    for (int j = 0; j < preprocessed.Cols; j++)
+            //    {
+            //        var t = T[i, j].Intensity / 255.0;
+            //        t = Math.Max(t, 0.1);
+
+            //        var B = preprocessed[i, j].Blue;
+            //        var G = preprocessed[i, j].Green;
+            //        var R = preprocessed[i, j].Red;
+
+            //        double B_ = B;
+            //        double G_ = G;
+            //        double R_ = R;
+
+            //        //// ADJUST THE CONTRAST
+            //        var threshold = 10;
+            //        var contrast = Math.Pow((100.0 + threshold) / 100.0, 2);
+            //        //B_ = ((((B_ / 255.0) - 0.5) * contrast) + 0.5) * 255.0;
+            //        //G_ = ((((G_ / 255.0) - 0.5) * contrast) + 0.5) * 255.0;
+            //        //R_ = ((((R_ / 255.0) - 0.5) * contrast) + 0.5) * 255.0;
+
+            //        // 1st working way - too vivid colors
+            //        double c = 2.5;
+            //        B_ = (1 - ((Math.Abs(B_ - A) / (255.0 * c)) / t)) * B_;
+            //        G_ = (1 - ((Math.Abs(G_ - A) / (255.0 * c)) / t)) * G_;
+            //        R_ = (1 - ((Math.Abs(R_ - A) / (255.0 * c)) / t)) * R_;
+
+            //        //B_ = B_ > 255 ? 255 : Math.Abs(B_);
+            //        //G_ = G_ > 255 ? 255 : Math.Abs(G_);
+            //        //R_ = R_ > 255 ? 255 : Math.Abs(R_);
+
+            //        processed[i, j] = new Bgr(B_, G_, R_);
+            //    }
+            //}
+
+            //// 3. Postprocessing - use AGC or somithing similar to balance brightness & colors
+            //var postProcessed = processed;
+            //result = postProcessed;
+
+            // TRY IN HSV
+            var hsv = ImageHelper.ToHsv(image);
+            double H_, S_, V_;
             for (int i = 0; i < preprocessed.Rows; i++)
             {
                 for (int j = 0; j < preprocessed.Cols; j++)
@@ -1409,51 +1468,38 @@ namespace diploma5_csharp
                     var t = T[i, j].Intensity / 255.0;
                     t = Math.Max(t, 0.1);
 
-                    var B = preprocessed[i, j].Blue;
-                    var G = preprocessed[i, j].Green;
-                    var R = preprocessed[i, j].Red;
-
-                    double B_ = B;
-                    double G_ = G;
-                    double R_ = R;
+                    H_ = hsv[i, j].Hue;
+                    S_ = hsv[i, j].Satuation;
+                    V_ = hsv[i, j].Value;
 
                     //// ADJUST THE CONTRAST
-                    var threshold = 10;
-                    var contrast = Math.Pow((100.0 + threshold) / 100.0, 2);
-                    B_ = ((((B_ / 255.0) - 0.5) * contrast) + 0.5) * 255.0;
-                    G_ = ((((G_ / 255.0) - 0.5) * contrast) + 0.5) * 255.0;
-                    R_ = ((((R_ / 255.0) - 0.5) * contrast) + 0.5) * 255.0;
+                    //var threshold = 10;
+                    //var contrast = Math.Pow((100.0 + threshold) / 100.0, 2);
+                    //V_ = ((((V_ / 255.0) - 0.5) * contrast) + 0.5) * 255.0;
 
                     // 1st working way - too vivid colors
-                    double c = 2.5;
-                    B_ = (1 - ((Math.Abs(B_ - A) / (255.0 * c)) / t)) * B_;
-                    G_ = (1 - ((Math.Abs(G_ - A) / (255.0 * c)) / t)) * G_;
-                    R_ = (1 - ((Math.Abs(R_ - A) / (255.0 * c)) / t)) * R_;
+                    //double c = 1.95;
+                    //V_ = (1 - ((Math.Abs(V_ - A) / (255.0 * c)) / t)) * V_;
+                    //V_ = (1 - ((Math.Abs(V_ - A) / (255.0)) / t)) * V_;
 
-                    B_ = B_ > 255 ? 255 : Math.Abs(B_);
-                    G_ = G_ > 255 ? 255 : Math.Abs(G_);
-                    R_ = R_ > 255 ? 255 : Math.Abs(R_);
+                    /// 2nd approach
+                    V_ = CustomSmartAdd(V_, (V_ - A) * (1 - t));
 
-                    processed[i, j] = new Bgr(B_, G_, R_);
+                    if(V_ < 0 || V_ > 255)
+                    {
+                        throw new OverflowException();
+                    }
+
+                    //hsv[i, j] = new Hsv(H_, S_, V_);
+                    hsv.Data[i, j, 2] = (byte)V_;
                 }
             }
+            var processed = ImageHelper.ToBgr(hsv);
+            var postProcessed = ImageHelper.AdjustContrast(processed);
 
-            // 3. Postprocessing - use AGC or somithing similar to balance brightness & colors
-            ////var postProcessed = GammaCorrection.Adaptive(processed);
-            //// create filter
-            ////AForge.Imaging.Filters.ContrastStretch filter = new AForge.Imaging.Filters.ContrastStretch();
-            //Accord.Imaging.Filters.ContrastStretch filter = new Accord.Imaging.Filters.ContrastStretch();
-            //var bmp = filter.Apply(processed.Bitmap);
-            //var postProcessed = new Image<Bgr, byte>(bmp);
-            //result = postProcessed;
-            var postProcessed = processed;
-            result = postProcessed;
-
-            ////use Kaliko.ImageLibrary;
-            //KalikoImage imageK = new KalikoImage(result.Bitmap);
-            //imageK.ApplyFilter(new UnsharpMaskFilter(radius: 2.5f, amount: 0.7f, threshold: 0));
-            //var unharpMask = new Image<Bgr, byte>(imageK.GetAsBitmap());
-            //EmguCvWindowManager.Display(unharpMask, "unsharp mask KalikoImage");
+            KalikoImage imageK = new KalikoImage(postProcessed.Bitmap);
+            imageK.ApplyFilter(new UnsharpMaskFilter(radius: 2.5f, amount: 0.7f, threshold: 0));
+            var postProcessed2 = new Image<Bgr, byte>(imageK.GetAsBitmap());
 
             stopwatch.Stop();
 
@@ -1464,17 +1510,42 @@ namespace diploma5_csharp
                 EmguCvWindowManager.Display(T, "T");
                 EmguCvWindowManager.Display(processed, "processed");
                 EmguCvWindowManager.Display(postProcessed, "postProcessed");
+                EmguCvWindowManager.Display(postProcessed2, "postProcessed2");
             }
 
-            var Metrics = ImageMetricHelper.ComputeAll(image.Convert<Bgr, double>(), result.Convert<Bgr, double>());
+            var Metrics = ImageMetricHelper.ComputeAll(image, postProcessed2);
             return new BaseMethodResponse
             {
-                EnhancementResult = result,
-                DetectionResult = transmission,
-                DetailedResults = new List<IInputArray> { image, preprocessed, T, processed, postProcessed },
+                EnhancementResult = postProcessed2,
+                DetectionResult = T,
+                DetailedResults = new List<IInputArray> { image, preprocessed, T, processed, postProcessed, postProcessed2 },
                 Metrics = Metrics,
                 ExecutionTimeMs = stopwatch.ElapsedMilliseconds
             };
+        }
+
+        private double CustomSmartAdd(double intensity, double addVal, int callCount = 0)
+        {
+            if(callCount > 25)
+            {
+                throw new OverflowException("Max call stack overflow");
+            }
+            byte intesityB = (byte)intensity;
+            if (intesityB == 255 || intesityB == 0)
+            {
+                return intensity;
+            }
+            callCount += 1;
+            double sum = intensity + addVal;
+            if (sum < 0 || sum > 255)
+            {
+                //double percentOfMax = intensity / 255.0;
+                double reducePercent = 0.25;
+                double r2 = addVal * (1 - reducePercent);
+                double res = CustomSmartAdd(intensity, r2, callCount);
+                return res;
+            }
+            return sum;
         }
 
         public BaseMethodResponse RemoveFogUsingCustomMethodWithDepthEstimation(Image<Bgr, Byte> image, FogRemovalParams _params)
@@ -1575,7 +1646,7 @@ namespace diploma5_csharp
                 EmguCvWindowManager.Display(alternativeResult, "alternativeResult");
             }
 
-            var Metrics = ImageMetricHelper.ComputeAll(image.Convert<Bgr, double>(), result.Convert<Bgr, double>());
+            var Metrics = ImageMetricHelper.ComputeAll(image, result);
             return new BaseMethodResponse
             {
                 EnhancementResult = result,
