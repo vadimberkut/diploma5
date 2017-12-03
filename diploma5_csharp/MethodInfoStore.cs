@@ -22,12 +22,27 @@ namespace diploma5_csharp
         private const string CSV_DELIMITER = ";"; // exel automatically formats CSV with semicolon (alternatively add "sep=;" to start of the CSV file)
         private readonly List<EnhanceMethodInfoModel> Store;
 
+        public Dictionary<string, string> MethodNameMap = new Dictionary<string, string>()
+        {
+            // FOG
+            { nameof(Fog.RemoveFogUsingDarkChannelPrior), "DCP" },
+            { nameof(Fog.RemoveFogUsingMedianChannelPrior), "MCP" },
+            { nameof(Fog.RemoveFogUsingIdcpWithClahe), "DCP&CLAHE" },
+            //{ nameof(Fog.RemoveFogUsingDCPAndDFT), "DCP&DFT" },
+            { nameof(Fog.RemoveFogUsingMultiCoreDSPMethod), "DSP" },
+            //{ nameof(Fog.EnhaceVisibilityUsingRobbyTanMethodForRoads), "RTFR" },
+            { nameof(Fog.RemoveFogUsingCustomMethod), "CUS" },
+            { nameof(Fog.RemoveFogUsingCustomMethodWithDepthEstimation), "CUSD" },
+
+            // DUST
+            { nameof(Dust.VisibilityEnhancementUsingTunedTriThresholdFuzzyIntensificationOperatorsMethod), "TTFIO" },
+            { nameof(Dust.RecoveringOfWeatherDegradedImagesBasedOnRGBResponseRatioConstancyMethod), "RGBRRC" },
+        };
+
         public MethodInfoStore()
         {
             Store = this.LoadFromFile();
         }
-
-       
 
         public void AddOrUpdate(EnhanceMethodInfoModel data)
         {
@@ -62,12 +77,26 @@ namespace diploma5_csharp
                 folderPath = Directory.GetCurrentDirectory();
             }
 
+            // delete all csv in store folder
+            var files = Directory.GetFiles(this.GetSavePath(""));
+            foreach (var file in files)
+            {
+                if (Path.GetExtension(file) == ".csv")
+                {
+                    File.Delete(file);
+                }
+            }
+
+            // Save only methods with maps
+            var whiteList = this.MethodNameMap.Keys;
+            var store = this.Store.Where(x => whiteList.Contains(x.EnhanceMethodName));
+
             // get exec time statistics for each method
-            var execStat = this.Store.GroupBy(x => x.EnhanceMethodName, (key, g) =>
+            var execStat = store.GroupBy(x => x.EnhanceMethodName, (key, g) =>
             {
                 return new
                 {
-                    EnhanceMethodName = key,
+                    EnhanceMethodName = MethodNameMap[key],
                     Min = g.Min(x => x.ExecutionTimeMs),
                     Max = g.Max(x => x.ExecutionTimeMs),
                     Average = g.Average(x => x.ExecutionTimeMs),
@@ -85,10 +114,10 @@ namespace diploma5_csharp
 
             // for each metric get list of results
             string[] metricNames = typeof(MetricsResult).GetProperties().Select(x => x.Name).ToArray();
-            string[] methodNames = this.Store.Select(x => x.EnhanceMethodName).Distinct().OrderBy(x => x).ToArray();
+            string[] methodNames = store.Select(x => x.EnhanceMethodName).Distinct().OrderBy(x => x).ToArray();
             var metricProps = typeof(MetricsResult).GetProperties();
 
-            var metricsValues = this.Store.Select(x =>
+            var metricsValues = store.Select(x =>
             {
                 return metricProps.Select(y => y).Select(y => new
                 {
@@ -112,7 +141,7 @@ namespace diploma5_csharp
                     foreach (var methodName in methodNames)
                     {
                         var metricValueForMethod = g2.Where(z => z.EnhanceMethodName == methodName).Select(z => z.MetrciValue).FirstOrDefault();
-                        metricRow.Add(methodName, metricValueForMethod);
+                        metricRow.Add(MethodNameMap[methodName], metricValueForMethod);
 
                     }
 

@@ -1367,10 +1367,9 @@ namespace diploma5_csharp
 
             // 0. Preprocessing - ADJUST THE CONTRAST
             //var preprocessed = ImageHelper.AdjustContrast(image);
-            var preprocessed = image;
 
             // 1. Compute transmission using FFT
-            var gray = ImageHelper.ToGray(preprocessed); // TODO - get gray image in more smart way
+            var gray = ImageHelper.ToGray(image); // TODO - get gray image in more smart way
             var hpF = ImageHelper.ButterworthHightPassFilter(gray);
             var lpF = ImageHelper.ButterworthLowPassFilter(gray);
             var T_float = hpF + lpF;
@@ -1417,7 +1416,7 @@ namespace diploma5_csharp
 
             // 2. Apply fog removal using modifiend fog model
             //var processed = new Image<Bgr, byte>(image.Size);
-            
+
             //for (int i = 0; i < preprocessed.Rows; i++)
             //{
             //    for (int j = 0; j < preprocessed.Cols; j++)
@@ -1458,12 +1457,82 @@ namespace diploma5_csharp
             //var postProcessed = processed;
             //result = postProcessed;
 
+            //// TRY IN HSV
+            //var hsv = ImageHelper.ToHsv(image);
+            //double H_, S_, V_;
+            //for (int i = 0; i < preprocessed.Rows; i++)
+            //{
+            //    for (int j = 0; j < preprocessed.Cols; j++)
+            //    {
+            //        var t = T[i, j].Intensity / 255.0;
+            //        t = Math.Max(t, 0.1);
+
+            //        H_ = hsv[i, j].Hue;
+            //        S_ = hsv[i, j].Satuation;
+            //        V_ = hsv[i, j].Value;
+
+            //        //// ADJUST THE CONTRAST
+            //        //var threshold = 10;
+            //        //var contrast = Math.Pow((100.0 + threshold) / 100.0, 2);
+            //        //V_ = ((((V_ / 255.0) - 0.5) * contrast) + 0.5) * 255.0;
+
+            //        // 1st working way - too vivid colors
+            //        //double c = 1.95;
+            //        //V_ = (1 - ((Math.Abs(V_ - A) / (255.0 * c)) / t)) * V_;
+            //        //V_ = (1 - ((Math.Abs(V_ - A) / (255.0)) / t)) * V_;
+
+            //        /// 2nd approach
+            //        V_ = CustomSmartAdd(V_, (V_ - A) * (1 - t));
+
+            //        if(V_ < 0 || V_ > 255)
+            //        {
+            //            throw new OverflowException();
+            //        }
+
+            //        //hsv[i, j] = new Hsv(H_, S_, V_);
+            //        hsv.Data[i, j, 2] = (byte)V_;
+            //    }
+            //}
+            //var processed = ImageHelper.ToBgr(hsv);
+            //var postProcessed = ImageHelper.AdjustContrast(processed);
+
+            //KalikoImage imageK = new KalikoImage(postProcessed.Bitmap);
+            //imageK.ApplyFilter(new UnsharpMaskFilter(radius: 2.5f, amount: 0.7f, threshold: 0));
+            //var postProcessed2 = new Image<Bgr, byte>(imageK.GetAsBitmap());
+
+            var processed = CustomRemoveFog(image, T, A);
+
+            stopwatch.Stop();
+
+            if (_params.ShowWindows)
+            {
+                EmguCvWindowManager.Display(image, "image");
+                //EmguCvWindowManager.Display(preprocessed, "preprocessed");
+                EmguCvWindowManager.Display(T, "T");
+                EmguCvWindowManager.Display(processed, "processed");
+                //EmguCvWindowManager.Display(postProcessed, "postProcessed");
+                //EmguCvWindowManager.Display(postProcessed2, "postProcessed2");
+            }
+
+            var Metrics = ImageMetricHelper.ComputeAll(image, processed);
+            return new BaseMethodResponse
+            {
+                EnhancementResult = processed,
+                DetectionResult = T,
+                DetailedResults = new List<IInputArray> { image, T, processed },
+                Metrics = Metrics,
+                ExecutionTimeMs = stopwatch.ElapsedMilliseconds
+            };
+        }
+
+        private Image<Bgr, byte> CustomRemoveFog(Image<Bgr, byte> image, Image<Gray, byte> T, int Airlight)
+        {
             // TRY IN HSV
             var hsv = ImageHelper.ToHsv(image);
             double H_, S_, V_;
-            for (int i = 0; i < preprocessed.Rows; i++)
+            for (int i = 0; i < image.Rows; i++)
             {
-                for (int j = 0; j < preprocessed.Cols; j++)
+                for (int j = 0; j < image.Cols; j++)
                 {
                     var t = T[i, j].Intensity / 255.0;
                     t = Math.Max(t, 0.1);
@@ -1483,9 +1552,9 @@ namespace diploma5_csharp
                     //V_ = (1 - ((Math.Abs(V_ - A) / (255.0)) / t)) * V_;
 
                     /// 2nd approach
-                    V_ = CustomSmartAdd(V_, (V_ - A) * (1 - t));
+                    V_ = CustomSmartAdd(V_, (V_ - Airlight) * (1 - t));
 
-                    if(V_ < 0 || V_ > 255)
+                    if (V_ < 0 || V_ > 255)
                     {
                         throw new OverflowException();
                     }
@@ -1501,27 +1570,7 @@ namespace diploma5_csharp
             imageK.ApplyFilter(new UnsharpMaskFilter(radius: 2.5f, amount: 0.7f, threshold: 0));
             var postProcessed2 = new Image<Bgr, byte>(imageK.GetAsBitmap());
 
-            stopwatch.Stop();
-
-            if (_params.ShowWindows)
-            {
-                EmguCvWindowManager.Display(image, "image");
-                EmguCvWindowManager.Display(preprocessed, "preprocessed");
-                EmguCvWindowManager.Display(T, "T");
-                EmguCvWindowManager.Display(processed, "processed");
-                EmguCvWindowManager.Display(postProcessed, "postProcessed");
-                EmguCvWindowManager.Display(postProcessed2, "postProcessed2");
-            }
-
-            var Metrics = ImageMetricHelper.ComputeAll(image, postProcessed2);
-            return new BaseMethodResponse
-            {
-                EnhancementResult = postProcessed2,
-                DetectionResult = T,
-                DetailedResults = new List<IInputArray> { image, preprocessed, T, processed, postProcessed, postProcessed2 },
-                Metrics = Metrics,
-                ExecutionTimeMs = stopwatch.ElapsedMilliseconds
-            };
+            return postProcessed2;
         }
 
         private double CustomSmartAdd(double intensity, double addVal, int callCount = 0)
@@ -1608,7 +1657,11 @@ namespace diploma5_csharp
             var improvedT = ImageHelper.GuidedFilterBy_clarkzjw(guideImage: image, inputImage: T, radius: 7, eps: 0.02);
 
             // Use standart model
-            var result = RemoveFog(image, improvedT, Airlight);
+            //var result = RemoveFog(image, improvedT, Airlight);
+            var fogModelResult = RemoveFog(image, improvedT, Airlight);
+
+            // use custom approach
+            var result = CustomRemoveFog(image, improvedT, Airlight);
 
             // apply correction only to Lightnes
             var lab = ImageHelper.ToLab(image);
@@ -1643,6 +1696,7 @@ namespace diploma5_csharp
                 EmguCvWindowManager.Display(T, "T");
                 EmguCvWindowManager.Display(improvedT, "improvedT");
                 EmguCvWindowManager.Display(result, "result");
+                EmguCvWindowManager.Display(fogModelResult, "fogModelResult");
                 EmguCvWindowManager.Display(alternativeResult, "alternativeResult");
             }
 
@@ -1651,7 +1705,7 @@ namespace diploma5_csharp
             {
                 EnhancementResult = result,
                 DetectionResult = transmission,
-                DetailedResults = new List<IInputArray> { image, depthMapColor, T, improvedT, result, alternativeResult },
+                DetailedResults = new List<IInputArray> { image, depthMapColor, T, improvedT, fogModelResult, alternativeResult, result },
                 Metrics = Metrics,
                 ExecutionTimeMs = stopwatch.ElapsedMilliseconds
             };
