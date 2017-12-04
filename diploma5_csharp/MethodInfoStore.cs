@@ -30,7 +30,7 @@ namespace diploma5_csharp
             { nameof(Fog.RemoveFogUsingIdcpWithClahe), "DCP&CLAHE" },
             //{ nameof(Fog.RemoveFogUsingDCPAndDFT), "DCP&DFT" },
             { nameof(Fog.RemoveFogUsingMultiCoreDSPMethod), "DSP" },
-            //{ nameof(Fog.EnhaceVisibilityUsingRobbyTanMethodForRoads), "RTFR" },
+            { nameof(Fog.EnhaceVisibilityUsingRobbyTanMethodForRoads), "RTFR" },
             { nameof(Fog.RemoveFogUsingCustomMethod), "CUS" },
             { nameof(Fog.RemoveFogUsingCustomMethodWithDepthEstimation), "CUSD" },
 

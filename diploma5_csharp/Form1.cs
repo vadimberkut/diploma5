@@ -1116,6 +1116,38 @@ namespace diploma5_csharp
                         //Console.Error.WriteLine(ex.Message);
                     }
 
+
+                    // RobbyTanMethodForRoads
+                    method = this._methodInfoStore.MethodNameMap[nameof(Fog.EnhaceVisibilityUsingRobbyTanMethodForRoads)];
+                    result2 = this._appState.Fog.EnhaceVisibilityUsingRobbyTanMethodForRoads(image, new FogRemovalParams() { ShowWindows = false, InputImageFileName = imageFileName });
+                    if (this.checkBoxUpdateStats.Checked)
+                    {
+                        _methodInfoStore.AddOrUpdate(new EnhanceMethodInfoModel
+                        {
+                            ImageFileName = imageFileName,
+                            EnhanceMethodName = nameof(Fog.EnhaceVisibilityUsingRobbyTanMethodForRoads),
+                            Metrics = result2.Metrics,
+                            ExecutionTimeMs = result2.ExecutionTimeMs
+                        });
+                    }
+                    for (int i = result2.DetailedResults.Count() - 1; i >= 0; i -= 1)
+                    {
+                        if (this.checkBoxRunAllMethodsSaveAllImages.Checked == false)
+                        {
+                            // save only first ad last image
+                            if (i != result2.DetailedResults.Count() - 1 && i != 0)
+                            {
+                                continue;
+                            }
+                        }
+                        img = result2.DetailedResults[i];
+                        imgPath = Path.Combine(dustImagesDestPath, String.Format(IMAGE_FILENAME_TEMPLATE, method, imageType, Path.GetFileNameWithoutExtension(imageFileName), i, Path.GetExtension(imageFileName)));
+                        CvInvoke.Imwrite(imgPath, img);
+                    }
+                    result2.EnhancementResult.Dispose();
+                    result2.DetectionResult.Dispose();
+                    GC.Collect();
+
                     // update counter
                     filesProcessed += 1;
 

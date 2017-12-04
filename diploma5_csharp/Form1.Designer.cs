@@ -668,13 +668,12 @@
             // buttonEnhaceVisibilityUsingRobbyTanMethodForRoads
             // 
             this.buttonEnhaceVisibilityUsingRobbyTanMethodForRoads.BackColor = System.Drawing.SystemColors.Control;
-            this.buttonEnhaceVisibilityUsingRobbyTanMethodForRoads.Location = new System.Drawing.Point(505, 634);
+            this.buttonEnhaceVisibilityUsingRobbyTanMethodForRoads.Location = new System.Drawing.Point(844, 533);
             this.buttonEnhaceVisibilityUsingRobbyTanMethodForRoads.Name = "buttonEnhaceVisibilityUsingRobbyTanMethodForRoads";
-            this.buttonEnhaceVisibilityUsingRobbyTanMethodForRoads.Size = new System.Drawing.Size(121, 40);
+            this.buttonEnhaceVisibilityUsingRobbyTanMethodForRoads.Size = new System.Drawing.Size(157, 37);
             this.buttonEnhaceVisibilityUsingRobbyTanMethodForRoads.TabIndex = 54;
-            this.buttonEnhaceVisibilityUsingRobbyTanMethodForRoads.Text = "Robby Tan (VE for roads) WUC";
+            this.buttonEnhaceVisibilityUsingRobbyTanMethodForRoads.Text = "Robby Tan VE For Roads";
             this.buttonEnhaceVisibilityUsingRobbyTanMethodForRoads.UseVisualStyleBackColor = false;
-            this.buttonEnhaceVisibilityUsingRobbyTanMethodForRoads.Visible = false;
             this.buttonEnhaceVisibilityUsingRobbyTanMethodForRoads.Click += new System.EventHandler(this.buttonEnhaceVisibilityUsingRobbyTanMethodForRoads_Click);
             // 
             // buttonRemoveFogUsingDCPAndDFT
@@ -725,7 +724,7 @@
             // 
             // textBoxFvmMetric
             // 
-            this.textBoxFvmMetric.Location = new System.Drawing.Point(899, 580);
+            this.textBoxFvmMetric.Location = new System.Drawing.Point(901, 620);
             this.textBoxFvmMetric.Name = "textBoxFvmMetric";
             this.textBoxFvmMetric.Size = new System.Drawing.Size(60, 20);
             this.textBoxFvmMetric.TabIndex = 59;
@@ -733,7 +732,7 @@
             // label13
             // 
             this.label13.AutoSize = true;
-            this.label13.Location = new System.Drawing.Point(846, 583);
+            this.label13.Location = new System.Drawing.Point(848, 623);
             this.label13.Name = "label13";
             this.label13.Size = new System.Drawing.Size(29, 13);
             this.label13.TabIndex = 60;
@@ -774,7 +773,7 @@
             // label14
             // 
             this.label14.AutoSize = true;
-            this.label14.Location = new System.Drawing.Point(846, 607);
+            this.label14.Location = new System.Drawing.Point(848, 647);
             this.label14.Name = "label14";
             this.label14.Size = new System.Drawing.Size(30, 13);
             this.label14.TabIndex = 65;
@@ -782,7 +781,7 @@
             // 
             // textBoxMseMetric
             // 
-            this.textBoxMseMetric.Location = new System.Drawing.Point(899, 604);
+            this.textBoxMseMetric.Location = new System.Drawing.Point(901, 644);
             this.textBoxMseMetric.Name = "textBoxMseMetric";
             this.textBoxMseMetric.Size = new System.Drawing.Size(60, 20);
             this.textBoxMseMetric.TabIndex = 64;
@@ -790,7 +789,7 @@
             // label15
             // 
             this.label15.AutoSize = true;
-            this.label15.Location = new System.Drawing.Point(846, 631);
+            this.label15.Location = new System.Drawing.Point(848, 671);
             this.label15.Name = "label15";
             this.label15.Size = new System.Drawing.Size(29, 13);
             this.label15.TabIndex = 67;
@@ -798,7 +797,7 @@
             // 
             // textBoxNaeMetric
             // 
-            this.textBoxNaeMetric.Location = new System.Drawing.Point(899, 628);
+            this.textBoxNaeMetric.Location = new System.Drawing.Point(901, 668);
             this.textBoxNaeMetric.Name = "textBoxNaeMetric";
             this.textBoxNaeMetric.Size = new System.Drawing.Size(60, 20);
             this.textBoxNaeMetric.TabIndex = 66;
@@ -806,7 +805,7 @@
             // label16
             // 
             this.label16.AutoSize = true;
-            this.label16.Location = new System.Drawing.Point(981, 579);
+            this.label16.Location = new System.Drawing.Point(983, 619);
             this.label16.Name = "label16";
             this.label16.Size = new System.Drawing.Size(21, 13);
             this.label16.TabIndex = 69;
@@ -814,7 +813,7 @@
             // 
             // textBoxScMetric
             // 
-            this.textBoxScMetric.Location = new System.Drawing.Point(1033, 575);
+            this.textBoxScMetric.Location = new System.Drawing.Point(1035, 615);
             this.textBoxScMetric.Name = "textBoxScMetric";
             this.textBoxScMetric.Size = new System.Drawing.Size(60, 20);
             this.textBoxScMetric.TabIndex = 68;
@@ -822,7 +821,7 @@
             // label17
             // 
             this.label17.AutoSize = true;
-            this.label17.Location = new System.Drawing.Point(981, 605);
+            this.label17.Location = new System.Drawing.Point(983, 645);
             this.label17.Name = "label17";
             this.label17.Size = new System.Drawing.Size(37, 13);
             this.label17.TabIndex = 71;
@@ -830,7 +829,7 @@
             // 
             // textBoxPsnrMEtric
             // 
-            this.textBoxPsnrMEtric.Location = new System.Drawing.Point(1033, 602);
+            this.textBoxPsnrMEtric.Location = new System.Drawing.Point(1035, 642);
             this.textBoxPsnrMEtric.Name = "textBoxPsnrMEtric";
             this.textBoxPsnrMEtric.Size = new System.Drawing.Size(60, 20);
             this.textBoxPsnrMEtric.TabIndex = 70;
@@ -838,7 +837,7 @@
             // label18
             // 
             this.label18.AutoSize = true;
-            this.label18.Location = new System.Drawing.Point(981, 631);
+            this.label18.Location = new System.Drawing.Point(983, 671);
             this.label18.Name = "label18";
             this.label18.Size = new System.Drawing.Size(22, 13);
             this.label18.TabIndex = 73;
@@ -846,7 +845,7 @@
             // 
             // textBoxAdMetric
             // 
-            this.textBoxAdMetric.Location = new System.Drawing.Point(1033, 628);
+            this.textBoxAdMetric.Location = new System.Drawing.Point(1035, 668);
             this.textBoxAdMetric.Name = "textBoxAdMetric";
             this.textBoxAdMetric.Size = new System.Drawing.Size(60, 20);
             this.textBoxAdMetric.TabIndex = 72;
@@ -854,7 +853,7 @@
             // label19
             // 
             this.label19.AutoSize = true;
-            this.label19.Location = new System.Drawing.Point(980, 656);
+            this.label19.Location = new System.Drawing.Point(982, 696);
             this.label19.Name = "label19";
             this.label19.Size = new System.Drawing.Size(47, 13);
             this.label19.TabIndex = 75;
@@ -862,7 +861,7 @@
             // 
             // textBoxRMSMetricDiff
             // 
-            this.textBoxRMSMetricDiff.Location = new System.Drawing.Point(1033, 653);
+            this.textBoxRMSMetricDiff.Location = new System.Drawing.Point(1035, 693);
             this.textBoxRMSMetricDiff.Name = "textBoxRMSMetricDiff";
             this.textBoxRMSMetricDiff.Size = new System.Drawing.Size(60, 20);
             this.textBoxRMSMetricDiff.TabIndex = 74;
@@ -870,7 +869,7 @@
             // label20
             // 
             this.label20.AutoSize = true;
-            this.label20.Location = new System.Drawing.Point(980, 682);
+            this.label20.Location = new System.Drawing.Point(982, 722);
             this.label20.Name = "label20";
             this.label20.Size = new System.Drawing.Size(50, 39);
             this.label20.TabIndex = 77;
@@ -878,7 +877,7 @@
             // 
             // textBoxShannonEntropyDiff
             // 
-            this.textBoxShannonEntropyDiff.Location = new System.Drawing.Point(1033, 679);
+            this.textBoxShannonEntropyDiff.Location = new System.Drawing.Point(1035, 719);
             this.textBoxShannonEntropyDiff.Name = "textBoxShannonEntropyDiff";
             this.textBoxShannonEntropyDiff.Size = new System.Drawing.Size(60, 20);
             this.textBoxShannonEntropyDiff.TabIndex = 76;
@@ -886,7 +885,7 @@
             // label21
             // 
             this.label21.AutoSize = true;
-            this.label21.Location = new System.Drawing.Point(846, 659);
+            this.label21.Location = new System.Drawing.Point(848, 699);
             this.label21.Name = "label21";
             this.label21.Size = new System.Drawing.Size(31, 13);
             this.label21.TabIndex = 79;
@@ -894,7 +893,7 @@
             // 
             // textBoxRMSMetric
             // 
-            this.textBoxRMSMetric.Location = new System.Drawing.Point(899, 656);
+            this.textBoxRMSMetric.Location = new System.Drawing.Point(901, 696);
             this.textBoxRMSMetric.Name = "textBoxRMSMetric";
             this.textBoxRMSMetric.Size = new System.Drawing.Size(60, 20);
             this.textBoxRMSMetric.TabIndex = 78;
@@ -902,7 +901,7 @@
             // label22
             // 
             this.label22.AutoSize = true;
-            this.label22.Location = new System.Drawing.Point(846, 685);
+            this.label22.Location = new System.Drawing.Point(848, 725);
             this.label22.Name = "label22";
             this.label22.Size = new System.Drawing.Size(50, 26);
             this.label22.TabIndex = 81;
@@ -910,7 +909,7 @@
             // 
             // textBoxShannonEntropy
             // 
-            this.textBoxShannonEntropy.Location = new System.Drawing.Point(899, 682);
+            this.textBoxShannonEntropy.Location = new System.Drawing.Point(901, 722);
             this.textBoxShannonEntropy.Name = "textBoxShannonEntropy";
             this.textBoxShannonEntropy.Size = new System.Drawing.Size(60, 20);
             this.textBoxShannonEntropy.TabIndex = 80;
@@ -918,7 +917,7 @@
             // label23
             // 
             this.label23.AutoSize = true;
-            this.label23.Location = new System.Drawing.Point(845, 557);
+            this.label23.Location = new System.Drawing.Point(847, 597);
             this.label23.Name = "label23";
             this.label23.Size = new System.Drawing.Size(30, 13);
             this.label23.TabIndex = 83;
@@ -926,7 +925,7 @@
             // 
             // textBoxMEthodExecTime
             // 
-            this.textBoxMEthodExecTime.Location = new System.Drawing.Point(899, 554);
+            this.textBoxMEthodExecTime.Location = new System.Drawing.Point(901, 594);
             this.textBoxMEthodExecTime.Name = "textBoxMEthodExecTime";
             this.textBoxMEthodExecTime.Size = new System.Drawing.Size(60, 20);
             this.textBoxMEthodExecTime.TabIndex = 82;
@@ -945,7 +944,7 @@
             // 
             this.label25.AutoSize = true;
             this.label25.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.label25.Location = new System.Drawing.Point(845, 536);
+            this.label25.Location = new System.Drawing.Point(847, 576);
             this.label25.Name = "label25";
             this.label25.Size = new System.Drawing.Size(54, 15);
             this.label25.TabIndex = 85;
@@ -1003,7 +1002,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1235, 724);
+            this.ClientSize = new System.Drawing.Size(1235, 768);
             this.Controls.Add(this.checkBoxRunAllMethodsSaveAllImages);
             this.Controls.Add(this.checkBoxRunAllMethodsDust);
             this.Controls.Add(this.checkBoxRunAllMethodsFog);
