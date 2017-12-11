@@ -56,7 +56,8 @@ namespace diploma5_csharp.Helpers
             double FVM = ImageMetricHelper.FVM(image1, image2);
             double RMS = ImageMetricHelper.RMS(image2);
             double RMSDiff = ImageMetricHelper.RMSDifference(image1, image2);
-            double ShannonEntropy = ImageMetricHelper.ShannonEntropy(image2B); // !!! - better to calc entripy for byte images
+            //double ShannonEntropy = ImageMetricHelper.ShannonEntropy(image2B); // !!! - better to calc entripy for byte images
+            double ShannonEntropy = ImageMetricHelper.ShannonEntropyByChannels(image2B); // !!! - better to calc entripy for byte images
             double ShannonEntropyDiff = ImageMetricHelper.ShannonEntropyDiff(image1B, image2B); // !!! - better to calc entripy for byte images
 
             return new MetricsResult
@@ -716,6 +717,37 @@ namespace diploma5_csharp.Helpers
         public static double ShannonEntropy(Image<Bgr, byte> image)
         {
             var SE = new DataEntropyUTF8(image);
+            return SE.Entropy;
+        }
+
+        /// <summary>
+        /// Calculates Shannon entropy for one image by grouppping bytes by channels
+        /// </summary>
+        /// <param name="image"></param>
+        /// <returns></returns>
+        public static double ShannonEntropyByChannels(Image<Bgr, byte> image)
+        {
+            int size = image.Rows * image.Cols;
+            byte[] data = new byte[size * image.NumberOfChannels];
+            for (int m = 0; m < image.Rows; m++)
+            {
+                for (int n = 0; n < image.Cols; n++)
+                {
+                    Bgr p = image[m, n];
+                    data[0 + m * image.Cols + n] = (byte)p.Blue;
+                    data[size + m * image.Cols + n] = (byte)p.Green;
+                    data[2 * size + m * image.Cols + n] = (byte)p.Red;
+                }
+            }
+
+            // for each channel
+            //var channels = ImageHelper.GetBgrChannelsAsByte(image);
+            //double SE_B = (new DataEntropyUTF8(channels.B)).Entropy;
+            //double SE_G = (new DataEntropyUTF8(channels.G)).Entropy;
+            //double SE_R = (new DataEntropyUTF8(channels.R)).Entropy;
+            //double SE_AVG = (SE_B + SE_G + SE_R) / 3.0;
+
+            var SE = new DataEntropyUTF8(data);
             return SE.Entropy;
         }
 

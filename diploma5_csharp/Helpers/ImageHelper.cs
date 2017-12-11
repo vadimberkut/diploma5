@@ -380,6 +380,25 @@ namespace diploma5_csharp.Helpers
             return result;
         }
 
+        public static BgrChannelsByte GetBgrChannelsAsByte(Image<Bgr, Byte> image)
+        {
+            BgrChannelsByte result = new BgrChannelsByte(image.Rows * image.Cols);
+
+            for (int i = 0; i < image.Rows; i += 1)
+            {
+                for (int j = 0; j < image.Cols; j += 1)
+                {
+                    Bgr color = image[i, j];
+
+                    result.B[i * image.Cols + j] = (byte)color.Blue;
+                    result.G[i * image.Cols + j] = (byte)color.Green;
+                    result.R[i * image.Cols + j] = (byte)color.Red;
+                }
+            }
+
+            return result;
+        }
+
         public static LabChannels GetLabChannels(Image<Lab, Byte> image)
         {
             LabChannels result = new LabChannels(image.Rows * image.Cols);
@@ -1336,6 +1355,20 @@ namespace diploma5_csharp.Helpers
         public double[] B;
         public double[] G;
         public double[] R;
+    }
+
+    public class BgrChannelsByte
+    {
+        public BgrChannelsByte(int size)
+        {
+            B = new byte[size];
+            G = new byte[size];
+            R = new byte[size];
+        }
+
+        public byte[] B;
+        public byte[] G;
+        public byte[] R;
     }
 
     public class LabChannels

@@ -237,6 +237,14 @@ namespace diploma5_csharp.DataEntropy
             }
         }
 
+        public DataEntropyUTF8(byte[] data)
+        {
+            this.Clear();
+            ExamineChunk(data);
+            GetEntropy();
+            GetSortedDistribution();
+        }
+
         public DataEntropyUTF8()
         {
             this.Clear();

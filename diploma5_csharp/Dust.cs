@@ -77,7 +77,7 @@ namespace diploma5_csharp
 
             stopwatch.Stop();
 
-            var Metrics = ImageMetricHelper.ComputeAll(image.Convert<Bgr, double>(), result.Convert<Bgr, double>());
+            var Metrics = ImageMetricHelper.ComputeAll(image, result);
             return new BaseMethodResponse
             {
                 EnhancementResult = result,
@@ -199,7 +199,7 @@ namespace diploma5_csharp
 
             stopwatch.Stop();
 
-            var Metrics = ImageMetricHelper.ComputeAll(image.Convert<Bgr, double>(), result.Convert<Bgr, double>());
+            var Metrics = ImageMetricHelper.ComputeAll(image, result);
             return new BaseMethodResponse
             {
                 EnhancementResult = result,
