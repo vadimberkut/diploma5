@@ -50,6 +50,8 @@ namespace diploma5_csharp.Helpers
             return data.Select(Average).ToList();
         }
 
+
+        // std = sqrt(variance)
         public static double StandartDeviation(double[] data)
         {
             double stdDevL = 0;
@@ -71,6 +73,85 @@ namespace diploma5_csharp.Helpers
             double sd = Math.Sqrt(sumOfSquaresOfDifferences / data.Length);
 
             return sd;
+        }
+
+        // https://statanaliz.info/metody/opisanie-dannyx/11-dispersiya-standartnoe-otklonenie-koeffitsient-variatsii
+        /// <summary>
+        /// Выборочная дисперсия, рассчитанная по данным наблюдений
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        public static double SampleVariance(double[] data)
+        {
+            double variance = 0;
+            double n = data.Count();
+            double avg = Average(data);
+            double nominator = 0;
+
+            for (int i = 0; i < n; i++)
+            {
+                nominator += Math.Pow(data[i] - avg, 2);
+            }
+
+            variance = nominator / n;
+            return variance;
+        }
+
+        public static double SampleVariance(double[] data, double avg)
+        {
+            double variance = 0;
+            double n = data.Count();
+            double nominator = 0;
+
+            for (int i = 0; i < n; i++)
+            {
+                nominator += Math.Pow(data[i] - avg, 2);
+            }
+
+            variance = nominator / n;
+            return variance;
+        }
+
+
+        // https://ru.wikipedia.org/wiki/Ковариация
+        /// <summary>
+        /// Covariance of 2 data samples
+        /// </summary>
+        /// <param name="data"></param>
+        /// <param name="avg"></param>
+        /// <returns></returns>
+        public static double Covariance(double[] x, double[] y)
+        {
+            if (x.Count() != y.Count()) throw new ArgumentException();
+
+            double covariance = 0;
+            double n = x.Count();
+            double avg_x = Average(x);
+            double avg_y = Average(y);
+
+            for (int i = 0; i < n; i++)
+            {
+                covariance = (x[i] - avg_x) * (y[i] - avg_y);
+            }
+
+            covariance = covariance / n;
+            return covariance;
+        }
+
+        public static double Covariance(double[] x, double[] y, double avg_x, double avg_y)
+        {
+            if (x.Count() != y.Count()) throw new ArgumentException();
+
+            double covariance = 0;
+            double n = x.Count();
+
+            for (int i = 0; i < n; i++)
+            {
+                covariance = (x[i] - avg_x) * (y[i] - avg_y);
+            }
+
+            covariance = covariance / n;
+            return covariance;
         }
 
         public static double Moda(IEnumerable<double> values)

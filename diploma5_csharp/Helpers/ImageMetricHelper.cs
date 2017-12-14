@@ -59,6 +59,7 @@ namespace diploma5_csharp.Helpers
             //double ShannonEntropy = ImageMetricHelper.ShannonEntropy(image2B); // !!! - better to calc entripy for byte images
             double ShannonEntropy = ImageMetricHelper.ShannonEntropyByChannels(image2B); // !!! - better to calc entripy for byte images
             double ShannonEntropyDiff = ImageMetricHelper.ShannonEntropyDiff(image1B, image2B); // !!! - better to calc entripy for byte images
+            double SSIM = ImageMetricHelper.SSIM(image1, image2);
 
             return new MetricsResult
             {
@@ -72,6 +73,7 @@ namespace diploma5_csharp.Helpers
                 RMSDiff = Math.Round(RMSDiff, DECIMALS),
                 ShannonEntropy = Math.Round(ShannonEntropy, DECIMALS), // for result image
                 ShannonEntropyDiff = Math.Round(ShannonEntropyDiff, DECIMALS),
+                SSIM = Math.Round(SSIM, DECIMALS)
             };
         }
 
@@ -319,53 +321,45 @@ namespace diploma5_csharp.Helpers
         /// <param name="image1"></param>
         /// <param name="image2"></param>
         /// <returns></returns>
-        public static double SSIM(Image<Gray, double> image1, Image<Gray, double> image2)
-        {
-            double result = 0;
-            int M = image1.Rows;
-            int N = image1.Cols;
-
-            // average
-            double mu_x = 0;
-            double mu_y = 0;
-
-            // variance
-            double sigma_x = 0;
-            double sigma_y = 0;
-
-            // covariance
-            double sigma_xy = 0;
-
-            double k1 = 0.01;
-            double k2 = 0.03;
-            double L = Math.Pow(2, sizeof(byte)) - 1; // dynamic pixel range 2^(bits per pixel) - 1
-            double c1 = Math.Pow(k1 * L, 2);
-            double c2 = Math.Pow(k2 * L, 2);
-
-
-            throw new NotImplementedException();
-
-            return result;
-        }
-
-        /// <summary>
-        /// Structural Similarity Index (SSIM) for measuring image quality. If SSIM = 1 we have equal images
-        /// </summary>
-        /// <param name="image1"></param>
-        /// <param name="image2"></param>
-        /// <returns></returns>
         public static double SSIM(Image<Bgr, double> image1, Image<Bgr, double> image2)
         {
-            throw new NotImplementedException();
+            #region my implementation (dot not work correctly)
 
-            var channels1 = image1.Split();
-            var channels2 = image2.Split();
-            double result = 0;
-            for (int i = 0; i < channels1.Count(); i++)
-            {
-                result += SSIM(channels1[i], channels2[i]);
-            }
-            return result;
+            //// x - image1
+            //// y - image2
+            //int M = image1.Rows;
+            //int N = image1.Cols;
+
+            //var pixels1 = ImageHelper.GetImagePixels(image1);
+            //var pixels2 = ImageHelper.GetImagePixels(image2);
+            ////pixels2 = pixels1;
+
+            //// average
+            //double mu_x = StatisticsHelper.Average(pixels1);
+            //double mu_y = StatisticsHelper.Average(pixels2);
+
+            //// variance (дисперсия)
+            //// std = sqrt(variance) => srd^2 = variance
+            //double sigma_x = StatisticsHelper.SampleVariance(pixels1, mu_x);
+            //double sigma_y = StatisticsHelper.SampleVariance(pixels2, mu_y);
+
+            //// covariance (ковариация)
+            //double sigma_xy = StatisticsHelper.Covariance(pixels1, pixels2, mu_x, mu_y);
+
+            //double k1 = 0.01;
+            //double k2 = 0.03;
+            //double L = Math.Pow(2, 8) - 1; // dynamic pixel range 2^(bits per pixel) - 1
+            //double c1 = Math.Pow(k1 * L, 2);
+            //double c2 = Math.Pow(k2 * L, 2);
+
+            //double ssim = ((2 * mu_x * mu_y + c1) * (2 * sigma_xy + c2)) / ((Math.Pow(mu_x, 2) + Math.Pow(mu_y, 2) + c1) * (sigma_x + sigma_y + c2));
+            //return ssim;
+
+            #endregion
+
+            var sss = new SSIM();
+            var ssim2 = sss.Index(image1.Bitmap, image2.Bitmap);
+            return ssim2;
         }
 
         /// <summary>

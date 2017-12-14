@@ -123,6 +123,7 @@ namespace diploma5_csharp
             this.textBoxRMSMetricDiff.Text = data.RMSDiff.ToString();
             this.textBoxShannonEntropy.Text = data.ShannonEntropy.ToString();
             this.textBoxShannonEntropyDiff.Text = data.ShannonEntropyDiff.ToString();
+            this.textBoxSSIMMetric.Text = data.SSIM.ToString();
         }
 
         #endregion GENERAL METHODS

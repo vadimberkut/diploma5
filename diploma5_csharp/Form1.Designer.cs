@@ -120,6 +120,8 @@
             this.checkBoxRunAllMethodsFog = new System.Windows.Forms.CheckBox();
             this.checkBoxRunAllMethodsDust = new System.Windows.Forms.CheckBox();
             this.checkBoxRunAllMethodsSaveAllImages = new System.Windows.Forms.CheckBox();
+            this.label26 = new System.Windows.Forms.Label();
+            this.textBoxSSIMMetric = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).BeginInit();
@@ -998,11 +1000,29 @@
             this.checkBoxRunAllMethodsSaveAllImages.Text = "Save all images?";
             this.checkBoxRunAllMethodsSaveAllImages.UseVisualStyleBackColor = true;
             // 
+            // label26
+            // 
+            this.label26.AutoSize = true;
+            this.label26.Location = new System.Drawing.Point(983, 594);
+            this.label26.Name = "label26";
+            this.label26.Size = new System.Drawing.Size(33, 13);
+            this.label26.TabIndex = 91;
+            this.label26.Text = "SSIM";
+            // 
+            // textBoxSSIMMetric
+            // 
+            this.textBoxSSIMMetric.Location = new System.Drawing.Point(1035, 590);
+            this.textBoxSSIMMetric.Name = "textBoxSSIMMetric";
+            this.textBoxSSIMMetric.Size = new System.Drawing.Size(60, 20);
+            this.textBoxSSIMMetric.TabIndex = 90;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1235, 768);
+            this.Controls.Add(this.label26);
+            this.Controls.Add(this.textBoxSSIMMetric);
             this.Controls.Add(this.checkBoxRunAllMethodsSaveAllImages);
             this.Controls.Add(this.checkBoxRunAllMethodsDust);
             this.Controls.Add(this.checkBoxRunAllMethodsFog);
@@ -1192,6 +1212,8 @@
         private System.Windows.Forms.CheckBox checkBoxRunAllMethodsFog;
         private System.Windows.Forms.CheckBox checkBoxRunAllMethodsDust;
         private System.Windows.Forms.CheckBox checkBoxRunAllMethodsSaveAllImages;
+        private System.Windows.Forms.Label label26;
+        private System.Windows.Forms.TextBox textBoxSSIMMetric;
     }
 }
 

@@ -315,6 +315,21 @@ namespace diploma5_csharp.Helpers
             return result;
         }
 
+        public static double CalcGrayChannelAverage(Image<Gray, Byte> image)
+        {
+            double result = 0;
+            for (int i = 0; i < image.Rows; i += 1)
+            {
+                for (int j = 0; j < image.Cols; j += 1)
+                {
+                    result += image[i, j].Intensity;
+
+                }
+            }
+            result = result / (image.Rows * image.Cols);
+            return result;
+        }
+
 
         public static BgrChannelAverageResult CalcBgrChannelAverage(Image<Bgr, Byte> image)
         {

@@ -159,6 +159,7 @@
     <Compile Include="Helpers\ImageHelper.cs" />
     <Compile Include="Helpers\ImageMetricHelper.cs" />
     <Compile Include="Helpers\MathHelper.cs" />
+    <Compile Include="Helpers\SSIM.cs" />
     <Compile Include="MethodInfoStore.cs" />
     <Compile Include="Models\BaseMethodResponse.cs" />
     <Compile Include="Models\BgrChannelAverageResult.cs" />

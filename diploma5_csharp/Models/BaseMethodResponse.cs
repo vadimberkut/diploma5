@@ -34,5 +34,6 @@ namespace diploma5_csharp.Models
         public double RMSDiff { get; set; }
         public double ShannonEntropy { get; set; }
         public double ShannonEntropyDiff { get; set; }
+        public double SSIM { get; set; }
     }
 }
