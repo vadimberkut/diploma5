@@ -605,15 +605,15 @@ namespace diploma5_csharp
             stopwatch.Start();
 
             // 1 - median channel
-            //Image<Gray, Byte> J_median = new Image<Gray, byte>(image.Size);
-            //for (int m = 0; m < image.Rows; m++)
-            //{
-            //    for (int n = 0; n < image.Cols; n++)
-            //    {
-            //        Bgr pixel = image[m, n];
-            //        J_median[m, n] = new Gray((pixel.Blue + pixel.Green + pixel.Red) / 3);
-            //    }
-            //}
+            Image<Gray, Byte> J_median = new Image<Gray, byte>(image.Size);
+            for (int m = 0; m < image.Rows; m++)
+            {
+                for (int n = 0; n < image.Cols; n++)
+                {
+                    Bgr pixel = image[m, n];
+                    J_median[m, n] = new Gray((pixel.Blue + pixel.Green + pixel.Red) / 3);
+                }
+            }
 
             //double[] J_median = new double[3];
             //for (int m = 0; m < image.Rows; m++)
@@ -681,7 +681,7 @@ namespace diploma5_csharp
             if (_params.ShowWindows)
             {
                 EmguCvWindowManager.Display(image, "1 image");
-                // EmguCvWindowManager.Display(J_median, "2 J_median");
+                EmguCvWindowManager.Display(J_median, "2 J_median");
                 EmguCvWindowManager.Display(T, "3 T");
                 EmguCvWindowManager.Display(result, "4 result");
             }
@@ -691,7 +691,7 @@ namespace diploma5_csharp
             {
                 EnhancementResult = result,
                 DetectionResult = T,
-                DetailedResults = new List<IInputArray> { image, T, result },
+                DetailedResults = new List<IInputArray> { image, J_median, T, result },
                 Metrics = Metrics,
                 ExecutionTimeMs = stopwatch.ElapsedMilliseconds
             };

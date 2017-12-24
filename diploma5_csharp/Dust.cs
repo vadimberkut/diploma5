@@ -145,18 +145,42 @@ namespace diploma5_csharp
                 double[] minValues = new double[3] { regionBValues.Min(), regionGValues.Min(), regionRValues.Min() };
                 double[] maxValues = new double[3] { regionBValues.Max(), regionGValues.Max(), regionRValues.Max() };
 
-
                 int pixelsCountInRegion = regionPixelsCoordinates[region].Count;
-                
+
+                double B_min = minValues[0];
+                double G_min = minValues[1];
+                double R_min = minValues[2];
+
+                double B_max = maxValues[0];
+                double G_max = maxValues[1];
+                double R_max = maxValues[2];
+
+                if (_params.Imin != null)
+                {
+                    B_min = _params.Imin.Value;
+                    G_min = _params.Imin.Value;
+                    R_min = _params.Imin.Value;
+                }
+                if (_params.Imax != null)
+                {
+                    B_max = _params.Imax.Value;
+                    G_max = _params.Imax.Value;
+                    R_max = _params.Imax.Value;
+                }
+
                 //Apply formula
                 for (int i = 0; i < pixelsCountInRegion; i++)
                 {
                     var pixelCoordinates = regionPixelsCoordinates[region][i];
                     Bgr pixel = image[pixelCoordinates.X, pixelCoordinates.Y];
 
-                    double B = (pixel.Blue - minValues[0]) * (maxValues[0] / (maxValues[0] - minValues[0]));
-                    double G = (pixel.Green - minValues[1]) * (maxValues[1] / (maxValues[1] - minValues[1]));
-                    double R = (pixel.Red - minValues[2]) * (maxValues[2] / (maxValues[2] - minValues[2]));
+                    //double B = (pixel.Blue - minValues[0]) * (maxValues[0] / (maxValues[0] - minValues[0]));
+                    //double G = (pixel.Green - minValues[1]) * (maxValues[1] / (maxValues[1] - minValues[1]));
+                    //double R = (pixel.Red - minValues[2]) * (maxValues[2] / (maxValues[2] - minValues[2]));
+
+                    double B = (pixel.Blue - B_min) * (B_max / (B_max - B_min));
+                    double G = (pixel.Green - G_min) * (G_max / (G_max - G_min));
+                    double R = (pixel.Red - R_min) * (R_max / (R_max - R_min));
 
                     result[pixelCoordinates.X, pixelCoordinates.Y] = new Bgr(B, G, R);
                 }
@@ -173,6 +197,28 @@ namespace diploma5_csharp
             Point[] minLocations2;
             Point[] maxLocations2;
             image.MinMax(out minValues2, out maxValues2, out minLocations2, out maxLocations2);
+
+            double B_min2 = minValues2[0];
+            double G_min2 = minValues2[1];
+            double R_min2 = minValues2[2];
+
+            double B_max2 = maxValues2[0];
+            double G_max2 = maxValues2[1];
+            double R_max2 = maxValues2[2];
+
+            if (_params.Imin != null)
+            {
+                B_min2 = _params.Imin.Value;
+                G_min2 = _params.Imin.Value;
+                R_min2 = _params.Imin.Value;
+            }
+            if (_params.Imax != null)
+            {
+                B_max2 = _params.Imax.Value;
+                G_max2 = _params.Imax.Value;
+                R_max2 = _params.Imax.Value;
+            }
+
             //maxValues2 = new double[] { 200, 200, 200 };
             for (int m = 0; m < image.Rows; m++)
             {
@@ -180,9 +226,13 @@ namespace diploma5_csharp
                 {
                     Bgr pixel = image[m, n];
 
-                    double B = (pixel.Blue - minValues2[0]) * (maxValues2[0] / (maxValues2[0] - minValues2[0]));
-                    double G = (pixel.Green - minValues2[1]) * (maxValues2[1] / (maxValues2[1] - minValues2[1]));
-                    double R = (pixel.Red - minValues2[2]) * (maxValues2[2] / (maxValues2[2] - minValues2[2]));
+                    //double B = (pixel.Blue - minValues2[0]) * (maxValues2[0] / (maxValues2[0] - minValues2[0]));
+                    //double G = (pixel.Green - minValues2[1]) * (maxValues2[1] / (maxValues2[1] - minValues2[1]));
+                    //double R = (pixel.Red - minValues2[2]) * (maxValues2[2] / (maxValues2[2] - minValues2[2]));
+
+                    double B = (pixel.Blue - B_min2) * (B_max2 / (B_max2 - B_min2));
+                    double G = (pixel.Green - G_min2) * (G_max2 / (G_max2 - G_min2));
+                    double R = (pixel.Red - R_min2) * (R_max2 / (R_max2 - R_min2));
 
                     resultToAll[m, n] = new Bgr(B, G, R);
                 }

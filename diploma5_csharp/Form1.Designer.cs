@@ -122,6 +122,10 @@
             this.checkBoxRunAllMethodsSaveAllImages = new System.Windows.Forms.CheckBox();
             this.label26 = new System.Windows.Forms.Label();
             this.textBoxSSIMMetric = new System.Windows.Forms.TextBox();
+            this.label27 = new System.Windows.Forms.Label();
+            this.label28 = new System.Windows.Forms.Label();
+            this.textBox_RatioConstancyMethod_Imax = new System.Windows.Forms.TextBox();
+            this.textBox_RatioConstancyMethod_Imin = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).BeginInit();
@@ -1016,11 +1020,47 @@
             this.textBoxSSIMMetric.Size = new System.Drawing.Size(60, 20);
             this.textBoxSSIMMetric.TabIndex = 90;
             // 
+            // label27
+            // 
+            this.label27.AutoSize = true;
+            this.label27.Location = new System.Drawing.Point(1108, 491);
+            this.label27.Name = "label27";
+            this.label27.Size = new System.Drawing.Size(29, 13);
+            this.label27.TabIndex = 95;
+            this.label27.Text = "Imax";
+            // 
+            // label28
+            // 
+            this.label28.AutoSize = true;
+            this.label28.Location = new System.Drawing.Point(1074, 491);
+            this.label28.Name = "label28";
+            this.label28.Size = new System.Drawing.Size(26, 13);
+            this.label28.TabIndex = 94;
+            this.label28.Text = "Imin";
+            // 
+            // textBox_RatioConstancyMethod_Imax
+            // 
+            this.textBox_RatioConstancyMethod_Imax.Location = new System.Drawing.Point(1111, 507);
+            this.textBox_RatioConstancyMethod_Imax.Name = "textBox_RatioConstancyMethod_Imax";
+            this.textBox_RatioConstancyMethod_Imax.Size = new System.Drawing.Size(28, 20);
+            this.textBox_RatioConstancyMethod_Imax.TabIndex = 93;
+            // 
+            // textBox_RatioConstancyMethod_Imin
+            // 
+            this.textBox_RatioConstancyMethod_Imin.Location = new System.Drawing.Point(1077, 507);
+            this.textBox_RatioConstancyMethod_Imin.Name = "textBox_RatioConstancyMethod_Imin";
+            this.textBox_RatioConstancyMethod_Imin.Size = new System.Drawing.Size(28, 20);
+            this.textBox_RatioConstancyMethod_Imin.TabIndex = 92;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1235, 768);
+            this.Controls.Add(this.label27);
+            this.Controls.Add(this.label28);
+            this.Controls.Add(this.textBox_RatioConstancyMethod_Imax);
+            this.Controls.Add(this.textBox_RatioConstancyMethod_Imin);
             this.Controls.Add(this.label26);
             this.Controls.Add(this.textBoxSSIMMetric);
             this.Controls.Add(this.checkBoxRunAllMethodsSaveAllImages);
@@ -1214,6 +1254,10 @@
         private System.Windows.Forms.CheckBox checkBoxRunAllMethodsSaveAllImages;
         private System.Windows.Forms.Label label26;
         private System.Windows.Forms.TextBox textBoxSSIMMetric;
+        private System.Windows.Forms.Label label27;
+        private System.Windows.Forms.Label label28;
+        private System.Windows.Forms.TextBox textBox_RatioConstancyMethod_Imax;
+        private System.Windows.Forms.TextBox textBox_RatioConstancyMethod_Imin;
     }
 }
 
