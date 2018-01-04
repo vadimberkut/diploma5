@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace diploma5_csharp.Models
 {
-    public class TriThresholdFuzzyIntensificationOperatorsMethodParams
+    public class TriThresholdFuzzyIntensificationOperatorsMethodParams : DustRemovalParams
     {
         public double? Dzeta { get; set; }
     }

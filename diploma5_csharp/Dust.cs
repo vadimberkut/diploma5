@@ -83,6 +83,7 @@ namespace diploma5_csharp
                 DetectionResult = new Image<Gray, byte>(image.Size),
                 DetailedResults = new List<IInputArray> { image, result },
                 Metrics = Metrics,
+                MetricsGT = ImageMetricHelper.ComputeAll(_params.ImageGT, result),
                 ExecutionTimeMs = stopwatch.ElapsedMilliseconds
             };
         }
@@ -222,7 +223,7 @@ namespace diploma5_csharp
                 }
             }
 
-            if (_params.ShowOptionalWindows)
+            if (_params.ShowWindows)
             {
                 EmguCvWindowManager.Display(image, "1. image");
                 EmguCvWindowManager.Display(msResult.Image, "2. MS");
@@ -239,6 +240,7 @@ namespace diploma5_csharp
                 DetectionResult = new Image<Gray, byte>(image.Size),
                 DetailedResults = new List<IInputArray> { image, msResult.Image, resultToAll, result },
                 Metrics = Metrics,
+                MetricsGT = ImageMetricHelper.ComputeAll(_params.ImageGT, result),
                 ExecutionTimeMs = stopwatch.ElapsedMilliseconds
             };
         }

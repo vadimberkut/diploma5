@@ -163,6 +163,7 @@
     <Compile Include="MethodInfoStore.cs" />
     <Compile Include="Models\BaseMethodResponse.cs" />
     <Compile Include="Models\BgrChannelAverageResult.cs" />
+    <Compile Include="Models\DustRemovalParams.cs" />
     <Compile Include="Models\FogRemovalParams.cs" />
     <Compile Include="Models\LabChannelAverageResult.cs" />
     <Compile Include="Models\MeanShiftClusteringAcordParams.cs" />

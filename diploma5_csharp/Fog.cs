@@ -53,6 +53,7 @@ namespace diploma5_csharp
                 DetectionResult = T,
                 DetailedResults = new List<IInputArray> { image, DC, T, result },
                 Metrics = Metrics,
+                MetricsGT = ImageMetricHelper.ComputeAll(_params.ImageGT, result),
                 ExecutionTimeMs = stopwatch.ElapsedMilliseconds
             };
         }
@@ -580,6 +581,7 @@ namespace diploma5_csharp
                 DetectionResult = new Image<Gray, Byte>(image.Size),
                 DetailedResults = new List<IInputArray> { image, E_normilized.Convert<Bgr, Byte>(), E_normilized_Gamma },
                 Metrics = Metrics,
+                MetricsGT = ImageMetricHelper.ComputeAll(_params.ImageGT, E_normilized_Gamma),
                 ExecutionTimeMs = stopwatch.ElapsedMilliseconds
             };
         }
@@ -670,6 +672,7 @@ namespace diploma5_csharp
                 DetectionResult = T,
                 DetailedResults = new List<IInputArray> { image, J_median, T, result },
                 Metrics = Metrics,
+                MetricsGT = ImageMetricHelper.ComputeAll(_params.ImageGT, result),
                 ExecutionTimeMs = stopwatch.ElapsedMilliseconds
             };
         }
@@ -728,6 +731,7 @@ namespace diploma5_csharp
                 DetectionResult = transmission,
                 DetailedResults = new List<IInputArray> { image, clahe, transmission, resultDCP.EnhancementResult, result },
                 Metrics = Metrics,
+                MetricsGT = ImageMetricHelper.ComputeAll(_params.ImageGT, result),
                 ExecutionTimeMs = stopwatch.ElapsedMilliseconds
             };
         }
@@ -1234,6 +1238,7 @@ namespace diploma5_csharp
                 DetectionResult = transmission,
                 DetailedResults = new List<IInputArray> { image, downsampled, T, improvedT, upsampledT, hazeFree, colorCalibrated },
                 Metrics = Metrics,
+                MetricsGT = ImageMetricHelper.ComputeAll(_params.ImageGT, result),
                 ExecutionTimeMs = stopwatch.ElapsedMilliseconds
             };
         }
@@ -1293,6 +1298,7 @@ namespace diploma5_csharp
                 DetectionResult = T,
                 DetailedResults = new List<IInputArray> { image, T, processed },
                 Metrics = Metrics,
+                MetricsGT = ImageMetricHelper.ComputeAll(_params.ImageGT, processed),
                 ExecutionTimeMs = stopwatch.ElapsedMilliseconds
             };
         }
@@ -1459,6 +1465,7 @@ namespace diploma5_csharp
                 DetectionResult = transmission,
                 DetailedResults = new List<IInputArray> { image, depthMapColor, T, improvedT, fogModelResult, alternativeResult, result },
                 Metrics = Metrics,
+                MetricsGT = ImageMetricHelper.ComputeAll(_params.ImageGT, result),
                 ExecutionTimeMs = stopwatch.ElapsedMilliseconds
             };
         }

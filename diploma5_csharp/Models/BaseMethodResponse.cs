@@ -19,6 +19,7 @@ namespace diploma5_csharp.Models
         public List<IInputArray> DetailedResults { get; set; }
 
         public MetricsResult  Metrics { get; set; }
+        public MetricsResult  MetricsGT { get; set; }
         public double ExecutionTimeMs { get; set; }
     }
 

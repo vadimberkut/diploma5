@@ -22,6 +22,9 @@ namespace diploma5_csharp.Helpers
 
         public static MetricsResult ComputeAll(Image<Bgr, double> image1, Image<Bgr, double> image2)
         {
+            if (image1 == null || image2 == null)
+                return null;
+
             var converted1 = image1.Convert<Bgr, byte>();
             var converted2 = image2.Convert<Bgr, byte>();
             var result = ComputeAll(converted1, image1, converted2, image2);
@@ -35,6 +38,9 @@ namespace diploma5_csharp.Helpers
 
         public static MetricsResult ComputeAll(Image<Bgr, byte> image1, Image<Bgr, byte> image2)
         {
+            if (image1 == null || image2 == null)
+                return null;
+
             var converted1 = image1.Convert<Bgr, double>();
             var converted2 = image2.Convert<Bgr, double>();
             var result = ComputeAll(image1, converted1, image2, converted2);

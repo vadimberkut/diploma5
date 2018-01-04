@@ -126,6 +126,7 @@
             this.label28 = new System.Windows.Forms.Label();
             this.textBox_RatioConstancyMethod_Imax = new System.Windows.Forms.TextBox();
             this.textBox_RatioConstancyMethod_Imin = new System.Windows.Forms.TextBox();
+            this.buttonComputeMetrics = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).BeginInit();
@@ -460,7 +461,7 @@
             // 
             // buttonShadowRemovalLabMethod2
             // 
-            this.buttonShadowRemovalLabMethod2.Location = new System.Drawing.Point(159, 691);
+            this.buttonShadowRemovalLabMethod2.Location = new System.Drawing.Point(160, 733);
             this.buttonShadowRemovalLabMethod2.Name = "buttonShadowRemovalLabMethod2";
             this.buttonShadowRemovalLabMethod2.Size = new System.Drawing.Size(75, 23);
             this.buttonShadowRemovalLabMethod2.TabIndex = 32;
@@ -482,7 +483,7 @@
             // 
             // buttonTestEmguCVCudaMeanShift
             // 
-            this.buttonTestEmguCVCudaMeanShift.Location = new System.Drawing.Point(12, 691);
+            this.buttonTestEmguCVCudaMeanShift.Location = new System.Drawing.Point(13, 733);
             this.buttonTestEmguCVCudaMeanShift.Name = "buttonTestEmguCVCudaMeanShift";
             this.buttonTestEmguCVCudaMeanShift.Size = new System.Drawing.Size(141, 23);
             this.buttonTestEmguCVCudaMeanShift.TabIndex = 34;
@@ -493,7 +494,7 @@
             // 
             // buttonMSTest
             // 
-            this.buttonMSTest.Location = new System.Drawing.Point(12, 663);
+            this.buttonMSTest.Location = new System.Drawing.Point(13, 705);
             this.buttonMSTest.Name = "buttonMSTest";
             this.buttonMSTest.Size = new System.Drawing.Size(75, 23);
             this.buttonMSTest.TabIndex = 35;
@@ -504,7 +505,7 @@
             // 
             // textBoxTestMsKernel
             // 
-            this.textBoxTestMsKernel.Location = new System.Drawing.Point(93, 665);
+            this.textBoxTestMsKernel.Location = new System.Drawing.Point(94, 707);
             this.textBoxTestMsKernel.Name = "textBoxTestMsKernel";
             this.textBoxTestMsKernel.Size = new System.Drawing.Size(28, 20);
             this.textBoxTestMsKernel.TabIndex = 36;
@@ -512,7 +513,7 @@
             // 
             // textBoxTestMsSigma
             // 
-            this.textBoxTestMsSigma.Location = new System.Drawing.Point(127, 666);
+            this.textBoxTestMsSigma.Location = new System.Drawing.Point(128, 708);
             this.textBoxTestMsSigma.Name = "textBoxTestMsSigma";
             this.textBoxTestMsSigma.Size = new System.Drawing.Size(28, 20);
             this.textBoxTestMsSigma.TabIndex = 37;
@@ -532,7 +533,7 @@
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(90, 649);
+            this.label6.Location = new System.Drawing.Point(91, 691);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(36, 13);
             this.label6.TabIndex = 39;
@@ -542,7 +543,7 @@
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(124, 650);
+            this.label7.Location = new System.Drawing.Point(125, 692);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(34, 13);
             this.label7.TabIndex = 40;
@@ -618,7 +619,7 @@
             // buttonRobbyTanFogRemovalMethod
             // 
             this.buttonRobbyTanFogRemovalMethod.BackColor = System.Drawing.SystemColors.Control;
-            this.buttonRobbyTanFogRemovalMethod.Location = new System.Drawing.Point(247, 679);
+            this.buttonRobbyTanFogRemovalMethod.Location = new System.Drawing.Point(248, 721);
             this.buttonRobbyTanFogRemovalMethod.Name = "buttonRobbyTanFogRemovalMethod";
             this.buttonRobbyTanFogRemovalMethod.Size = new System.Drawing.Size(121, 32);
             this.buttonRobbyTanFogRemovalMethod.TabIndex = 49;
@@ -662,7 +663,7 @@
             // 
             // buttonTestFilters
             // 
-            this.buttonTestFilters.Location = new System.Drawing.Point(12, 634);
+            this.buttonTestFilters.Location = new System.Drawing.Point(13, 676);
             this.buttonTestFilters.Name = "buttonTestFilters";
             this.buttonTestFilters.Size = new System.Drawing.Size(75, 23);
             this.buttonTestFilters.TabIndex = 53;
@@ -707,7 +708,7 @@
             // buttonRemoveFogUsingLocalExtremaMethod
             // 
             this.buttonRemoveFogUsingLocalExtremaMethod.BackColor = System.Drawing.SystemColors.Control;
-            this.buttonRemoveFogUsingLocalExtremaMethod.Location = new System.Drawing.Point(501, 679);
+            this.buttonRemoveFogUsingLocalExtremaMethod.Location = new System.Drawing.Point(502, 721);
             this.buttonRemoveFogUsingLocalExtremaMethod.Name = "buttonRemoveFogUsingLocalExtremaMethod";
             this.buttonRemoveFogUsingLocalExtremaMethod.Size = new System.Drawing.Size(121, 32);
             this.buttonRemoveFogUsingLocalExtremaMethod.TabIndex = 57;
@@ -719,7 +720,7 @@
             // buttonRemoveFogUsingPhysicsBasedMethod
             // 
             this.buttonRemoveFogUsingPhysicsBasedMethod.BackColor = System.Drawing.SystemColors.Control;
-            this.buttonRemoveFogUsingPhysicsBasedMethod.Location = new System.Drawing.Point(374, 679);
+            this.buttonRemoveFogUsingPhysicsBasedMethod.Location = new System.Drawing.Point(375, 721);
             this.buttonRemoveFogUsingPhysicsBasedMethod.Name = "buttonRemoveFogUsingPhysicsBasedMethod";
             this.buttonRemoveFogUsingPhysicsBasedMethod.Size = new System.Drawing.Size(121, 32);
             this.buttonRemoveFogUsingPhysicsBasedMethod.TabIndex = 58;
@@ -734,6 +735,7 @@
             this.textBoxFvmMetric.Name = "textBoxFvmMetric";
             this.textBoxFvmMetric.Size = new System.Drawing.Size(60, 20);
             this.textBoxFvmMetric.TabIndex = 59;
+            this.textBoxFvmMetric.Visible = false;
             // 
             // label13
             // 
@@ -743,6 +745,7 @@
             this.label13.Size = new System.Drawing.Size(29, 13);
             this.label13.TabIndex = 60;
             this.label13.Text = "FVM";
+            this.label13.Visible = false;
             // 
             // buttonRemoveFogUsingCustomMethodWithDepthEstimation
             // 
@@ -784,6 +787,7 @@
             this.label14.Size = new System.Drawing.Size(30, 13);
             this.label14.TabIndex = 65;
             this.label14.Text = "MSE";
+            this.label14.Visible = false;
             // 
             // textBoxMseMetric
             // 
@@ -791,6 +795,7 @@
             this.textBoxMseMetric.Name = "textBoxMseMetric";
             this.textBoxMseMetric.Size = new System.Drawing.Size(60, 20);
             this.textBoxMseMetric.TabIndex = 64;
+            this.textBoxMseMetric.Visible = false;
             // 
             // label15
             // 
@@ -800,6 +805,7 @@
             this.label15.Size = new System.Drawing.Size(29, 13);
             this.label15.TabIndex = 67;
             this.label15.Text = "NAE";
+            this.label15.Visible = false;
             // 
             // textBoxNaeMetric
             // 
@@ -807,6 +813,7 @@
             this.textBoxNaeMetric.Name = "textBoxNaeMetric";
             this.textBoxNaeMetric.Size = new System.Drawing.Size(60, 20);
             this.textBoxNaeMetric.TabIndex = 66;
+            this.textBoxNaeMetric.Visible = false;
             // 
             // label16
             // 
@@ -816,6 +823,7 @@
             this.label16.Size = new System.Drawing.Size(21, 13);
             this.label16.TabIndex = 69;
             this.label16.Text = "SC";
+            this.label16.Visible = false;
             // 
             // textBoxScMetric
             // 
@@ -823,6 +831,7 @@
             this.textBoxScMetric.Name = "textBoxScMetric";
             this.textBoxScMetric.Size = new System.Drawing.Size(60, 20);
             this.textBoxScMetric.TabIndex = 68;
+            this.textBoxScMetric.Visible = false;
             // 
             // label17
             // 
@@ -832,6 +841,7 @@
             this.label17.Size = new System.Drawing.Size(37, 13);
             this.label17.TabIndex = 71;
             this.label17.Text = "PSNR";
+            this.label17.Visible = false;
             // 
             // textBoxPsnrMEtric
             // 
@@ -839,6 +849,7 @@
             this.textBoxPsnrMEtric.Name = "textBoxPsnrMEtric";
             this.textBoxPsnrMEtric.Size = new System.Drawing.Size(60, 20);
             this.textBoxPsnrMEtric.TabIndex = 70;
+            this.textBoxPsnrMEtric.Visible = false;
             // 
             // label18
             // 
@@ -848,6 +859,7 @@
             this.label18.Size = new System.Drawing.Size(22, 13);
             this.label18.TabIndex = 73;
             this.label18.Text = "AD";
+            this.label18.Visible = false;
             // 
             // textBoxAdMetric
             // 
@@ -855,6 +867,7 @@
             this.textBoxAdMetric.Name = "textBoxAdMetric";
             this.textBoxAdMetric.Size = new System.Drawing.Size(60, 20);
             this.textBoxAdMetric.TabIndex = 72;
+            this.textBoxAdMetric.Visible = false;
             // 
             // label19
             // 
@@ -864,6 +877,7 @@
             this.label19.Size = new System.Drawing.Size(47, 13);
             this.label19.TabIndex = 75;
             this.label19.Text = "RMSDiff";
+            this.label19.Visible = false;
             // 
             // textBoxRMSMetricDiff
             // 
@@ -871,6 +885,7 @@
             this.textBoxRMSMetricDiff.Name = "textBoxRMSMetricDiff";
             this.textBoxRMSMetricDiff.Size = new System.Drawing.Size(60, 20);
             this.textBoxRMSMetricDiff.TabIndex = 74;
+            this.textBoxRMSMetricDiff.Visible = false;
             // 
             // label20
             // 
@@ -880,6 +895,7 @@
             this.label20.Size = new System.Drawing.Size(50, 39);
             this.label20.TabIndex = 77;
             this.label20.Text = "Shannon\r\nEntropy\r\nDiff";
+            this.label20.Visible = false;
             // 
             // textBoxShannonEntropyDiff
             // 
@@ -887,6 +903,7 @@
             this.textBoxShannonEntropyDiff.Name = "textBoxShannonEntropyDiff";
             this.textBoxShannonEntropyDiff.Size = new System.Drawing.Size(60, 20);
             this.textBoxShannonEntropyDiff.TabIndex = 76;
+            this.textBoxShannonEntropyDiff.Visible = false;
             // 
             // label21
             // 
@@ -896,6 +913,7 @@
             this.label21.Size = new System.Drawing.Size(31, 13);
             this.label21.TabIndex = 79;
             this.label21.Text = "RMS";
+            this.label21.Visible = false;
             // 
             // textBoxRMSMetric
             // 
@@ -903,6 +921,7 @@
             this.textBoxRMSMetric.Name = "textBoxRMSMetric";
             this.textBoxRMSMetric.Size = new System.Drawing.Size(60, 20);
             this.textBoxRMSMetric.TabIndex = 78;
+            this.textBoxRMSMetric.Visible = false;
             // 
             // label22
             // 
@@ -912,6 +931,7 @@
             this.label22.Size = new System.Drawing.Size(50, 26);
             this.label22.TabIndex = 81;
             this.label22.Text = "Shannon\r\nEntropy\r";
+            this.label22.Visible = false;
             // 
             // textBoxShannonEntropy
             // 
@@ -919,6 +939,7 @@
             this.textBoxShannonEntropy.Name = "textBoxShannonEntropy";
             this.textBoxShannonEntropy.Size = new System.Drawing.Size(60, 20);
             this.textBoxShannonEntropy.TabIndex = 80;
+            this.textBoxShannonEntropy.Visible = false;
             // 
             // label23
             // 
@@ -928,6 +949,7 @@
             this.label23.Size = new System.Drawing.Size(30, 13);
             this.label23.TabIndex = 83;
             this.label23.Text = "Time";
+            this.label23.Visible = false;
             // 
             // textBoxMEthodExecTime
             // 
@@ -935,6 +957,7 @@
             this.textBoxMEthodExecTime.Name = "textBoxMEthodExecTime";
             this.textBoxMEthodExecTime.Size = new System.Drawing.Size(60, 20);
             this.textBoxMEthodExecTime.TabIndex = 82;
+            this.textBoxMEthodExecTime.Visible = false;
             // 
             // label24
             // 
@@ -955,6 +978,7 @@
             this.label25.Size = new System.Drawing.Size(54, 15);
             this.label25.TabIndex = 85;
             this.label25.Text = "Metrics";
+            this.label25.Visible = false;
             // 
             // checkBoxUpdateStats
             // 
@@ -1012,6 +1036,7 @@
             this.label26.Size = new System.Drawing.Size(33, 13);
             this.label26.TabIndex = 91;
             this.label26.Text = "SSIM";
+            this.label26.Visible = false;
             // 
             // textBoxSSIMMetric
             // 
@@ -1019,6 +1044,7 @@
             this.textBoxSSIMMetric.Name = "textBoxSSIMMetric";
             this.textBoxSSIMMetric.Size = new System.Drawing.Size(60, 20);
             this.textBoxSSIMMetric.TabIndex = 90;
+            this.textBoxSSIMMetric.Visible = false;
             // 
             // label27
             // 
@@ -1052,11 +1078,22 @@
             this.textBox_RatioConstancyMethod_Imin.Size = new System.Drawing.Size(28, 20);
             this.textBox_RatioConstancyMethod_Imin.TabIndex = 92;
             // 
+            // buttonComputeMetrics
+            // 
+            this.buttonComputeMetrics.Location = new System.Drawing.Point(6, 571);
+            this.buttonComputeMetrics.Name = "buttonComputeMetrics";
+            this.buttonComputeMetrics.Size = new System.Drawing.Size(114, 27);
+            this.buttonComputeMetrics.TabIndex = 96;
+            this.buttonComputeMetrics.Text = "Compute metrics";
+            this.buttonComputeMetrics.UseVisualStyleBackColor = true;
+            this.buttonComputeMetrics.Click += new System.EventHandler(this.buttonComputeMetrics_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1235, 768);
+            this.Controls.Add(this.buttonComputeMetrics);
             this.Controls.Add(this.label27);
             this.Controls.Add(this.label28);
             this.Controls.Add(this.textBox_RatioConstancyMethod_Imax);
@@ -1258,6 +1295,7 @@
         private System.Windows.Forms.Label label28;
         private System.Windows.Forms.TextBox textBox_RatioConstancyMethod_Imax;
         private System.Windows.Forms.TextBox textBox_RatioConstancyMethod_Imin;
+        private System.Windows.Forms.Button buttonComputeMetrics;
     }
 }
 

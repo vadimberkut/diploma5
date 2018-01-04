@@ -19,6 +19,7 @@ namespace diploma5_csharp
     {
         private const string DATA_STORE_FOLDER = "ApplicationData";
         private const string STORE_FILE_NAME = "methodinfostore.json";
+        private const string BACKUP_FILE_NAME = "methodinfostore.backup.json";
         private const string CSV_DELIMITER = ";"; // exel automatically formats CSV with semicolon (alternatively add "sep=;" to start of the CSV file)
         private readonly List<EnhanceMethodInfoModel> Store;
 
@@ -42,6 +43,7 @@ namespace diploma5_csharp
         public MethodInfoStore()
         {
             Store = this.LoadFromFile();
+            this.Backup();
         }
 
         public void AddOrUpdate(EnhanceMethodInfoModel data)
@@ -67,6 +69,13 @@ namespace diploma5_csharp
         {
             var text = JsonConvert.SerializeObject(this.Store, Formatting.Indented);
             File.WriteAllText(this.GetSavePath(STORE_FILE_NAME), text, Encoding.UTF8);
+        }
+
+        // backup
+        public void Backup()
+        {
+            var text = JsonConvert.SerializeObject(this.Store, Formatting.Indented);
+            File.WriteAllText(this.GetSavePath(BACKUP_FILE_NAME), text, Encoding.UTF8);
         }
 
         public void SaveToCsv(string folderPath = "")
@@ -112,10 +121,22 @@ namespace diploma5_csharp
                 }
             }
 
+            // save metrcis
+            this.SaveMetricsToCsv(store, metricsForGT: false);
+            this.SaveMetricsToCsv(store, metricsForGT: true);
+        }
+
+        private void SaveMetricsToCsv(IEnumerable<EnhanceMethodInfoModel> store, bool metricsForGT = false)
+        {
             // for each metric get list of results
             string[] metricNames = typeof(MetricsResult).GetProperties().Select(x => x.Name).ToArray();
             string[] methodNames = store.Select(x => x.EnhanceMethodName).Distinct().OrderBy(x => x).ToArray();
             var metricProps = typeof(MetricsResult).GetProperties();
+
+            if (metricsForGT)
+            {
+                store = store.Where(x => x.MetricsGT != null);
+            }
 
             var metricsValues = store.Select(x =>
             {
@@ -124,14 +145,13 @@ namespace diploma5_csharp
                     ImageFileName = x.ImageFileName,
                     EnhanceMethodName = x.EnhanceMethodName,
                     MetricName = y.Name,
-                    MetrciValue = y.GetValue(x.Metrics).ToString()
+                    MetricValue = metricsForGT ? y.GetValue(x.MetricsGT).ToString() : y.GetValue(x.Metrics).ToString()
                 }).ToList();
             }).SelectMany(x => x)
             .ToList();
 
             var metricTables = metricsValues.GroupBy(x => x.MetricName, (key, g) =>
             {
-
                 var metricRows = g.GroupBy(y => y.ImageFileName, (key2, g2) =>
                 {
                     Dictionary<string, string> metricRow = new Dictionary<string, string>();
@@ -140,7 +160,7 @@ namespace diploma5_csharp
 
                     foreach (var methodName in methodNames)
                     {
-                        var metricValueForMethod = g2.Where(z => z.EnhanceMethodName == methodName).Select(z => z.MetrciValue).FirstOrDefault();
+                        var metricValueForMethod = g2.Where(z => z.EnhanceMethodName == methodName).Select(z => z.MetricValue).FirstOrDefault();
                         metricRow.Add(MethodNameMap[methodName], metricValueForMethod);
 
                     }
@@ -152,12 +172,13 @@ namespace diploma5_csharp
 
             foreach (var metricTable in metricTables)
             {
-                string metricStatFilePath = this.GetSavePath($"imageMetricStatistic_{metricTable.MetricName}.csv");
-                if(metricTable.Rows.Count > 0)
+                string suffix = metricsForGT ? "_GT" : ""; 
+                string metricStatFilePath = this.GetSavePath($"imageMetricStatistic_{metricTable.MetricName}{suffix}.csv");
+                if (metricTable.Rows.Count > 0)
                 {
-                    using(var fs = new FileStream(metricStatFilePath, FileMode.Create, FileAccess.Write))
+                    using (var fs = new FileStream(metricStatFilePath, FileMode.Create, FileAccess.Write))
                     {
-                        using(var sw = new StreamWriter(fs))
+                        using (var sw = new StreamWriter(fs))
                         {
                             // write header
                             var columnNames = metricTable.Rows[0].Select(x => x.Key);
@@ -233,6 +254,11 @@ namespace diploma5_csharp
         public string ImageFileName { get; set; }
         public string EnhanceMethodName { get; set; }
         public MetricsResult Metrics { get; set; }
+
+        /// <summary>
+        /// Metrics for ground truth images
+        /// </summary>
+        public MetricsResult MetricsGT { get; set; }
         public double ExecutionTimeMs { get; set; }
     }
 }

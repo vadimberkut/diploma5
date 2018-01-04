@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace diploma5_csharp.Models
 {
-    public class FogRemovalParams
+    public class DustRemovalParams
     {
         public bool ShowWindows { get; set; }
         public string InputImageFileName { get; set; }
