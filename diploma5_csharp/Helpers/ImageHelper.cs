@@ -197,10 +197,10 @@ namespace diploma5_csharp.Helpers
 
 
         //converts to Hsi but saves in Bgr (no Hsi in EmguCv)
-        public static Image<Bgr, Byte> ToHSI(Image<Bgr, Byte> image)
+        public static Image<Bgr, double> ToHSI(Image<Bgr, Byte> image)
         {
-            Image<Bgr, Byte> input = image.Clone();
-            Image<Bgr, Byte> result = new Image<Bgr, byte>(image.Size);
+            Image<Bgr, Byte> input = image;
+            Image<Bgr, double> result = new Image<Bgr, double>(image.Size);
 
             //Algorithm from http://angeljohnsy.blogspot.com/2013/05/converting-rgb-image-to-hsi.html
 
@@ -269,10 +269,10 @@ namespace diploma5_csharp.Helpers
 
         //2 variant from github 
         //https://gist.github.com/rzhukov/9129585
-        public static Image<Bgr, Byte> ToHSIGitHub(Image<Bgr, Byte> image)
+        public static Image<Bgr, double> ToHSIGitHub(Image<Bgr, Byte> image)
         {
             Image<Bgr, Byte> input = image.Clone();
-            Image<Bgr, Byte> result = new Image<Bgr, byte>(image.Size);
+            Image<Bgr, double> result = new Image<Bgr, double>(image.Size);
 
             //Find HSI components
             for (int m = 0; m < input.Rows; m++)

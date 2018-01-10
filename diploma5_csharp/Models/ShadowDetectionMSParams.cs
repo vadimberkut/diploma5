@@ -1,9 +1,7 @@
 ﻿namespace diploma5_csharp.Models
 {
-    public class ShadowDetectionMSParams
+    public class ShadowDetectionMSParams : ShadowDetectionParams
     {
-        //public const double ThresholdDefault = 256;
-        public double? Threshold;
-        public bool ShowWindows;
+        public double? Threshold { get; set; }
     }
 }

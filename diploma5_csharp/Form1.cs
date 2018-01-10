@@ -256,7 +256,8 @@ namespace diploma5_csharp
 
         private void Form1_Load(object sender, EventArgs e)
         {
-
+            // Set tooltips
+            toolTip1.SetToolTip(buttonRunAllMethods, "sdsadasd");
         }
 
         #endregion
@@ -284,14 +285,15 @@ namespace diploma5_csharp
             SetTextBoxValue(this.textBoxShadowDetectionLMSThreshold, Math.Round((double)_params.Threshold, _appState.FORM_DISPLAY_DOUBLE_PRECISION).ToString());
         }
 
-
         //Modified Ratio Of Hue Over Intensity Method
         private void buttonDetectUsingModifiedRatioOfHueOverIntensityMethod_Click(object sender, EventArgs e)
         {
-            var result = _appState.Shadow.DetectUsingModifiedRatioOfHueOverIntensityMethod(_appState.InputImageBgr);
+            ShadowDetectionParams _params = new ShadowDetectionParams() { ShowWindows = GetCheckBoxValue(checkBoxShowOptionalWindows) };
+            var result = _appState.Shadow.DetectUsingModifiedRatioOfHueOverIntensityMethod(_appState.InputImageBgr, _params);
             _appState.SetShadowMaskImage(result);
             this.DisplayImageInPictureBox(pictureBox2, result.Bitmap);
         }
+
 
 
         //SHADOW REMOVAL
@@ -1508,6 +1510,94 @@ namespace diploma5_csharp
                 }
             }
             MessageBox.Show("Done");
+        }
+
+        private void buttonTestVideo_Click(object sender, EventArgs e)
+        {
+            //int Time_millisecounds = 10 * 1000;
+            //int MAX_IMAGES = 1000000;
+            //List<Image<Bgr, Byte>> image_array = new List<Image<Bgr, Byte>>();
+            //System.Diagnostics.Stopwatch SW = new System.Diagnostics.Stopwatch();
+
+            //bool Reading = true;
+            //string path = "Videos/Thick fog airplane cockpit view (1).mp4";
+            //Emgu.CV.Capture _capture = new Emgu.CV.Capture(Path.Combine(path));
+            //SW.Start();
+
+            //while (Reading)
+            //{
+            //    Mat frame_ = _capture.QueryFrame();
+
+            //    if (frame_ != null)
+            //    {
+            //        Image<Bgr, Byte> frame = new Image<Bgr, byte>(frame_.Bitmap);
+            //        image_array.Add(frame);
+            //        if (image_array.Count() >= MAX_IMAGES) Reading = false;
+            //    }
+            //    else
+            //    {
+            //        Reading = false;
+            //    }
+            //}
+            //SW.Stop();
+            //GC.Collect();
+
+            //// defog
+            //for (int i = 0; i < image_array.Count; i++)
+            //{
+            //    image_array[i] = DehazeDarkChannel.Dehaze_Image(image_array[i]);
+            //    if (i % 10 == 0)
+            //    {
+            //        GC.Collect();
+            //    }
+            //}
+            //GC.Collect();
+
+            //// write new video
+            //var vw = new VideoWriter(Path.Combine(@"Videos\result.avi"), 30, new Size(_capture.Width, _capture.Height), true);
+            //_capture.Dispose();
+            //for (int i = 0; i < image_array.Count; i++)
+            //{
+            //    vw.Write(image_array[i].Mat);
+            //    image_array[i].Dispose();
+            //}
+            //vw.Dispose();
+
+            //
+            // REFACTORE
+            List<Image<Bgr, Byte>> image_array = new List<Image<Bgr, Byte>>();
+            string path = @"Videos/Pakistan Railway Train EMERGE FROM DENSE Heavy Fog Weather COMPILATION.mp4";
+            Emgu.CV.Capture _capture = new Emgu.CV.Capture(Path.Combine(path));
+            var vw = new VideoWriter(Path.Combine($"Videos/{Path.GetFileNameWithoutExtension(path)}_result.avi"), 30, new Size(_capture.Width, _capture.Height), true);
+            int MAX_IMAGES = 10000000;
+
+            for (int i = 0; true; i++)
+            {
+                Mat frame_ = _capture.QueryFrame();
+
+                if (frame_ != null)
+                {
+                    Image<Bgr, Byte> frame = new Image<Bgr, byte>(frame_.Bitmap);
+                    frame = DehazeDarkChannel.Dehaze_Image(frame);
+                    vw.Write(frame.Mat);
+                    frame.Dispose();
+                    Console.WriteLine(i);
+                    if(i % 20 == 0)
+                    {
+                        GC.Collect();
+                    }
+                    if(i >= MAX_IMAGES)
+                    {
+                        break;
+                    }
+                }
+                else
+                {
+                    break;
+                }
+            }
+            _capture.Dispose();
+            vw.Dispose();
         }
     }
 }

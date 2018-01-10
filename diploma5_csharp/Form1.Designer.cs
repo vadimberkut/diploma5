@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.pictureBox2 = new System.Windows.Forms.PictureBox();
             this.pictureBox3 = new System.Windows.Forms.PictureBox();
@@ -127,6 +128,8 @@
             this.textBox_RatioConstancyMethod_Imax = new System.Windows.Forms.TextBox();
             this.textBox_RatioConstancyMethod_Imin = new System.Windows.Forms.TextBox();
             this.buttonComputeMetrics = new System.Windows.Forms.Button();
+            this.buttonTestVideo = new System.Windows.Forms.Button();
+            this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).BeginInit();
@@ -1088,11 +1091,26 @@
             this.buttonComputeMetrics.UseVisualStyleBackColor = true;
             this.buttonComputeMetrics.Click += new System.EventHandler(this.buttonComputeMetrics_Click);
             // 
+            // buttonTestVideo
+            // 
+            this.buttonTestVideo.Location = new System.Drawing.Point(13, 650);
+            this.buttonTestVideo.Name = "buttonTestVideo";
+            this.buttonTestVideo.Size = new System.Drawing.Size(75, 23);
+            this.buttonTestVideo.TabIndex = 97;
+            this.buttonTestVideo.Text = "Test video";
+            this.buttonTestVideo.UseVisualStyleBackColor = true;
+            this.buttonTestVideo.Click += new System.EventHandler(this.buttonTestVideo_Click);
+            // 
+            // toolTip1
+            // 
+            this.toolTip1.ToolTipTitle = "asdasd";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1235, 768);
+            this.Controls.Add(this.buttonTestVideo);
             this.Controls.Add(this.buttonComputeMetrics);
             this.Controls.Add(this.label27);
             this.Controls.Add(this.label28);
@@ -1296,6 +1314,8 @@
         private System.Windows.Forms.TextBox textBox_RatioConstancyMethod_Imax;
         private System.Windows.Forms.TextBox textBox_RatioConstancyMethod_Imin;
         private System.Windows.Forms.Button buttonComputeMetrics;
+        private System.Windows.Forms.Button buttonTestVideo;
+        private System.Windows.Forms.ToolTip toolTip1;
     }
 }
 
