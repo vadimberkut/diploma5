@@ -23,6 +23,8 @@ namespace diploma5_csharp
 
         //CONSTANTS
         public int FORM_DISPLAY_DOUBLE_PRECISION = 2;
+        public int OPTIMAL_INPUT_IMAGE_WIDTH = 640;
+        public int OPTIMAL_INPUT_IMAGE_HEIGHT = 480;
 
         public AppState(Form1 form1)
         {

@@ -229,7 +229,7 @@ namespace diploma5_csharp
             var gray = ImageHelper.ToGray(mergedBgr.Convert<Bgr, Byte>());
             Image<Gray, Byte> grayThersholded = new Image<Gray, byte>(gray.Size);
             CvInvoke.Threshold(gray, grayThersholded, 180, 255, ThresholdType.BinaryInv);
-            shadowMask = gray;
+            shadowMask = grayThersholded;
 
             if (_params.ShowWindows)
             {
@@ -1028,6 +1028,8 @@ namespace diploma5_csharp
             return result;
         }
 
+        // Refactored version of Lab method
+        // Todo - need to complete it
         public Image<Bgr, Byte> RemoveUsingLabMethod2(Image<Bgr, Byte> image, Image<Gray, Byte> shadowMask, ShadowRemovalParams _params)
         {
             Image<Bgr, Byte> result = image.Clone();
@@ -2259,12 +2261,18 @@ namespace diploma5_csharp
 
         #endregion
 
+        #region Edge processing
 
-
-        public Image<Emgu.CV.Structure.Bgr, Byte> InpaintShadowEdges(Image<Bgr, Byte> image, Image<Gray, Byte> shadowMask)
+        public Image<Emgu.CV.Structure.Bgr, Byte> InpaintShadowEdges(Image<Bgr, Byte> image, Image<Gray, Byte> shadowMask, EdgeInpaintModel _params)
         {
             int INPAINT_DILATION_KERNEL_SIZE = 3;
-            double INPAINT_RADIUS = 4;
+            int INPAINT_RADIUS = 4;
+
+            if(_params != null)
+            {
+                _params.DilationKernelSize = _params.DilationKernelSize ?? INPAINT_DILATION_KERNEL_SIZE;
+                _params.KernelRadius = _params.KernelRadius ?? INPAINT_RADIUS;
+            }
 
             Image<Bgr, Byte> result = image.Clone();
             Image<Gray, Byte> imgEdge = shadowMask.Clone();
@@ -2273,26 +2281,27 @@ namespace diploma5_csharp
 
             CvInvoke.Canny(shadowMask, imgEdge, 50, 150, 3);
 
-            //TODO //Load inpaint params from UI
-            int inpaintDilationKernelSize = INPAINT_DILATION_KERNEL_SIZE;
-            double inpaintRadius = INPAINT_RADIUS;
-
-            Mat elementD = CvInvoke.GetStructuringElement(Emgu.CV.CvEnum.ElementShape.Rectangle, new Size(inpaintDilationKernelSize, inpaintDilationKernelSize), new Point(-1, -1));
+            Mat elementD = CvInvoke.GetStructuringElement(Emgu.CV.CvEnum.ElementShape.Rectangle, new Size(_params.DilationKernelSize.Value, _params.DilationKernelSize.Value), new Point(-1, -1));
             CvInvoke.Dilate(imgEdge, imgEdgeDilatedForInpaint, elementD, new Point(-1, -1), 1, BorderType.Default, new MCvScalar());
 
             //Inpaint edge artifacts
             //int inpaintinMethod = CV_INPAINT_NS; //Navier-Stokes based method.
             InpaintType inpaintinMethod = InpaintType.Telea; //Method by Alexandru Telea
-            CvInvoke.Inpaint(image, imgEdgeDilatedForInpaint, imgBGRInpainted, inpaintRadius, inpaintinMethod);
+            CvInvoke.Inpaint(image, imgEdgeDilatedForInpaint, imgBGRInpainted, _params.KernelRadius.Value, inpaintinMethod);
 
             return imgBGRInpainted;
         }
 
-        public Image<Emgu.CV.Structure.Bgr, Byte> SmoothShadowEdgesUsingGaussianFilter(Image<Bgr, Byte> image,Image<Gray, Byte> shadowMask)
+        public Image<Emgu.CV.Structure.Bgr, Byte> SmoothShadowEdgesUsingGaussianFilter(Image<Bgr, Byte> image, Image<Gray, Byte> shadowMask, EdgeGaussianModel _params)
         {
             int GAUSSIAN_FILTER_DILATION_KERNEL_SIZE = 3;
             int GAUSSIAN_FILTER_KERNEL_SIZE = 3;
 
+            if (_params != null)
+            {
+                 _params.DilationKernelSize = _params.DilationKernelSize ?? GAUSSIAN_FILTER_DILATION_KERNEL_SIZE;
+                _params.KernelRadius = _params.KernelRadius ?? GAUSSIAN_FILTER_KERNEL_SIZE;
+            }
 
             Image<Bgr, Byte> result = image.Clone();
             Image<Gray, Byte> imgEdge = shadowMask.Clone();
@@ -2303,29 +2312,25 @@ namespace diploma5_csharp
 
             CvInvoke.Canny(shadowMask, imgEdge, 50, 150, 3);
 
-            //TODO //Load inpaint params from UI
-            int diationKernelSize = GAUSSIAN_FILTER_DILATION_KERNEL_SIZE;
-            int kernelSize = GAUSSIAN_FILTER_KERNEL_SIZE;
-
-            Mat elementD = CvInvoke.GetStructuringElement(Emgu.CV.CvEnum.ElementShape.Rectangle, new Size(diationKernelSize, diationKernelSize), new Point(-1, -1));
+            Mat elementD = CvInvoke.GetStructuringElement(Emgu.CV.CvEnum.ElementShape.Rectangle, new Size(_params.DilationKernelSize.Value, _params.DilationKernelSize.Value), new Point(-1, -1));
             CvInvoke.Dilate(imgEdge, imgEdgeDilated, elementD, new Point(-1, -1), 1, BorderType.Default, new MCvScalar());
 
-            CvInvoke.GaussianBlur(imgBGRResSource, imgEdgeGaussianWhole, new Size(kernelSize, kernelSize), 0);
+            CvInvoke.GaussianBlur(imgBGRResSource, imgEdgeGaussianWhole, new Size(_params.KernelRadius.Value, _params.KernelRadius.Value), 0);
             imgEdgeGaussianWhole.Copy(imgEdgeGaussianEdgeOnly, imgEdgeDilated);
-
-            //if ( true)
-            //{
-            //    EmguCvWindowManager.Display(imgEdgeGaussianWhole, "1 imgEdgeGaussianWhole");
-            //    EmguCvWindowManager.Display(imgEdgeGaussianEdgeOnly, "2 imgEdgeGaussianEdgeOnly");
-            //}
 
             return imgEdgeGaussianEdgeOnly;
         }
 
-        public Image<Emgu.CV.Structure.Bgr, Byte> SmoothShadowEdgesUsingMedianFilter(Image<Bgr, Byte> image, Image<Gray, Byte> shadowMask)
+        public Image<Emgu.CV.Structure.Bgr, Byte> SmoothShadowEdgesUsingMedianFilter(Image<Bgr, Byte> image, Image<Gray, Byte> shadowMask, EdgeMedianModel _params)
         {
             int MEDIAN_FILTER_DILATION_KERNEL_SIZE = 3;
             int MEDIAN_FILTER_KERNEL_SIZE = 3;
+
+            if (_params != null)
+            {
+                _params.DilationKernelSize = _params.DilationKernelSize ?? MEDIAN_FILTER_DILATION_KERNEL_SIZE;
+                _params.KernelRadius = _params.KernelRadius ?? MEDIAN_FILTER_KERNEL_SIZE;
+            }
 
             Image<Bgr, Byte> result = image.Clone();
             Image<Gray, Byte> imgEdge = shadowMask.Clone();
@@ -2335,23 +2340,17 @@ namespace diploma5_csharp
 
             CvInvoke.Canny(shadowMask, imgEdge, 50, 150, 3);
 
-            //TODO //Load inpaint params from UI
-            int diationKernelSize = MEDIAN_FILTER_DILATION_KERNEL_SIZE;
-            int kernelSize = MEDIAN_FILTER_KERNEL_SIZE;
-
-            Mat elementD = CvInvoke.GetStructuringElement(Emgu.CV.CvEnum.ElementShape.Rectangle, new Size(diationKernelSize, diationKernelSize), new Point(-1, -1));
+            Mat elementD = CvInvoke.GetStructuringElement(Emgu.CV.CvEnum.ElementShape.Rectangle, new Size(_params.DilationKernelSize.Value, _params.DilationKernelSize.Value), new Point(-1, -1));
             CvInvoke.Dilate(imgEdge, imgEdgeDilated, elementD, new Point(-1, -1), 1, BorderType.Default, new MCvScalar());
 
-            CvInvoke.MedianBlur(image, imgMedianWhole, kernelSize);
+            CvInvoke.MedianBlur(image, imgMedianWhole, _params.KernelRadius.Value);
             imgMedianWhole.Copy(imgMedianEdgeOnly, imgEdgeDilated);
-
-            //if (true)
-            //{
-            //    EmguCvWindowManager.Display(imgMedianWhole, "1 imgMedianWhole");
-            //    EmguCvWindowManager.Display(imgMedianEdgeOnly, "2 imgMedianEdgeOnly");
-            //}
 
             return imgMedianEdgeOnly;
         }
+
+        #endregion
+
+
     }
 }

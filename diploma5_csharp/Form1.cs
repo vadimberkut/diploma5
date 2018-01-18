@@ -49,6 +49,115 @@ namespace diploma5_csharp
 
         #region GENERAL METHODS
 
+        #region Prerequrements checks
+
+
+        /// <summary>
+        /// Checks different conditions before start image processing and displays appropriate messages to user
+        /// </summary>
+        /// <returns></returns>
+        private bool CheckBasePrerequirements()
+        {
+            // Check image was opened
+            if (_appState.InputImageBgr == null)
+            {
+                MessageBox.Show("You need to open input image first!");
+                return false;
+            }
+
+            return true;
+        }
+
+        private bool CheckDetectionResultSavePrerequirements()
+        {
+            if(!this.CheckBasePrerequirements()) return false;
+
+            // Check image was opened
+            if (_appState.ShadowMaskImageGray == null)
+            {
+                MessageBox.Show("No detection result to save! E.g. you need to perform shadow detection");
+                return false;
+            }
+
+            return true;
+        }
+
+        private bool CheckResultSavePrerequirements()
+        {
+            if (!this.CheckBasePrerequirements()) return false;
+
+            // Check image was opened
+            if (_appState.OutputImageBgr == null)
+            {
+                MessageBox.Show("You need to process input image. Then you can save result!");
+                return false;
+            }
+
+            return true;
+        }
+
+        private bool CheckShadowDetectionPrerequirements()
+        {
+            if (!this.CheckBasePrerequirements()) return false;
+
+            return true;
+        }
+
+        private bool CheckShadowRemovalPrerequirements()
+        {
+            if (!this.CheckBasePrerequirements()) return false;
+
+            // Check that shadow mask is present
+            if (_appState.ShadowMaskImageGray == null)
+            {
+                MessageBox.Show("You need to perform shadow detection in order to delete shadow from image!");
+                return false;
+            }
+
+            return true;
+        }
+
+        private bool CheckShadowEdgeProcessingPrerequirements()
+        {
+            if (!this.CheckBasePrerequirements()) return false;
+            if (!this.CheckShadowDetectionPrerequirements()) return false;
+            if (!this.CheckShadowRemovalPrerequirements()) return false;
+
+            // Check that shadow mask is present
+            if (_appState.OutputImageBgr == null)
+            {
+                MessageBox.Show("You need to perform shadow removal in order to process shadow edges!");
+                return false;
+            }
+
+            return true;
+        }
+
+        private bool CheckFogRemovalPrerequirements()
+        {
+            if (!this.CheckBasePrerequirements()) return false;
+
+            return true;
+        }
+
+        private bool CheckDustRemovalPrerequirements()
+        {
+            if (!this.CheckBasePrerequirements()) return false;
+
+            return true;
+        }
+
+        #endregion
+
+        private void StartImageProcessing()
+        {
+            Cursor.Current = Cursors.WaitCursor;
+        }
+        private void EndImageProcessing()
+        {
+            Cursor.Current = Cursors.Default;
+        }
+
         private void DisplayImageInPictureBox(PictureBox pictureBox, Image image)
         {
             //pictureBox.Dispose();
@@ -156,6 +265,12 @@ namespace diploma5_csharp
             }
         }
 
+        // FORM LOAD
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            // Set tooltips
+        }
+
         //TOP MENU
         #region TOP MENU
 
@@ -176,9 +291,6 @@ namespace diploma5_csharp
             if (openFileDialog1.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
                 string fileName = openFileDialog1.FileName;
-                //System.IO.StreamReader sr = new System.IO.StreamReader(fileName);
-                //string fileContent = sr.ReadToEnd();
-                //sr.Close();
                 Bitmap image = new Bitmap(fileName);
                 _appState.InputImageFileName = fileName;
                 var image2 = new Image<Bgr, Byte>(image);
@@ -201,6 +313,18 @@ namespace diploma5_csharp
                     image2.Dispose();
                     image2 = image3;
                 }
+
+                // resize to optimal size
+                if (this.checkBoxMinifyLargeImages.Checked)
+                {
+                    if(image2.Width > _appState.OPTIMAL_INPUT_IMAGE_WIDTH || image2.Height > _appState.OPTIMAL_INPUT_IMAGE_HEIGHT)
+                    {
+                        var t = image2.Resize(_appState.OPTIMAL_INPUT_IMAGE_WIDTH, _appState.OPTIMAL_INPUT_IMAGE_HEIGHT, Inter.Linear);
+                        image2.Dispose();
+                        image2 = t;
+                    }
+                }
+
                 _appState.SetInputImage(image2);
                 this.DisplayImageInPictureBox(pictureBox1, image);
 
@@ -210,11 +334,27 @@ namespace diploma5_csharp
             }
         }
 
+        // Save Detection Result
+        private void saveDetectionResultToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (!this.CheckDetectionResultSavePrerequirements()) return;
+
+            //save this in file
+            SaveFileDialog saveFileDialog1 = new SaveFileDialog();
+            saveFileDialog1.Filter = "Image Files (*.png; *.jpg; *.jpeg; *.bmp)|*.png; *.jpg; *.jpeg; *.bmp"; // "Файлы Excel (*.xls; *.xlsx) | *.xls; *.xlsx";
+            saveFileDialog1.InitialDirectory = "<путь к папке>";
+            saveFileDialog1.Title = "Save Detection Result Image in File";
+
+            if (saveFileDialog1.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                _appState.ShadowMaskImageGray.Save(saveFileDialog1.FileName);
+            }
+        }
+
         //Save
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            //Select what to save
-            //SaveImagePrompt.ShowDialog("sd", "sd");
+            if (!this.CheckResultSavePrerequirements()) return;
 
             //save this in file
             SaveFileDialog saveFileDialog1 = new SaveFileDialog();
@@ -254,17 +394,16 @@ namespace diploma5_csharp
 
         #endregion
 
-        private void Form1_Load(object sender, EventArgs e)
-        {
-            // Set tooltips
-            toolTip1.SetToolTip(buttonRunAllMethods, "sdsadasd");
-        }
+        
 
         #endregion
 
         //SHADOW DETECTION
         private void buttonShadowDetectionLab_Click(object sender, EventArgs e)
         {
+            if (!this.CheckShadowDetectionPrerequirements()) return;
+            StartImageProcessing();
+
             ShadowDetectionLabParams _params = new ShadowDetectionLabParams() { Threshold = GetTextBoxValue<double>(textBoxShadowDetectionLabThreshold), ShowWindows = GetCheckBoxValue(checkBoxShowOptionalWindows) };
             var result = _appState.Shadow.DetectUsingLabMethod(_appState.InputImageLab, _params);
             _appState.SetShadowMaskImage(result);
@@ -272,10 +411,14 @@ namespace diploma5_csharp
 
             //Set params from method
             SetTextBoxValue(this.textBoxShadowDetectionLabThreshold, Math.Round((double)_params.Threshold, _appState.FORM_DISPLAY_DOUBLE_PRECISION).ToString());
+            EndImageProcessing();
         }
 
         private void buttonShadowDetectionMS_Click(object sender, EventArgs e)
         {
+            if (!this.CheckShadowDetectionPrerequirements()) return;
+            StartImageProcessing();
+
             ShadowDetectionMSParams _params = new ShadowDetectionMSParams() {Threshold = GetTextBoxValue<double>(textBoxShadowDetectionLMSThreshold), ShowWindows = GetCheckBoxValue(checkBoxShowOptionalWindows) };
             var result = _appState.Shadow.DetectUsingMSMethod(_appState.InputImageBgr, _params);
             _appState.SetShadowMaskImage(result);
@@ -283,66 +426,96 @@ namespace diploma5_csharp
 
             //Set params from method
             SetTextBoxValue(this.textBoxShadowDetectionLMSThreshold, Math.Round((double)_params.Threshold, _appState.FORM_DISPLAY_DOUBLE_PRECISION).ToString());
+            EndImageProcessing();
         }
 
         //Modified Ratio Of Hue Over Intensity Method
         private void buttonDetectUsingModifiedRatioOfHueOverIntensityMethod_Click(object sender, EventArgs e)
         {
+            if (!this.CheckShadowDetectionPrerequirements()) return;
+            StartImageProcessing();
+
             ShadowDetectionParams _params = new ShadowDetectionParams() { ShowWindows = GetCheckBoxValue(checkBoxShowOptionalWindows) };
             var result = _appState.Shadow.DetectUsingModifiedRatioOfHueOverIntensityMethod(_appState.InputImageBgr, _params);
             _appState.SetShadowMaskImage(result);
             this.DisplayImageInPictureBox(pictureBox2, result.Bitmap);
+            EndImageProcessing();
         }
 
 
+        
 
         //SHADOW REMOVAL
         private void buttonShadowRemovalAditiveMethod_Click(object sender, EventArgs e)
         {
+            if (!this.CheckShadowRemovalPrerequirements()) return;
+            StartImageProcessing();
+
             var result = _appState.Shadow.RemoveUsingAditiveMethod(_appState.InputImageBgr, _appState.ShadowMaskImageGray, new ShadowRemovalParams() { ShowWindows = GetCheckBoxValue(checkBoxShowOptionalWindows) } );
             _appState.SetOutputImage(result);
             _appState.SetOutputImageOrigin(result);
             this.DisplayImageInPictureBox(pictureBox3, result.Bitmap);
+            EndImageProcessing();
         }
 
         private void buttonShadowRemovalBasicLightModelMethod_Click(object sender, EventArgs e)
         {
+            if (!this.CheckShadowRemovalPrerequirements()) return;
+            StartImageProcessing();
+
             var result = _appState.Shadow.RemoveUsingBasicLightModelMethod(_appState.InputImageBgr, _appState.ShadowMaskImageGray, new ShadowRemovalParams() { ShowWindows = GetCheckBoxValue(checkBoxShowOptionalWindows) });
             _appState.SetOutputImage(result);
             _appState.SetOutputImageOrigin(result);
             this.DisplayImageInPictureBox(pictureBox3, result.Bitmap);
+            EndImageProcessing();
         }
 
         private void buttonShadowRemovalCombinedMethod_Click(object sender, EventArgs e)
         {
+            if (!this.CheckShadowRemovalPrerequirements()) return;
+            StartImageProcessing();
+
             var result = _appState.Shadow.RemoveUsingCombinedMethod(_appState.InputImageBgr, _appState.ShadowMaskImageGray, new ShadowRemovalParams() { ShowWindows = GetCheckBoxValue(checkBoxShowOptionalWindows) });
             _appState.SetOutputImage(result);
             _appState.SetOutputImageOrigin(result);
             this.DisplayImageInPictureBox(pictureBox3, result.Bitmap);
+            EndImageProcessing();
         }
 
         private void buttonShadowRemovalLabMethod_Click(object sender, EventArgs e)
         {
+            if (!this.CheckShadowRemovalPrerequirements()) return;
+            StartImageProcessing();
+
             var result = _appState.Shadow.RemoveUsingLabMethod2(_appState.InputImageBgr, _appState.ShadowMaskImageGray, new ShadowRemovalParams() { ShowWindows = GetCheckBoxValue(checkBoxShowOptionalWindows) });
             _appState.SetOutputImage(result);
             _appState.SetOutputImageOrigin(result);
             this.DisplayImageInPictureBox(pictureBox3, result.Bitmap);
+            EndImageProcessing();
         }
 
         private void buttonShadowRemovalLabMethod2_Click(object sender, EventArgs e)
         {
+            if (!this.CheckShadowRemovalPrerequirements()) return;
+            StartImageProcessing();
+
             var result = _appState.Shadow.RemoveUsingLabMethod2(_appState.InputImageBgr, _appState.ShadowMaskImageGray, new ShadowRemovalParams() { ShowWindows = GetCheckBoxValue(checkBoxShowOptionalWindows) });
             _appState.SetOutputImage(result);
             _appState.SetOutputImageOrigin(result);
             this.DisplayImageInPictureBox(pictureBox3, result.Bitmap);
+            EndImageProcessing();
         }
 
         private void buttonShadowRemovalConstantMethod_Click(object sender, EventArgs e)
         {
+            if (!this.CheckShadowRemovalPrerequirements()) return;
+            StartImageProcessing();
+
             var result = _appState.Shadow.RemoveUsingConstantMethod(_appState.InputImageBgr, _appState.ShadowMaskImageGray, new ShadowRemovalParams() { ShowWindows = GetCheckBoxValue(checkBoxShowOptionalWindows) });
             _appState.SetOutputImage(result);
             _appState.SetOutputImageOrigin(result);
             this.DisplayImageInPictureBox(pictureBox3, result.Bitmap);
+            EndImageProcessing();
         }
 
 
@@ -351,30 +524,102 @@ namespace diploma5_csharp
         //
         private void buttonImpaintShadowEdges_Click(object sender, EventArgs e)
         {
-            var result = _appState.Shadow.InpaintShadowEdges(_appState.OutputImageBgr, _appState.ShadowMaskImageGray);
+            if (!this.CheckShadowEdgeProcessingPrerequirements()) return;
+            StartImageProcessing();
+
+            EdgeInpaintModel _params = new EdgeInpaintModel();
+            try
+            {
+                if (!String.IsNullOrEmpty(textBoxShadowEdgeInpaint_DilationKernelSize.Text))
+                    _params.DilationKernelSize = int.Parse(textBoxShadowEdgeInpaint_DilationKernelSize.Text);
+                if (!String.IsNullOrEmpty(textBoxShadowEdgeInpaint_KernelRadius.Text))
+                    _params.KernelRadius = int.Parse(textBoxShadowEdgeInpaint_KernelRadius.Text);
+            }
+            catch(FormatException ex)
+            {
+                MessageBox.Show(ex.Message, "Incorrect parameters!");
+            }
+
+            var result = _appState.Shadow.InpaintShadowEdges(_appState.OutputImageBgr, _appState.ShadowMaskImageGray, _params);
             _appState.SetOutputImage(result);
             this.DisplayImageInPictureBox(pictureBox3, result.Bitmap);
+
+            //Set params from method
+            SetTextBoxValue(this.textBoxShadowEdgeInpaint_DilationKernelSize, _params.DilationKernelSize.ToString());
+            SetTextBoxValue(this.textBoxShadowEdgeInpaint_KernelRadius, _params.KernelRadius.ToString());
+
+            EndImageProcessing();
         }
 
         private void buttonSmoothShadowEdgesUsingGaussianFilter_Click(object sender, EventArgs e)
         {
-            var result = _appState.Shadow.SmoothShadowEdgesUsingGaussianFilter(_appState.OutputImageBgr, _appState.ShadowMaskImageGray);
+            if (!this.CheckShadowEdgeProcessingPrerequirements()) return;
+            StartImageProcessing();
+
+            EdgeGaussianModel _params = new EdgeGaussianModel();
+            
+            try
+            {
+                if (!String.IsNullOrEmpty(textBoxShadowEdgeGaussian_DilationKernelSize.Text))
+                    _params.DilationKernelSize = int.Parse(textBoxShadowEdgeGaussian_DilationKernelSize.Text);
+                if (!String.IsNullOrEmpty(textBoxShadowEdgeGaussian_KernelRadius.Text))
+                    _params.KernelRadius = int.Parse(textBoxShadowEdgeGaussian_KernelRadius.Text);
+            }
+            catch (FormatException ex)
+            {
+                MessageBox.Show(ex.Message, "Incorrect parameters!");
+            }
+
+            var result = _appState.Shadow.SmoothShadowEdgesUsingGaussianFilter(_appState.OutputImageBgr, _appState.ShadowMaskImageGray, _params);
             _appState.SetOutputImage(result);
             this.DisplayImageInPictureBox(pictureBox3, result.Bitmap);
+
+            //Set params from method
+            SetTextBoxValue(this.textBoxShadowEdgeGaussian_DilationKernelSize, _params.DilationKernelSize.ToString());
+            SetTextBoxValue(this.textBoxShadowEdgeGaussian_KernelRadius, _params.KernelRadius.ToString());
+
+            EndImageProcessing();
         }
 
         private void buttonSmoothShadowEdgesUsingMedianFilter_Click(object sender, EventArgs e)
         {
-            var result = _appState.Shadow.SmoothShadowEdgesUsingMedianFilter(_appState.OutputImageBgr, _appState.ShadowMaskImageGray);
+            if (!this.CheckShadowEdgeProcessingPrerequirements()) return;
+            StartImageProcessing();
+
+            EdgeMedianModel _params = new EdgeMedianModel();
+            try
+            {
+                if (!String.IsNullOrEmpty(textBoxShadowEdgeMedian_DilationKernelSIze.Text))
+                    _params.DilationKernelSize = int.Parse(textBoxShadowEdgeMedian_DilationKernelSIze.Text);
+                if (!String.IsNullOrEmpty(textBoxShadowEdgeMedian_KernelRadius.Text))
+                    _params.KernelRadius = int.Parse(textBoxShadowEdgeMedian_KernelRadius.Text);
+            }
+            catch (FormatException ex)
+            {
+                MessageBox.Show(ex.Message, "Incorrect parameters!");
+            }
+
+            var result = _appState.Shadow.SmoothShadowEdgesUsingMedianFilter(_appState.OutputImageBgr, _appState.ShadowMaskImageGray, _params);
             _appState.SetOutputImage(result);
             this.DisplayImageInPictureBox(pictureBox3, result.Bitmap);
+
+            //Set params from method
+            SetTextBoxValue(this.textBoxShadowEdgeMedian_DilationKernelSIze, _params.DilationKernelSize.ToString());
+            SetTextBoxValue(this.textBoxShadowEdgeMedian_KernelRadius, _params.KernelRadius.ToString());
+
+            EndImageProcessing();
         }
+
+
 
         //
         //FOG REMOVAL
         //
         private void buttonRemoveFogUsingDarkChannelMethod_Click(object sender, EventArgs e)
         {
+            if (!this.CheckFogRemovalPrerequirements()) return;
+            StartImageProcessing();
+
             var result = _appState.Fog.RemoveFogUsingDarkChannelPrior(_appState.InputImageBgr, new FogRemovalParams() { ShowWindows = GetCheckBoxValue(checkBoxShowOptionalWindows) });
             _appState.SetOutputImage(result.EnhancementResult);
             _appState.SetShadowMaskImage(result.DetectionResult);
@@ -391,10 +636,14 @@ namespace diploma5_csharp
                 ExecutionTimeMs = result.ExecutionTimeMs
             });
             DisplayImageMetrics(result.ExecutionTimeMs, result.Metrics);
+            EndImageProcessing();
         }
 
         private void buttonRobbyTanFogRemovalMethod_Click(object sender, EventArgs e)
         {
+            if (!this.CheckFogRemovalPrerequirements()) return;
+            StartImageProcessing();
+
             var result = _appState.Fog.RemoveUsingRobbyTanMethod(_appState.InputImageBgr, new FogRemovalParams() { ShowWindows = GetCheckBoxValue(checkBoxShowOptionalWindows) });
             _appState.SetOutputImage(result.EnhancementResult);
             _appState.SetShadowMaskImage(result.DetectionResult);
@@ -410,10 +659,14 @@ namespace diploma5_csharp
                 ExecutionTimeMs = result.ExecutionTimeMs
             });
             DisplayImageMetrics(result.ExecutionTimeMs, result.Metrics);
+            EndImageProcessing();
         }
 
         private void buttonRemoveFogUsingMedianChannelPrior_Click(object sender, EventArgs e)
         {
+            if (!this.CheckFogRemovalPrerequirements()) return;
+            StartImageProcessing();
+
             var result = _appState.Fog.RemoveFogUsingMedianChannelPrior(_appState.InputImageBgr, new FogRemovalParams() { ShowWindows = GetCheckBoxValue(checkBoxShowOptionalWindows) });
             _appState.SetOutputImage(result.EnhancementResult);
             _appState.SetShadowMaskImage(result.DetectionResult);
@@ -429,10 +682,14 @@ namespace diploma5_csharp
                 ExecutionTimeMs = result.ExecutionTimeMs
             });
             DisplayImageMetrics(result.ExecutionTimeMs, result.Metrics);
+            EndImageProcessing();
         }
 
         private void buttonRemoveFogUsingIdcpWithClahe_Click(object sender, EventArgs e)
         {
+            if (!this.CheckFogRemovalPrerequirements()) return;
+            StartImageProcessing();
+
             var result = _appState.Fog.RemoveFogUsingIdcpWithClahe(_appState.InputImageBgr, new FogRemovalParams() { ShowWindows = GetCheckBoxValue(checkBoxShowOptionalWindows) });
             _appState.SetOutputImage(result.EnhancementResult);
             _appState.SetShadowMaskImage(result.DetectionResult);
@@ -448,10 +705,14 @@ namespace diploma5_csharp
                 ExecutionTimeMs = result.ExecutionTimeMs
             });
             DisplayImageMetrics(result.ExecutionTimeMs, result.Metrics);
+            EndImageProcessing();
         }
 
         private void buttonEnhaceVisibilityUsingRobbyTanMethodForRoads_Click(object sender, EventArgs e)
         {
+            if (!this.CheckFogRemovalPrerequirements()) return;
+            StartImageProcessing();
+
             var result = _appState.Fog.EnhaceVisibilityUsingRobbyTanMethodForRoads(_appState.InputImageBgr, new FogRemovalParams() { ShowWindows = GetCheckBoxValue(checkBoxShowOptionalWindows) });
             _appState.SetOutputImage(result.EnhancementResult);
             _appState.SetShadowMaskImage(result.DetectionResult);
@@ -467,10 +728,14 @@ namespace diploma5_csharp
                 ExecutionTimeMs = result.ExecutionTimeMs
             });
             DisplayImageMetrics(result.ExecutionTimeMs, result.Metrics);
+            EndImageProcessing();
         }
 
         private void buttonRemoveFogUsingDCPAndDFT_Click(object sender, EventArgs e)
         {
+            if (!this.CheckFogRemovalPrerequirements()) return;
+            StartImageProcessing();
+
             var result = _appState.Fog.RemoveFogUsingDCPAndDFT(_appState.InputImageBgr, new FogRemovalParams() { ShowWindows = GetCheckBoxValue(checkBoxShowOptionalWindows) });
             _appState.SetOutputImage(result.EnhancementResult);
             _appState.SetShadowMaskImage(result.DetectionResult);
@@ -486,10 +751,14 @@ namespace diploma5_csharp
                 ExecutionTimeMs = result.ExecutionTimeMs
             });
             DisplayImageMetrics(result.ExecutionTimeMs, result.Metrics);
+            EndImageProcessing();
         }
 
         private void buttonRemoveFogUsingLocalExtremaMethod_Click(object sender, EventArgs e)
         {
+            if (!this.CheckFogRemovalPrerequirements()) return;
+            StartImageProcessing();
+
             var result = _appState.Fog.RemoveFogUsingLocalExtremaMethod(_appState.InputImageBgr, new FogRemovalParams() { ShowWindows = GetCheckBoxValue(checkBoxShowOptionalWindows) });
             _appState.SetOutputImage(result.EnhancementResult);
             _appState.SetShadowMaskImage(result.DetectionResult);
@@ -505,10 +774,14 @@ namespace diploma5_csharp
                 ExecutionTimeMs = result.ExecutionTimeMs
             });
             DisplayImageMetrics(result.ExecutionTimeMs, result.Metrics);
+            EndImageProcessing();
         }
 
         private void buttonRemoveFogUsingPhysicsBasedMethod_Click(object sender, EventArgs e)
         {
+            if (!this.CheckFogRemovalPrerequirements()) return;
+            StartImageProcessing();
+
             var result = _appState.Fog.RemoveFogUsingPhysicsBasedMethod(_appState.InputImageBgr, new FogRemovalParams() { ShowWindows = GetCheckBoxValue(checkBoxShowOptionalWindows) });
             _appState.SetOutputImage(result.EnhancementResult);
             _appState.SetShadowMaskImage(result.DetectionResult);
@@ -524,10 +797,14 @@ namespace diploma5_csharp
                 ExecutionTimeMs = result.ExecutionTimeMs
             });
             DisplayImageMetrics(result.ExecutionTimeMs, result.Metrics);
+            EndImageProcessing();
         }
 
         private void buttonRemoveFogUsingMultiCoreDSPMethod_Click(object sender, EventArgs e)
         {
+            if (!this.CheckFogRemovalPrerequirements()) return;
+            StartImageProcessing();
+
             var result = _appState.Fog.RemoveFogUsingMultiCoreDSPMethod(_appState.InputImageBgr, new FogRemovalParams() { ShowWindows = GetCheckBoxValue(checkBoxShowOptionalWindows) });
             _appState.SetOutputImage(result.EnhancementResult);
             _appState.SetShadowMaskImage(result.DetectionResult);
@@ -543,10 +820,14 @@ namespace diploma5_csharp
                 ExecutionTimeMs = result.ExecutionTimeMs
             });
             DisplayImageMetrics(result.ExecutionTimeMs, result.Metrics);
+            EndImageProcessing();
         }
 
         private void buttonRemoveFogUsingCustomMethod_Click(object sender, EventArgs e)
         {
+            if (!this.CheckFogRemovalPrerequirements()) return;
+            StartImageProcessing();
+
             var result = _appState.Fog.RemoveFogUsingCustomMethod(_appState.InputImageBgr, new FogRemovalParams() { ShowWindows = GetCheckBoxValue(checkBoxShowOptionalWindows), InputImageFileName = _appState.InputImageFileName });
             _appState.SetOutputImage(result.EnhancementResult);
             _appState.SetShadowMaskImage(result.DetectionResult);
@@ -562,10 +843,14 @@ namespace diploma5_csharp
                 ExecutionTimeMs = result.ExecutionTimeMs
             });
             DisplayImageMetrics(result.ExecutionTimeMs, result.Metrics);
+            EndImageProcessing();
         }
 
         private void buttonRemoveFogUsingCustomMethodWithDepthEstimation_Click(object sender, EventArgs e)
         {
+            if (!this.CheckFogRemovalPrerequirements()) return;
+            StartImageProcessing();
+
             var result = _appState.Fog.RemoveFogUsingCustomMethodWithDepthEstimation(_appState.InputImageBgr, new FogRemovalParams() { ShowWindows = GetCheckBoxValue(checkBoxShowOptionalWindows), InputImageFileName = _appState.InputImageFileName });
             _appState.SetOutputImage(result.EnhancementResult);
             _appState.SetShadowMaskImage(result.DetectionResult);
@@ -581,13 +866,20 @@ namespace diploma5_csharp
                 ExecutionTimeMs = result.ExecutionTimeMs
             });
             DisplayImageMetrics(result.ExecutionTimeMs, result.Metrics);
+            EndImageProcessing();
         }
+
+
+
 
         //
         //VISIBILITY ENHANCEMENT
         //
         private void buttonVisibilityEnhancementUsingTunedTriThresholdFuzzyIntensificationOperatorsMethod_Click(object sender, EventArgs e)
         {
+            if (!this.CheckDustRemovalPrerequirements()) return;
+            StartImageProcessing();
+
             var _params = new TriThresholdFuzzyIntensificationOperatorsMethodParams();
             if (!String.IsNullOrEmpty(textBoxTriThresholdFuzzyIntensificationOperatorsMethod_Dzeta.Text))
                 _params.Dzeta = double.Parse(textBoxTriThresholdFuzzyIntensificationOperatorsMethod_Dzeta.Text);
@@ -609,9 +901,13 @@ namespace diploma5_csharp
             DisplayImageMetrics(result.ExecutionTimeMs, result.Metrics);
 
             GC.Collect();
+            EndImageProcessing();
         }
         private void buttonRecoveringOfWeatherDegradedImagesBasedOnRGBResponseRatioConstancyMethod_Click(object sender, EventArgs e)
         {
+            if (!this.CheckDustRemovalPrerequirements()) return;
+            StartImageProcessing();
+
             string kernel = textBox_RatioConstancyMethod_kernel.Text;
             string sigma = textBox_RatioConstancyMethod_sigma.Text;
             string Imin = textBox_RatioConstancyMethod_Imin.Text;
@@ -656,7 +952,10 @@ namespace diploma5_csharp
             DisplayImageMetrics(result.ExecutionTimeMs, result.Metrics);
 
             GC.Collect();
+            EndImageProcessing();
         }
+
+
 
         //RESTORE RESULT IMAGE
         private void restoreToolStripMenuItem_Click(object sender, EventArgs e)
@@ -665,32 +964,30 @@ namespace diploma5_csharp
             this.DisplayImageInPictureBox(pictureBox3, _appState.OutputImageBgr.Bitmap);
         }
 
+
+
+
         // AGC
         private void buttonApplyAGC_Click(object sender, EventArgs e)
         {
+
+            if (!this.CheckBasePrerequirements()) return;
+
             var result = GammaCorrection.AdaptiveWithBaseResponse(_appState.InputImageBgr, showWindows: GetCheckBoxValue(checkBoxShowOptionalWindows));
             _appState.SetOutputImage(result.EnhancementResult);
             _appState.SetShadowMaskImage(result.DetectionResult);
             this.DisplayImageInPictureBox(pictureBox3, result.EnhancementResult.Bitmap);
             this.DisplayImageInPictureBox(pictureBox2, result.DetectionResult.Bitmap);
 
-            // save metrics
-            _methodInfoStore.AddOrUpdate(new EnhanceMethodInfoModel
-            {
-                ImageFileName = _appState.InputImageFileName,
-                EnhanceMethodName = nameof(GammaCorrection.Adaptive),
-                Metrics = result.Metrics,
-                ExecutionTimeMs = result.ExecutionTimeMs
-            });
-            DisplayImageMetrics(result.ExecutionTimeMs, result.Metrics);
-
-            // compare RMS
-            double rms1 = ImageMetricHelper.RMS(_appState.InputImageBgr.Convert<Bgr, double>());
-            double rms2 = ImageMetricHelper.RMS(result.EnhancementResult.Convert<Bgr, double>());
-            double diff = rms2 - rms1;
-            var metricRes = ImageMetricHelper.ComputeAll(_appState.InputImageBgr, result.EnhancementResult);
-
-            // compare entropy
+            //// save metrics
+            //_methodInfoStore.AddOrUpdate(new EnhanceMethodInfoModel
+            //{
+            //    ImageFileName = _appState.InputImageFileName,
+            //    EnhanceMethodName = nameof(GammaCorrection.Adaptive),
+            //    Metrics = result.Metrics,
+            //    ExecutionTimeMs = result.ExecutionTimeMs
+            //});
+            //DisplayImageMetrics(result.ExecutionTimeMs, result.Metrics);
         }
 
         private void buttonTestFilters_Click(object sender, EventArgs e)
@@ -1598,6 +1895,11 @@ namespace diploma5_csharp
             }
             _capture.Dispose();
             vw.Dispose();
+        }
+
+        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }
