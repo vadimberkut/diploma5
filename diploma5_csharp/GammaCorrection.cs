@@ -202,12 +202,10 @@ namespace diploma5_csharp
 
             stopwatch.Stop();
 
-            var Metrics = ImageMetricHelper.ComputeAll(image, result);
             return new BaseMethodResponse
             {
                 EnhancementResult = result,
                 DetectionResult = new Image<Gray, byte>(image.Size),
-                Metrics = Metrics,
                 ExecutionTimeMs = stopwatch.ElapsedMilliseconds
             };
         }

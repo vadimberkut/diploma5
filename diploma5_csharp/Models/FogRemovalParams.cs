@@ -15,6 +15,6 @@ namespace diploma5_csharp.Models
         /// <summary>
         /// Ground truth image
         /// </summary>
-        public Image<Bgr, Byte> ImageGT { get; set; }
+        // public Image<Bgr, Byte> ImageGT { get; set; }
     }
 }

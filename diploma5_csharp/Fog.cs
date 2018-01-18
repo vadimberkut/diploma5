@@ -46,14 +46,11 @@ namespace diploma5_csharp
                 EmguCvWindowManager.Display(result, "4 result");
             }
 
-            var Metrics = ImageMetricHelper.ComputeAll(image, result);
             return new BaseMethodResponse
             {
                 EnhancementResult = result,
                 DetectionResult = T,
                 DetailedResults = new List<IInputArray> { image, DC, T, result },
-                Metrics = Metrics,
-                MetricsGT = ImageMetricHelper.ComputeAll(_params.ImageGT, result),
                 ExecutionTimeMs = stopwatch.ElapsedMilliseconds
             };
         }
@@ -354,12 +351,10 @@ namespace diploma5_csharp
                 EmguCvWindowManager.Display(result, "100 result");
             }
 
-            var Metrics = ImageMetricHelper.ComputeAll(image, result);
             return new BaseMethodResponse
             {
                 EnhancementResult = result,
                 DetectionResult = new Image<Gray, byte>(image.Size),
-                Metrics = Metrics,
                 ExecutionTimeMs = stopwatch.ElapsedMilliseconds
             };
         }
@@ -573,15 +568,11 @@ namespace diploma5_csharp
                 EmguCvWindowManager.Display(E_normilized_Gamma, "E_normilized_Gamma");
             }
 
-            //var Metrics = ImageMetricHelper.ComputeAll(image, postProcessed);
-            var Metrics = ImageMetricHelper.ComputeAll(image, E_normilized_Gamma);
             return new BaseMethodResponse
             {
                 EnhancementResult = E_normilized_Gamma,
                 DetectionResult = new Image<Gray, Byte>(image.Size),
                 DetailedResults = new List<IInputArray> { image, E_normilized.Convert<Bgr, Byte>(), E_normilized_Gamma },
-                Metrics = Metrics,
-                MetricsGT = ImageMetricHelper.ComputeAll(_params.ImageGT, E_normilized_Gamma),
                 ExecutionTimeMs = stopwatch.ElapsedMilliseconds
             };
         }
@@ -665,14 +656,11 @@ namespace diploma5_csharp
                 EmguCvWindowManager.Display(result, "4 result");
             }
 
-            var Metrics = ImageMetricHelper.ComputeAll(image, result);
             return new BaseMethodResponse
             {
                 EnhancementResult = result,
                 DetectionResult = T,
                 DetailedResults = new List<IInputArray> { image, J_median, T, result },
-                Metrics = Metrics,
-                MetricsGT = ImageMetricHelper.ComputeAll(_params.ImageGT, result),
                 ExecutionTimeMs = stopwatch.ElapsedMilliseconds
             };
         }
@@ -724,14 +712,11 @@ namespace diploma5_csharp
             LChannel.Dispose();
             claheLChannel.Dispose();
 
-            var Metrics = ImageMetricHelper.ComputeAll(image, result);
             return new BaseMethodResponse
             {
                 EnhancementResult = result,
                 DetectionResult = transmission,
                 DetailedResults = new List<IInputArray> { image, clahe, transmission, resultDCP.EnhancementResult, result },
-                Metrics = Metrics,
-                MetricsGT = ImageMetricHelper.ComputeAll(_params.ImageGT, result),
                 ExecutionTimeMs = stopwatch.ElapsedMilliseconds
             };
         }
@@ -826,13 +811,11 @@ namespace diploma5_csharp
                 EmguCvWindowManager.Display(resultImproved, "resultImproved");
             }
 
-            var Metrics = ImageMetricHelper.ComputeAll(image, result);
             return new BaseMethodResponse
             {
                 EnhancementResult = resultImproved,
                 DetectionResult = transmission,
                 DetailedResults = new List<IInputArray> { image, transmission, result, resultImproved },
-                Metrics = Metrics,
                 ExecutionTimeMs = stopwatch.ElapsedMilliseconds
             };
         }
@@ -985,12 +968,10 @@ namespace diploma5_csharp
                 EmguCvWindowManager.Display(result, "9 result");
             }
 
-            var Metrics = ImageMetricHelper.ComputeAll(image, result);
             return new BaseMethodResponse
             {
                 EnhancementResult = result,
                 DetectionResult = transmission,
-                Metrics = Metrics,
                 ExecutionTimeMs = stopwatch.ElapsedMilliseconds
             };
         }
@@ -1129,12 +1110,10 @@ namespace diploma5_csharp
                 EmguCvWindowManager.Display(result, "9 result");
             }
 
-            var Metrics = ImageMetricHelper.ComputeAll(image, result);
             return new BaseMethodResponse
             {
                 EnhancementResult = result,
                 DetectionResult = transmission,
-                Metrics = Metrics,
                 ExecutionTimeMs = stopwatch.ElapsedMilliseconds
             };
         }
@@ -1231,14 +1210,11 @@ namespace diploma5_csharp
                 EmguCvWindowManager.Display(colorCalibrated, "colorCalibrated");
             }
 
-            var Metrics = ImageMetricHelper.ComputeAll(image, result);
             return new BaseMethodResponse
             {
                 EnhancementResult = result,
                 DetectionResult = transmission,
                 DetailedResults = new List<IInputArray> { image, downsampled, T, improvedT, upsampledT, hazeFree, colorCalibrated },
-                Metrics = Metrics,
-                MetricsGT = ImageMetricHelper.ComputeAll(_params.ImageGT, result),
                 ExecutionTimeMs = stopwatch.ElapsedMilliseconds
             };
         }
@@ -1291,14 +1267,11 @@ namespace diploma5_csharp
                 EmguCvWindowManager.Display(processed, "processed");
             }
 
-            var Metrics = ImageMetricHelper.ComputeAll(image, processed);
             return new BaseMethodResponse
             {
                 EnhancementResult = processed,
                 DetectionResult = T,
                 DetailedResults = new List<IInputArray> { image, T, processed },
-                Metrics = Metrics,
-                MetricsGT = ImageMetricHelper.ComputeAll(_params.ImageGT, processed),
                 ExecutionTimeMs = stopwatch.ElapsedMilliseconds
             };
         }
@@ -1458,14 +1431,11 @@ namespace diploma5_csharp
                 EmguCvWindowManager.Display(alternativeResult, "alternativeResult");
             }
 
-            var Metrics = ImageMetricHelper.ComputeAll(image, result);
             return new BaseMethodResponse
             {
                 EnhancementResult = result,
                 DetectionResult = transmission,
                 DetailedResults = new List<IInputArray> { image, depthMapColor, T, improvedT, fogModelResult, alternativeResult, result },
-                Metrics = Metrics,
-                MetricsGT = ImageMetricHelper.ComputeAll(_params.ImageGT, result),
                 ExecutionTimeMs = stopwatch.ElapsedMilliseconds
             };
         }

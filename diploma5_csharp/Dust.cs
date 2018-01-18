@@ -76,14 +76,11 @@ namespace diploma5_csharp
 
             stopwatch.Stop();
 
-            var Metrics = ImageMetricHelper.ComputeAll(image, result);
             return new BaseMethodResponse
             {
                 EnhancementResult = result,
                 DetectionResult = new Image<Gray, byte>(image.Size),
                 DetailedResults = new List<IInputArray> { image, result },
-                Metrics = Metrics,
-                MetricsGT = ImageMetricHelper.ComputeAll(_params.ImageGT, result),
                 ExecutionTimeMs = stopwatch.ElapsedMilliseconds
             };
         }
@@ -233,14 +230,11 @@ namespace diploma5_csharp
 
             stopwatch.Stop();
 
-            var Metrics = ImageMetricHelper.ComputeAll(image, result);
             return new BaseMethodResponse
             {
                 EnhancementResult = result,
                 DetectionResult = new Image<Gray, byte>(image.Size),
                 DetailedResults = new List<IInputArray> { image, msResult.Image, resultToAll, result },
-                Metrics = Metrics,
-                MetricsGT = ImageMetricHelper.ComputeAll(_params.ImageGT, result),
                 ExecutionTimeMs = stopwatch.ElapsedMilliseconds
             };
         }

@@ -18,6 +18,7 @@ namespace diploma5_csharp
     public class MethodInfoStore
     {
         private const string DATA_STORE_FOLDER = "ApplicationData";
+        private const string METRICS_STORE_FOLDER = "Metrics";
         private const string STORE_FILE_NAME = "methodinfostore.json";
         private const string BACKUP_FILE_NAME = "methodinfostore.backup.json";
         private const string CSV_DELIMITER = ";"; // exel automatically formats CSV with semicolon (alternatively add "sep=;" to start of the CSV file)
@@ -31,7 +32,7 @@ namespace diploma5_csharp
             { nameof(Fog.RemoveFogUsingDarkChannelPrior), "DCP" },
             { nameof(Fog.RemoveFogUsingMedianChannelPrior), "MCP" },
             { nameof(Fog.RemoveFogUsingIdcpWithClahe), "DCP&CLAHE" },
-            //{ nameof(Fog.RemoveFogUsingDCPAndDFT), "DCP&DFT" },
+            { nameof(Fog.RemoveFogUsingDCPAndDFT), "DCP&DFT" },
             { nameof(Fog.RemoveFogUsingMultiCoreDSPMethod), "DSP" },
             { nameof(Fog.EnhaceVisibilityUsingRobbyTanMethodForRoads), "RTFR" },
             { nameof(Fog.RemoveFogUsingCustomMethod), "CUS" },
@@ -83,7 +84,7 @@ namespace diploma5_csharp
             File.WriteAllText(this.GetSavePath(BACKUP_FILE_NAME), text, Encoding.UTF8);
         }
 
-        public void SaveToCsv(string folderPath = "")
+        public string SaveToCsv(string folderPath = "")
         {
             // use current directory if no path specified
             if (String.IsNullOrEmpty(folderPath))
@@ -105,6 +106,12 @@ namespace diploma5_csharp
             var whiteList = this.MethodNameMap.Keys;
             var store = this.Store.Where(x => whiteList.Contains(x.EnhanceMethodName));
 
+            // create metrics folder
+            if (!Directory.Exists(this.GetMetricsSavePath()))
+            {
+                Directory.CreateDirectory(this.GetMetricsSavePath());
+            }
+
             // get exec time statistics for each method
             var execStat = store.GroupBy(x => x.EnhanceMethodName, (key, g) =>
             {
@@ -117,7 +124,7 @@ namespace diploma5_csharp
                     Moda = StatisticsHelper.Moda(g.Select(x => x.ExecutionTimeMs))
                 };
             }).ToList();
-            string execStatFilePath = this.GetSavePath("methodsExecutionStatistic.csv");
+            string execStatFilePath = this.GetMetricsSavePath("methodsExecutionStatistic.csv");
             using (var textWriter = File.CreateText(execStatFilePath))
             {
                 using (var csv = new CsvWriter(textWriter, new CsvHelper.Configuration.Configuration { Delimiter = CSV_DELIMITER }))
@@ -127,30 +134,25 @@ namespace diploma5_csharp
             }
 
             // save metrcis
-            this.SaveMetricsToCsv(store, metricsForGT: false);
-            this.SaveMetricsToCsv(store, metricsForGT: true);
+            string savedPath = this.SaveMetricsToCsv(store);
+            return savedPath;
         }
 
-        private void SaveMetricsToCsv(IEnumerable<EnhanceMethodInfoModel> store, bool metricsForGT = false)
+        private string SaveMetricsToCsv(IEnumerable<EnhanceMethodInfoModel> store)
         {
             // for each metric get list of results
             string[] metricNames = typeof(MetricsResult).GetProperties().Select(x => x.Name).ToArray();
             string[] methodNames = store.Select(x => x.EnhanceMethodName).Distinct().OrderBy(x => x).ToArray();
             var metricProps = typeof(MetricsResult).GetProperties();
 
-            if (metricsForGT)
-            {
-                store = store.Where(x => x.MetricsGT != null);
-            }
-
-            var metricsValues = store.Select(x =>
+            var metricsValues = store.Where(x => x.Metrics != null).Select(x =>
             {
                 return metricProps.Select(y => y).Select(y => new
                 {
                     ImageFileName = x.ImageFileName,
                     EnhanceMethodName = x.EnhanceMethodName,
                     MetricName = y.Name,
-                    MetricValue = metricsForGT ? y.GetValue(x.MetricsGT).ToString() : y.GetValue(x.Metrics).ToString()
+                    MetricValue = y.GetValue(x.Metrics).ToString()
                 }).ToList();
             }).SelectMany(x => x)
             .ToList();
@@ -175,10 +177,12 @@ namespace diploma5_csharp
                 return new { MetricName = key, Rows = metricRows };
             }).ToList();
 
+           
+
             foreach (var metricTable in metricTables)
             {
-                string suffix = metricsForGT ? "_GT" : ""; 
-                string metricStatFilePath = this.GetSavePath($"imageMetricStatistic_{metricTable.MetricName}{suffix}.csv");
+                string suffix = ""; 
+                string metricStatFilePath = this.GetMetricsSavePath($"imageMetricStatistic_{metricTable.MetricName}{suffix}.csv");
                 if (metricTable.Rows.Count > 0)
                 {
                     using (var fs = new FileStream(metricStatFilePath, FileMode.Create, FileAccess.Write))
@@ -202,8 +206,9 @@ namespace diploma5_csharp
                     }
                 }
             }
-        }
 
+            return this.GetMetricsSavePath();
+        }
 
         public void Reset()
         {
@@ -225,7 +230,7 @@ namespace diploma5_csharp
 
         }
 
-        // loads stroe from file
+        // loads store from file
         private List<EnhanceMethodInfoModel> LoadFromFile()
         {
             if (!Directory.Exists(DATA_STORE_FOLDER))
@@ -252,6 +257,10 @@ namespace diploma5_csharp
         {
             return Path.Combine(DATA_STORE_FOLDER, filename);
         }
+        private string GetMetricsSavePath(string filename = "")
+        {
+            return Path.Combine(DATA_STORE_FOLDER, METRICS_STORE_FOLDER, filename);
+        }
     }
 
     public class EnhanceMethodInfoModel
@@ -259,11 +268,6 @@ namespace diploma5_csharp
         public string ImageFileName { get; set; }
         public string EnhanceMethodName { get; set; }
         public MetricsResult Metrics { get; set; }
-
-        /// <summary>
-        /// Metrics for ground truth images
-        /// </summary>
-        public MetricsResult MetricsGT { get; set; }
         public double ExecutionTimeMs { get; set; }
     }
 }

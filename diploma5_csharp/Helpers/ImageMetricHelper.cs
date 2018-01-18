@@ -61,10 +61,9 @@ namespace diploma5_csharp.Helpers
             double AD = ImageMetricHelper.AD(image1, image2);
             double FVM = ImageMetricHelper.FVM(image1, image2);
             double RMS = ImageMetricHelper.RMS(image2);
-            double RMSDiff = ImageMetricHelper.RMSDifference(image1, image2);
-            //double ShannonEntropy = ImageMetricHelper.ShannonEntropy(image2B); // !!! - better to calc entripy for byte images
+            // double RMSDiff = ImageMetricHelper.RMSDifference(image1, image2);
             double ShannonEntropy = ImageMetricHelper.ShannonEntropyByChannels(image2B); // !!! - better to calc entripy for byte images
-            double ShannonEntropyDiff = ImageMetricHelper.ShannonEntropyDiff(image1B, image2B); // !!! - better to calc entripy for byte images
+            // double ShannonEntropyDiff = ImageMetricHelper.ShannonEntropyDiff(image1B, image2B); // !!! - better to calc entripy for byte images
             double SSIM = ImageMetricHelper.SSIM(image1, image2);
 
             return new MetricsResult
@@ -76,9 +75,9 @@ namespace diploma5_csharp.Helpers
                 SC = Math.Round(SC, DECIMALS),
                 PSNR = Math.Round(PSNR, DECIMALS),
                 RMS = Math.Round(RMS, DECIMALS), // for result image
-                RMSDiff = Math.Round(RMSDiff, DECIMALS),
+                // RMSDiff = Math.Round(RMSDiff, DECIMALS),
                 ShannonEntropy = Math.Round(ShannonEntropy, DECIMALS), // for result image
-                ShannonEntropyDiff = Math.Round(ShannonEntropyDiff, DECIMALS),
+                // ShannonEntropyDiff = Math.Round(ShannonEntropyDiff, DECIMALS),
                 SSIM = Math.Round(SSIM, DECIMALS)
             };
         }
@@ -624,11 +623,6 @@ namespace diploma5_csharp.Helpers
 
 
 
-        // TODO - RMSE, BER
-
-
-
-
 
         /// <summary>
         /// Root-mean-square (RMS) contrast allows to define the contrast of an image
@@ -703,8 +697,6 @@ namespace diploma5_csharp.Helpers
             double result = rms2 - rms1;
             return result;
         }
-
-
 
 
 

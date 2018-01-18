@@ -89,39 +89,14 @@
             this.buttonRemoveFogUsingCustomMethod = new System.Windows.Forms.Button();
             this.buttonRemoveFogUsingLocalExtremaMethod = new System.Windows.Forms.Button();
             this.buttonRemoveFogUsingPhysicsBasedMethod = new System.Windows.Forms.Button();
-            this.textBoxFvmMetric = new System.Windows.Forms.TextBox();
-            this.label13 = new System.Windows.Forms.Label();
             this.buttonRemoveFogUsingCustomMethodWithDepthEstimation = new System.Windows.Forms.Button();
             this.buttonRemoveFogUsingMultiCoreDSPMethod = new System.Windows.Forms.Button();
             this.buttonRunAllMethods = new System.Windows.Forms.Button();
-            this.label14 = new System.Windows.Forms.Label();
-            this.textBoxMseMetric = new System.Windows.Forms.TextBox();
-            this.label15 = new System.Windows.Forms.Label();
-            this.textBoxNaeMetric = new System.Windows.Forms.TextBox();
-            this.label16 = new System.Windows.Forms.Label();
-            this.textBoxScMetric = new System.Windows.Forms.TextBox();
-            this.label17 = new System.Windows.Forms.Label();
-            this.textBoxPsnrMEtric = new System.Windows.Forms.TextBox();
-            this.label18 = new System.Windows.Forms.Label();
-            this.textBoxAdMetric = new System.Windows.Forms.TextBox();
-            this.label19 = new System.Windows.Forms.Label();
-            this.textBoxRMSMetricDiff = new System.Windows.Forms.TextBox();
-            this.label20 = new System.Windows.Forms.Label();
-            this.textBoxShannonEntropyDiff = new System.Windows.Forms.TextBox();
-            this.label21 = new System.Windows.Forms.Label();
-            this.textBoxRMSMetric = new System.Windows.Forms.TextBox();
-            this.label22 = new System.Windows.Forms.Label();
-            this.textBoxShannonEntropy = new System.Windows.Forms.TextBox();
-            this.label23 = new System.Windows.Forms.Label();
-            this.textBoxMEthodExecTime = new System.Windows.Forms.TextBox();
             this.label24 = new System.Windows.Forms.Label();
-            this.label25 = new System.Windows.Forms.Label();
             this.checkBoxUpdateStats = new System.Windows.Forms.CheckBox();
             this.checkBoxRunAllMethodsFog = new System.Windows.Forms.CheckBox();
             this.checkBoxRunAllMethodsDust = new System.Windows.Forms.CheckBox();
             this.checkBoxRunAllMethodsSaveAllImages = new System.Windows.Forms.CheckBox();
-            this.label26 = new System.Windows.Forms.Label();
-            this.textBoxSSIMMetric = new System.Windows.Forms.TextBox();
             this.label27 = new System.Windows.Forms.Label();
             this.label28 = new System.Windows.Forms.Label();
             this.textBox_RatioConstancyMethod_Imax = new System.Windows.Forms.TextBox();
@@ -154,6 +129,7 @@
             this.checkBoxTestDustMethods = new System.Windows.Forms.CheckBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.checkBox1ComputeMetricsSaveImages = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).BeginInit();
@@ -747,24 +723,6 @@
             this.buttonRemoveFogUsingPhysicsBasedMethod.Visible = false;
             this.buttonRemoveFogUsingPhysicsBasedMethod.Click += new System.EventHandler(this.buttonRemoveFogUsingPhysicsBasedMethod_Click);
             // 
-            // textBoxFvmMetric
-            // 
-            this.textBoxFvmMetric.Location = new System.Drawing.Point(903, 638);
-            this.textBoxFvmMetric.Name = "textBoxFvmMetric";
-            this.textBoxFvmMetric.Size = new System.Drawing.Size(60, 20);
-            this.textBoxFvmMetric.TabIndex = 59;
-            this.textBoxFvmMetric.Visible = false;
-            // 
-            // label13
-            // 
-            this.label13.AutoSize = true;
-            this.label13.Location = new System.Drawing.Point(850, 641);
-            this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(29, 13);
-            this.label13.TabIndex = 60;
-            this.label13.Text = "FVM";
-            this.label13.Visible = false;
-            // 
             // buttonRemoveFogUsingCustomMethodWithDepthEstimation
             // 
             this.buttonRemoveFogUsingCustomMethodWithDepthEstimation.BackColor = System.Drawing.SystemColors.Control;
@@ -797,186 +755,6 @@
             this.buttonRunAllMethods.UseVisualStyleBackColor = true;
             this.buttonRunAllMethods.Click += new System.EventHandler(this.buttonRunAllMethods_Click);
             // 
-            // label14
-            // 
-            this.label14.AutoSize = true;
-            this.label14.Location = new System.Drawing.Point(850, 665);
-            this.label14.Name = "label14";
-            this.label14.Size = new System.Drawing.Size(30, 13);
-            this.label14.TabIndex = 65;
-            this.label14.Text = "MSE";
-            this.label14.Visible = false;
-            // 
-            // textBoxMseMetric
-            // 
-            this.textBoxMseMetric.Location = new System.Drawing.Point(903, 662);
-            this.textBoxMseMetric.Name = "textBoxMseMetric";
-            this.textBoxMseMetric.Size = new System.Drawing.Size(60, 20);
-            this.textBoxMseMetric.TabIndex = 64;
-            this.textBoxMseMetric.Visible = false;
-            // 
-            // label15
-            // 
-            this.label15.AutoSize = true;
-            this.label15.Location = new System.Drawing.Point(850, 689);
-            this.label15.Name = "label15";
-            this.label15.Size = new System.Drawing.Size(29, 13);
-            this.label15.TabIndex = 67;
-            this.label15.Text = "NAE";
-            this.label15.Visible = false;
-            // 
-            // textBoxNaeMetric
-            // 
-            this.textBoxNaeMetric.Location = new System.Drawing.Point(903, 686);
-            this.textBoxNaeMetric.Name = "textBoxNaeMetric";
-            this.textBoxNaeMetric.Size = new System.Drawing.Size(60, 20);
-            this.textBoxNaeMetric.TabIndex = 66;
-            this.textBoxNaeMetric.Visible = false;
-            // 
-            // label16
-            // 
-            this.label16.AutoSize = true;
-            this.label16.Location = new System.Drawing.Point(985, 637);
-            this.label16.Name = "label16";
-            this.label16.Size = new System.Drawing.Size(21, 13);
-            this.label16.TabIndex = 69;
-            this.label16.Text = "SC";
-            this.label16.Visible = false;
-            // 
-            // textBoxScMetric
-            // 
-            this.textBoxScMetric.Location = new System.Drawing.Point(1037, 633);
-            this.textBoxScMetric.Name = "textBoxScMetric";
-            this.textBoxScMetric.Size = new System.Drawing.Size(60, 20);
-            this.textBoxScMetric.TabIndex = 68;
-            this.textBoxScMetric.Visible = false;
-            // 
-            // label17
-            // 
-            this.label17.AutoSize = true;
-            this.label17.Location = new System.Drawing.Point(985, 663);
-            this.label17.Name = "label17";
-            this.label17.Size = new System.Drawing.Size(37, 13);
-            this.label17.TabIndex = 71;
-            this.label17.Text = "PSNR";
-            this.label17.Visible = false;
-            // 
-            // textBoxPsnrMEtric
-            // 
-            this.textBoxPsnrMEtric.Location = new System.Drawing.Point(1037, 660);
-            this.textBoxPsnrMEtric.Name = "textBoxPsnrMEtric";
-            this.textBoxPsnrMEtric.Size = new System.Drawing.Size(60, 20);
-            this.textBoxPsnrMEtric.TabIndex = 70;
-            this.textBoxPsnrMEtric.Visible = false;
-            // 
-            // label18
-            // 
-            this.label18.AutoSize = true;
-            this.label18.Location = new System.Drawing.Point(985, 689);
-            this.label18.Name = "label18";
-            this.label18.Size = new System.Drawing.Size(22, 13);
-            this.label18.TabIndex = 73;
-            this.label18.Text = "AD";
-            this.label18.Visible = false;
-            // 
-            // textBoxAdMetric
-            // 
-            this.textBoxAdMetric.Location = new System.Drawing.Point(1037, 686);
-            this.textBoxAdMetric.Name = "textBoxAdMetric";
-            this.textBoxAdMetric.Size = new System.Drawing.Size(60, 20);
-            this.textBoxAdMetric.TabIndex = 72;
-            this.textBoxAdMetric.Visible = false;
-            // 
-            // label19
-            // 
-            this.label19.AutoSize = true;
-            this.label19.Location = new System.Drawing.Point(984, 714);
-            this.label19.Name = "label19";
-            this.label19.Size = new System.Drawing.Size(47, 13);
-            this.label19.TabIndex = 75;
-            this.label19.Text = "RMSDiff";
-            this.label19.Visible = false;
-            // 
-            // textBoxRMSMetricDiff
-            // 
-            this.textBoxRMSMetricDiff.Location = new System.Drawing.Point(1037, 711);
-            this.textBoxRMSMetricDiff.Name = "textBoxRMSMetricDiff";
-            this.textBoxRMSMetricDiff.Size = new System.Drawing.Size(60, 20);
-            this.textBoxRMSMetricDiff.TabIndex = 74;
-            this.textBoxRMSMetricDiff.Visible = false;
-            // 
-            // label20
-            // 
-            this.label20.AutoSize = true;
-            this.label20.Location = new System.Drawing.Point(984, 740);
-            this.label20.Name = "label20";
-            this.label20.Size = new System.Drawing.Size(50, 39);
-            this.label20.TabIndex = 77;
-            this.label20.Text = "Shannon\r\nEntropy\r\nDiff";
-            this.label20.Visible = false;
-            // 
-            // textBoxShannonEntropyDiff
-            // 
-            this.textBoxShannonEntropyDiff.Location = new System.Drawing.Point(1037, 737);
-            this.textBoxShannonEntropyDiff.Name = "textBoxShannonEntropyDiff";
-            this.textBoxShannonEntropyDiff.Size = new System.Drawing.Size(60, 20);
-            this.textBoxShannonEntropyDiff.TabIndex = 76;
-            this.textBoxShannonEntropyDiff.Visible = false;
-            // 
-            // label21
-            // 
-            this.label21.AutoSize = true;
-            this.label21.Location = new System.Drawing.Point(850, 717);
-            this.label21.Name = "label21";
-            this.label21.Size = new System.Drawing.Size(31, 13);
-            this.label21.TabIndex = 79;
-            this.label21.Text = "RMS";
-            this.label21.Visible = false;
-            // 
-            // textBoxRMSMetric
-            // 
-            this.textBoxRMSMetric.Location = new System.Drawing.Point(903, 714);
-            this.textBoxRMSMetric.Name = "textBoxRMSMetric";
-            this.textBoxRMSMetric.Size = new System.Drawing.Size(60, 20);
-            this.textBoxRMSMetric.TabIndex = 78;
-            this.textBoxRMSMetric.Visible = false;
-            // 
-            // label22
-            // 
-            this.label22.AutoSize = true;
-            this.label22.Location = new System.Drawing.Point(850, 743);
-            this.label22.Name = "label22";
-            this.label22.Size = new System.Drawing.Size(50, 26);
-            this.label22.TabIndex = 81;
-            this.label22.Text = "Shannon\r\nEntropy\r";
-            this.label22.Visible = false;
-            // 
-            // textBoxShannonEntropy
-            // 
-            this.textBoxShannonEntropy.Location = new System.Drawing.Point(903, 740);
-            this.textBoxShannonEntropy.Name = "textBoxShannonEntropy";
-            this.textBoxShannonEntropy.Size = new System.Drawing.Size(60, 20);
-            this.textBoxShannonEntropy.TabIndex = 80;
-            this.textBoxShannonEntropy.Visible = false;
-            // 
-            // label23
-            // 
-            this.label23.AutoSize = true;
-            this.label23.Location = new System.Drawing.Point(849, 615);
-            this.label23.Name = "label23";
-            this.label23.Size = new System.Drawing.Size(30, 13);
-            this.label23.TabIndex = 83;
-            this.label23.Text = "Time";
-            this.label23.Visible = false;
-            // 
-            // textBoxMEthodExecTime
-            // 
-            this.textBoxMEthodExecTime.Location = new System.Drawing.Point(903, 612);
-            this.textBoxMEthodExecTime.Name = "textBoxMEthodExecTime";
-            this.textBoxMEthodExecTime.Size = new System.Drawing.Size(60, 20);
-            this.textBoxMEthodExecTime.TabIndex = 82;
-            this.textBoxMEthodExecTime.Visible = false;
-            // 
             // label24
             // 
             this.label24.AutoSize = true;
@@ -986,17 +764,6 @@
             this.label24.Size = new System.Drawing.Size(42, 15);
             this.label24.TabIndex = 84;
             this.label24.Text = "Other";
-            // 
-            // label25
-            // 
-            this.label25.AutoSize = true;
-            this.label25.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.label25.Location = new System.Drawing.Point(849, 594);
-            this.label25.Name = "label25";
-            this.label25.Size = new System.Drawing.Size(54, 15);
-            this.label25.TabIndex = 85;
-            this.label25.Text = "Metrics";
-            this.label25.Visible = false;
             // 
             // checkBoxUpdateStats
             // 
@@ -1045,24 +812,6 @@
             this.checkBoxRunAllMethodsSaveAllImages.TabIndex = 89;
             this.checkBoxRunAllMethodsSaveAllImages.Text = "Save all images?";
             this.checkBoxRunAllMethodsSaveAllImages.UseVisualStyleBackColor = true;
-            // 
-            // label26
-            // 
-            this.label26.AutoSize = true;
-            this.label26.Location = new System.Drawing.Point(985, 612);
-            this.label26.Name = "label26";
-            this.label26.Size = new System.Drawing.Size(33, 13);
-            this.label26.TabIndex = 91;
-            this.label26.Text = "SSIM";
-            this.label26.Visible = false;
-            // 
-            // textBoxSSIMMetric
-            // 
-            this.textBoxSSIMMetric.Location = new System.Drawing.Point(1037, 608);
-            this.textBoxSSIMMetric.Name = "textBoxSSIMMetric";
-            this.textBoxSSIMMetric.Size = new System.Drawing.Size(60, 20);
-            this.textBoxSSIMMetric.TabIndex = 90;
-            this.textBoxSSIMMetric.Visible = false;
             // 
             // label27
             // 
@@ -1268,6 +1017,7 @@
             // 
             // groupBoxComputeMetrics
             // 
+            this.groupBoxComputeMetrics.Controls.Add(this.checkBox1ComputeMetricsSaveImages);
             this.groupBoxComputeMetrics.Controls.Add(this.checkBoxTestDustMethods);
             this.groupBoxComputeMetrics.Controls.Add(this.checkBoxCloudyFog);
             this.groupBoxComputeMetrics.Controls.Add(this.checkBoxCloudyHeterogeneousFog);
@@ -1276,7 +1026,7 @@
             this.groupBoxComputeMetrics.Controls.Add(this.buttonComputeMetrics);
             this.groupBoxComputeMetrics.Location = new System.Drawing.Point(8, 532);
             this.groupBoxComputeMetrics.Name = "groupBoxComputeMetrics";
-            this.groupBoxComputeMetrics.Size = new System.Drawing.Size(241, 118);
+            this.groupBoxComputeMetrics.Size = new System.Drawing.Size(241, 136);
             this.groupBoxComputeMetrics.TabIndex = 114;
             this.groupBoxComputeMetrics.TabStop = false;
             this.groupBoxComputeMetrics.Text = "Compute metrics";
@@ -1316,8 +1066,6 @@
             // checkBoxCloudyFog
             // 
             this.checkBoxCloudyFog.AutoSize = true;
-            this.checkBoxCloudyFog.Checked = true;
-            this.checkBoxCloudyFog.CheckState = System.Windows.Forms.CheckState.Checked;
             this.checkBoxCloudyFog.Location = new System.Drawing.Point(6, 53);
             this.checkBoxCloudyFog.Name = "checkBoxCloudyFog";
             this.checkBoxCloudyFog.Size = new System.Drawing.Size(76, 17);
@@ -1353,12 +1101,22 @@
             this.groupBox2.Controls.Add(this.checkBoxRunAllMethodsDust);
             this.groupBox2.Controls.Add(this.checkBoxRunAllMethodsSaveAllImages);
             this.groupBox2.Controls.Add(this.buttonRunAllMethods);
-            this.groupBox2.Location = new System.Drawing.Point(8, 656);
+            this.groupBox2.Location = new System.Drawing.Point(8, 674);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(241, 113);
             this.groupBox2.TabIndex = 116;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Run all methods";
+            // 
+            // checkBox1ComputeMetricsSaveImages
+            // 
+            this.checkBox1ComputeMetricsSaveImages.AutoSize = true;
+            this.checkBox1ComputeMetricsSaveImages.Location = new System.Drawing.Point(6, 113);
+            this.checkBox1ComputeMetricsSaveImages.Name = "checkBox1ComputeMetricsSaveImages";
+            this.checkBox1ComputeMetricsSaveImages.Size = new System.Drawing.Size(93, 17);
+            this.checkBox1ComputeMetricsSaveImages.TabIndex = 120;
+            this.checkBox1ComputeMetricsSaveImages.Text = "Save images?";
+            this.checkBox1ComputeMetricsSaveImages.UseVisualStyleBackColor = true;
             // 
             // Form1
             // 
@@ -1388,34 +1146,9 @@
             this.Controls.Add(this.label28);
             this.Controls.Add(this.textBox_RatioConstancyMethod_Imax);
             this.Controls.Add(this.textBox_RatioConstancyMethod_Imin);
-            this.Controls.Add(this.label26);
-            this.Controls.Add(this.textBoxSSIMMetric);
-            this.Controls.Add(this.label25);
             this.Controls.Add(this.label24);
-            this.Controls.Add(this.label23);
-            this.Controls.Add(this.textBoxMEthodExecTime);
-            this.Controls.Add(this.label22);
-            this.Controls.Add(this.textBoxShannonEntropy);
-            this.Controls.Add(this.label21);
-            this.Controls.Add(this.textBoxRMSMetric);
-            this.Controls.Add(this.label20);
-            this.Controls.Add(this.textBoxShannonEntropyDiff);
-            this.Controls.Add(this.label19);
-            this.Controls.Add(this.textBoxRMSMetricDiff);
-            this.Controls.Add(this.label18);
-            this.Controls.Add(this.textBoxAdMetric);
-            this.Controls.Add(this.label17);
-            this.Controls.Add(this.textBoxPsnrMEtric);
-            this.Controls.Add(this.label16);
-            this.Controls.Add(this.textBoxScMetric);
-            this.Controls.Add(this.label15);
-            this.Controls.Add(this.textBoxNaeMetric);
-            this.Controls.Add(this.label14);
-            this.Controls.Add(this.textBoxMseMetric);
             this.Controls.Add(this.buttonRemoveFogUsingMultiCoreDSPMethod);
             this.Controls.Add(this.buttonRemoveFogUsingCustomMethodWithDepthEstimation);
-            this.Controls.Add(this.label13);
-            this.Controls.Add(this.textBoxFvmMetric);
             this.Controls.Add(this.buttonRemoveFogUsingPhysicsBasedMethod);
             this.Controls.Add(this.buttonRemoveFogUsingLocalExtremaMethod);
             this.Controls.Add(this.buttonRemoveFogUsingCustomMethod);
@@ -1543,41 +1276,16 @@
         private System.Windows.Forms.Button buttonRemoveFogUsingCustomMethod;
         private System.Windows.Forms.Button buttonRemoveFogUsingLocalExtremaMethod;
         private System.Windows.Forms.Button buttonRemoveFogUsingPhysicsBasedMethod;
-        private System.Windows.Forms.TextBox textBoxFvmMetric;
-        private System.Windows.Forms.Label label13;
         private System.Windows.Forms.Button buttonRemoveFogUsingCustomMethodWithDepthEstimation;
         private System.Windows.Forms.Button buttonRemoveFogUsingMultiCoreDSPMethod;
         private System.Windows.Forms.ToolStripMenuItem exportMetricsToCSVToolStripMenuItem;
         private System.Windows.Forms.Button buttonRunAllMethods;
-        private System.Windows.Forms.Label label14;
-        private System.Windows.Forms.TextBox textBoxMseMetric;
-        private System.Windows.Forms.Label label15;
-        private System.Windows.Forms.TextBox textBoxNaeMetric;
-        private System.Windows.Forms.Label label16;
-        private System.Windows.Forms.TextBox textBoxScMetric;
-        private System.Windows.Forms.Label label17;
-        private System.Windows.Forms.TextBox textBoxPsnrMEtric;
-        private System.Windows.Forms.Label label18;
-        private System.Windows.Forms.TextBox textBoxAdMetric;
         private System.Windows.Forms.ToolStripMenuItem resetMethodsStatisticsToolStripMenuItem;
-        private System.Windows.Forms.Label label19;
-        private System.Windows.Forms.TextBox textBoxRMSMetricDiff;
-        private System.Windows.Forms.Label label20;
-        private System.Windows.Forms.TextBox textBoxShannonEntropyDiff;
-        private System.Windows.Forms.Label label21;
-        private System.Windows.Forms.TextBox textBoxRMSMetric;
-        private System.Windows.Forms.Label label22;
-        private System.Windows.Forms.TextBox textBoxShannonEntropy;
-        private System.Windows.Forms.Label label23;
-        private System.Windows.Forms.TextBox textBoxMEthodExecTime;
       private System.Windows.Forms.Label label24;
-      private System.Windows.Forms.Label label25;
         private System.Windows.Forms.CheckBox checkBoxUpdateStats;
         private System.Windows.Forms.CheckBox checkBoxRunAllMethodsFog;
         private System.Windows.Forms.CheckBox checkBoxRunAllMethodsDust;
         private System.Windows.Forms.CheckBox checkBoxRunAllMethodsSaveAllImages;
-        private System.Windows.Forms.Label label26;
-        private System.Windows.Forms.TextBox textBoxSSIMMetric;
         private System.Windows.Forms.Label label27;
         private System.Windows.Forms.Label label28;
         private System.Windows.Forms.TextBox textBox_RatioConstancyMethod_Imax;
@@ -1611,6 +1319,7 @@
         private System.Windows.Forms.CheckBox checkBoxTestDustMethods;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.GroupBox groupBox2;
+        private System.Windows.Forms.CheckBox checkBox1ComputeMetricsSaveImages;
     }
 }
 

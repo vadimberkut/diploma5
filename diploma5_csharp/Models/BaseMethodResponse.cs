@@ -18,8 +18,8 @@ namespace diploma5_csharp.Models
         /// </summary>
         public List<IInputArray> DetailedResults { get; set; }
 
-        public MetricsResult  Metrics { get; set; }
-        public MetricsResult  MetricsGT { get; set; }
+        //public MetricsResult  Metrics { get; set; }
+        //public MetricsResult  MetricsGT { get; set; }
         public double ExecutionTimeMs { get; set; }
     }
 
@@ -32,9 +32,9 @@ namespace diploma5_csharp.Models
         public double AD { get; set; }
         public double FVM { get; set; }
         public double RMS { get; set; }
-        public double RMSDiff { get; set; }
+        // public double RMSDiff { get; set; }
         public double ShannonEntropy { get; set; }
-        public double ShannonEntropyDiff { get; set; }
+        // public double ShannonEntropyDiff { get; set; }
         public double SSIM { get; set; }
     }
 }
