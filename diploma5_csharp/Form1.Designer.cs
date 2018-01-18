@@ -726,6 +726,7 @@
             // buttonRemoveFogUsingCustomMethodWithDepthEstimation
             // 
             this.buttonRemoveFogUsingCustomMethodWithDepthEstimation.BackColor = System.Drawing.SystemColors.Control;
+            this.buttonRemoveFogUsingCustomMethodWithDepthEstimation.Enabled = false;
             this.buttonRemoveFogUsingCustomMethodWithDepthEstimation.Location = new System.Drawing.Point(712, 697);
             this.buttonRemoveFogUsingCustomMethodWithDepthEstimation.Name = "buttonRemoveFogUsingCustomMethodWithDepthEstimation";
             this.buttonRemoveFogUsingCustomMethodWithDepthEstimation.Size = new System.Drawing.Size(108, 32);

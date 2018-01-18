@@ -833,22 +833,35 @@ namespace diploma5_csharp
         private void buttonRemoveFogUsingCustomMethodWithDepthEstimation_Click(object sender, EventArgs e)
         {
             if (!this.CheckFogRemovalPrerequirements()) return;
+
+            //var confirmResult = MessageBox.Show("You need to setup secial environment in order to run this method. Are you sure to start it?",
+            //                                     "Confirm action",
+            //                                     MessageBoxButtons.YesNo);
+            //if (confirmResult == DialogResult.No) return;
+
             StartImageProcessing();
 
-            var result = _appState.Fog.RemoveFogUsingCustomMethodWithDepthEstimation(_appState.InputImageBgr, new FogRemovalParams() { ShowWindows = GetCheckBoxValue(checkBoxShowOptionalWindows), InputImageFileName = _appState.InputImageFileName });
-            _appState.SetOutputImage(result.EnhancementResult);
-            _appState.SetShadowMaskImage(result.DetectionResult);
-            this.DisplayImageInPictureBox(pictureBox3, result.EnhancementResult.Bitmap);
-            this.DisplayImageInPictureBox(pictureBox2, result.DetectionResult.Bitmap);
-
-            // save metrics
-            _methodInfoStore.AddOrUpdate(new EnhanceMethodInfoModel
+            try
             {
-                ImageFileName = _appState.InputImageFileName,
-                EnhanceMethodName = nameof(Fog.RemoveFogUsingCustomMethodWithDepthEstimation),
-                Metrics = null,
-                ExecutionTimeMs = result.ExecutionTimeMs
-            });
+                var result = _appState.Fog.RemoveFogUsingCustomMethodWithDepthEstimation(_appState.InputImageBgr, new FogRemovalParams() { ShowWindows = GetCheckBoxValue(checkBoxShowOptionalWindows), InputImageFileName = _appState.InputImageFileName });
+                _appState.SetOutputImage(result.EnhancementResult);
+                _appState.SetShadowMaskImage(result.DetectionResult);
+                this.DisplayImageInPictureBox(pictureBox3, result.EnhancementResult.Bitmap);
+                this.DisplayImageInPictureBox(pictureBox2, result.DetectionResult.Bitmap);
+
+                // save metrics
+                _methodInfoStore.AddOrUpdate(new EnhanceMethodInfoModel
+                {
+                    ImageFileName = _appState.InputImageFileName,
+                    EnhanceMethodName = nameof(Fog.RemoveFogUsingCustomMethodWithDepthEstimation),
+                    Metrics = null,
+                    ExecutionTimeMs = result.ExecutionTimeMs
+                });
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show($"Error occured!\n\n{ex.Message}", "Error");
+            }
             
             EndImageProcessing();
         }
