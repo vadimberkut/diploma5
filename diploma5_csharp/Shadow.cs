@@ -18,15 +18,6 @@ namespace diploma5_csharp
 {
     public class Shadow
     {
-        //public ShadowDetectionLabParams ShadowDetectionLabParams;
-
-        public Shadow()
-        {
-            
-        }
-
-
-
         #region Shadow Detection
 
         public Image<Gray, Byte> DetectUsingLabMethod(Image<Lab, Byte> image, ShadowDetectionLabParams _params)

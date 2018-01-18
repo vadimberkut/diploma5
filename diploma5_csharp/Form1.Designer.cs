@@ -84,7 +84,6 @@
             this.buttonRemoveFogUsingMedianChannelPrior = new System.Windows.Forms.Button();
             this.buttonRemoveFogUsingIdcpWithClahe = new System.Windows.Forms.Button();
             this.buttonApplyAGC = new System.Windows.Forms.Button();
-            this.buttonTestFilters = new System.Windows.Forms.Button();
             this.buttonEnhaceVisibilityUsingRobbyTanMethodForRoads = new System.Windows.Forms.Button();
             this.buttonRemoveFogUsingDCPAndDFT = new System.Windows.Forms.Button();
             this.buttonRemoveFogUsingCustomMethod = new System.Windows.Forms.Button();
@@ -147,10 +146,21 @@
             this.textBoxShadowEdgeMedian_KernelRadius = new System.Windows.Forms.TextBox();
             this.textBoxShadowEdgeMedian_DilationKernelSIze = new System.Windows.Forms.TextBox();
             this.checkBoxMinifyLargeImages = new System.Windows.Forms.CheckBox();
+            this.groupBoxComputeMetrics = new System.Windows.Forms.GroupBox();
+            this.checkBoxUniformFog = new System.Windows.Forms.CheckBox();
+            this.checkBoxHeterogeneousFog = new System.Windows.Forms.CheckBox();
+            this.checkBoxCloudyHeterogeneousFog = new System.Windows.Forms.CheckBox();
+            this.checkBoxCloudyFog = new System.Windows.Forms.CheckBox();
+            this.checkBoxTestDustMethods = new System.Windows.Forms.CheckBox();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).BeginInit();
             this.menuStrip1.SuspendLayout();
+            this.groupBoxComputeMetrics.SuspendLayout();
+            this.groupBox1.SuspendLayout();
+            this.groupBox2.SuspendLayout();
             this.SuspendLayout();
             // 
             // pictureBox1
@@ -186,7 +196,7 @@
             // buttonShadowDetectionLab
             // 
             this.buttonShadowDetectionLab.BackColor = System.Drawing.SystemColors.Control;
-            this.buttonShadowDetectionLab.Location = new System.Drawing.Point(239, 474);
+            this.buttonShadowDetectionLab.Location = new System.Drawing.Point(263, 473);
             this.buttonShadowDetectionLab.Name = "buttonShadowDetectionLab";
             this.buttonShadowDetectionLab.Size = new System.Drawing.Size(75, 34);
             this.buttonShadowDetectionLab.TabIndex = 8;
@@ -196,7 +206,7 @@
             // 
             // textBoxShadowDetectionLabThreshold
             // 
-            this.textBoxShadowDetectionLabThreshold.Location = new System.Drawing.Point(320, 487);
+            this.textBoxShadowDetectionLabThreshold.Location = new System.Drawing.Point(344, 486);
             this.textBoxShadowDetectionLabThreshold.Name = "textBoxShadowDetectionLabThreshold";
             this.textBoxShadowDetectionLabThreshold.Size = new System.Drawing.Size(50, 20);
             this.textBoxShadowDetectionLabThreshold.TabIndex = 9;
@@ -204,7 +214,7 @@
             // buttonShadowDetectionMS
             // 
             this.buttonShadowDetectionMS.BackColor = System.Drawing.SystemColors.Control;
-            this.buttonShadowDetectionMS.Location = new System.Drawing.Point(239, 511);
+            this.buttonShadowDetectionMS.Location = new System.Drawing.Point(263, 510);
             this.buttonShadowDetectionMS.Name = "buttonShadowDetectionMS";
             this.buttonShadowDetectionMS.Size = new System.Drawing.Size(75, 34);
             this.buttonShadowDetectionMS.TabIndex = 10;
@@ -214,7 +224,7 @@
             // 
             // textBoxShadowDetectionLMSThreshold
             // 
-            this.textBoxShadowDetectionLMSThreshold.Location = new System.Drawing.Point(320, 524);
+            this.textBoxShadowDetectionLMSThreshold.Location = new System.Drawing.Point(344, 523);
             this.textBoxShadowDetectionLMSThreshold.Name = "textBoxShadowDetectionLMSThreshold";
             this.textBoxShadowDetectionLMSThreshold.Size = new System.Drawing.Size(50, 20);
             this.textBoxShadowDetectionLMSThreshold.TabIndex = 11;
@@ -222,7 +232,7 @@
             // buttonShadowRemovalAditiveMethod
             // 
             this.buttonShadowRemovalAditiveMethod.BackColor = System.Drawing.SystemColors.Control;
-            this.buttonShadowRemovalAditiveMethod.Location = new System.Drawing.Point(393, 466);
+            this.buttonShadowRemovalAditiveMethod.Location = new System.Drawing.Point(417, 465);
             this.buttonShadowRemovalAditiveMethod.Name = "buttonShadowRemovalAditiveMethod";
             this.buttonShadowRemovalAditiveMethod.Size = new System.Drawing.Size(75, 27);
             this.buttonShadowRemovalAditiveMethod.TabIndex = 15;
@@ -233,7 +243,7 @@
             // buttonShadowRemovalConstantMethod
             // 
             this.buttonShadowRemovalConstantMethod.BackColor = System.Drawing.SystemColors.Control;
-            this.buttonShadowRemovalConstantMethod.Location = new System.Drawing.Point(393, 595);
+            this.buttonShadowRemovalConstantMethod.Location = new System.Drawing.Point(417, 594);
             this.buttonShadowRemovalConstantMethod.Name = "buttonShadowRemovalConstantMethod";
             this.buttonShadowRemovalConstantMethod.Size = new System.Drawing.Size(75, 27);
             this.buttonShadowRemovalConstantMethod.TabIndex = 16;
@@ -244,7 +254,7 @@
             // buttonShadowRemovalLabMethod
             // 
             this.buttonShadowRemovalLabMethod.BackColor = System.Drawing.SystemColors.Control;
-            this.buttonShadowRemovalLabMethod.Location = new System.Drawing.Point(393, 562);
+            this.buttonShadowRemovalLabMethod.Location = new System.Drawing.Point(417, 561);
             this.buttonShadowRemovalLabMethod.Name = "buttonShadowRemovalLabMethod";
             this.buttonShadowRemovalLabMethod.Size = new System.Drawing.Size(75, 27);
             this.buttonShadowRemovalLabMethod.TabIndex = 17;
@@ -255,7 +265,7 @@
             // buttonShadowRemovalCombinedMethod
             // 
             this.buttonShadowRemovalCombinedMethod.BackColor = System.Drawing.SystemColors.Control;
-            this.buttonShadowRemovalCombinedMethod.Location = new System.Drawing.Point(393, 529);
+            this.buttonShadowRemovalCombinedMethod.Location = new System.Drawing.Point(417, 528);
             this.buttonShadowRemovalCombinedMethod.Name = "buttonShadowRemovalCombinedMethod";
             this.buttonShadowRemovalCombinedMethod.Size = new System.Drawing.Size(75, 27);
             this.buttonShadowRemovalCombinedMethod.TabIndex = 18;
@@ -266,7 +276,7 @@
             // buttonShadowRemovalBasicLightModelMethod
             // 
             this.buttonShadowRemovalBasicLightModelMethod.BackColor = System.Drawing.SystemColors.Control;
-            this.buttonShadowRemovalBasicLightModelMethod.Location = new System.Drawing.Point(393, 499);
+            this.buttonShadowRemovalBasicLightModelMethod.Location = new System.Drawing.Point(417, 498);
             this.buttonShadowRemovalBasicLightModelMethod.Name = "buttonShadowRemovalBasicLightModelMethod";
             this.buttonShadowRemovalBasicLightModelMethod.Size = new System.Drawing.Size(75, 27);
             this.buttonShadowRemovalBasicLightModelMethod.TabIndex = 19;
@@ -278,7 +288,7 @@
             // 
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.label1.Location = new System.Drawing.Point(236, 446);
+            this.label1.Location = new System.Drawing.Point(260, 445);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(121, 15);
             this.label1.TabIndex = 20;
@@ -288,7 +298,7 @@
             // 
             this.label2.AutoSize = true;
             this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.label2.Location = new System.Drawing.Point(390, 446);
+            this.label2.Location = new System.Drawing.Point(414, 445);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(113, 15);
             this.label2.TabIndex = 21;
@@ -352,9 +362,9 @@
             this.buttonRemoveFogUsingDarkChannelMethod.BackColor = System.Drawing.SystemColors.Control;
             this.buttonRemoveFogUsingDarkChannelMethod.Location = new System.Drawing.Point(712, 469);
             this.buttonRemoveFogUsingDarkChannelMethod.Name = "buttonRemoveFogUsingDarkChannelMethod";
-            this.buttonRemoveFogUsingDarkChannelMethod.Size = new System.Drawing.Size(121, 32);
+            this.buttonRemoveFogUsingDarkChannelMethod.Size = new System.Drawing.Size(108, 32);
             this.buttonRemoveFogUsingDarkChannelMethod.TabIndex = 27;
-            this.buttonRemoveFogUsingDarkChannelMethod.Text = "Dark channel";
+            this.buttonRemoveFogUsingDarkChannelMethod.Text = "DCP";
             this.buttonRemoveFogUsingDarkChannelMethod.UseVisualStyleBackColor = false;
             this.buttonRemoveFogUsingDarkChannelMethod.Click += new System.EventHandler(this.buttonRemoveFogUsingDarkChannelMethod_Click);
             // 
@@ -436,7 +446,7 @@
             // closeAllToolStripMenuItem
             // 
             this.closeAllToolStripMenuItem.Name = "closeAllToolStripMenuItem";
-            this.closeAllToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.closeAllToolStripMenuItem.Size = new System.Drawing.Size(118, 22);
             this.closeAllToolStripMenuItem.Text = "Close all";
             this.closeAllToolStripMenuItem.Click += new System.EventHandler(this.closeAllToolStripMenuItem_Click);
             // 
@@ -451,14 +461,14 @@
             // restoreToolStripMenuItem
             // 
             this.restoreToolStripMenuItem.Name = "restoreToolStripMenuItem";
-            this.restoreToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.restoreToolStripMenuItem.Size = new System.Drawing.Size(113, 22);
             this.restoreToolStripMenuItem.Text = "Restore";
             this.restoreToolStripMenuItem.Click += new System.EventHandler(this.restoreToolStripMenuItem_Click);
             // 
             // checkBoxShowOptionalWindows
             // 
             this.checkBoxShowOptionalWindows.AutoSize = true;
-            this.checkBoxShowOptionalWindows.Location = new System.Drawing.Point(8, 448);
+            this.checkBoxShowOptionalWindows.Location = new System.Drawing.Point(6, 19);
             this.checkBoxShowOptionalWindows.Name = "checkBoxShowOptionalWindows";
             this.checkBoxShowOptionalWindows.Size = new System.Drawing.Size(148, 17);
             this.checkBoxShowOptionalWindows.TabIndex = 29;
@@ -471,7 +481,7 @@
             this.buttonVisibilityEnhancementUsingTunedTriThresholdFuzzyIntensificationOperatorsMethod.Location = new System.Drawing.Point(846, 469);
             this.buttonVisibilityEnhancementUsingTunedTriThresholdFuzzyIntensificationOperatorsMethod.Name = "buttonVisibilityEnhancementUsingTunedTriThresholdFuzzyIntensificationOperatorsMet" +
     "hod";
-            this.buttonVisibilityEnhancementUsingTunedTriThresholdFuzzyIntensificationOperatorsMethod.Size = new System.Drawing.Size(117, 31);
+            this.buttonVisibilityEnhancementUsingTunedTriThresholdFuzzyIntensificationOperatorsMethod.Size = new System.Drawing.Size(88, 31);
             this.buttonVisibilityEnhancementUsingTunedTriThresholdFuzzyIntensificationOperatorsMethod.TabIndex = 31;
             this.buttonVisibilityEnhancementUsingTunedTriThresholdFuzzyIntensificationOperatorsMethod.Text = "TTFIO";
             this.buttonVisibilityEnhancementUsingTunedTriThresholdFuzzyIntensificationOperatorsMethod.UseVisualStyleBackColor = false;
@@ -489,7 +499,7 @@
             // 
             // buttonShadowRemovalLabMethod2
             // 
-            this.buttonShadowRemovalLabMethod2.Location = new System.Drawing.Point(162, 751);
+            this.buttonShadowRemovalLabMethod2.Location = new System.Drawing.Point(423, 702);
             this.buttonShadowRemovalLabMethod2.Name = "buttonShadowRemovalLabMethod2";
             this.buttonShadowRemovalLabMethod2.Size = new System.Drawing.Size(75, 23);
             this.buttonShadowRemovalLabMethod2.TabIndex = 32;
@@ -503,7 +513,7 @@
             this.buttonRecoveringOfWeatherDegradedImagesBasedOnRGBResponseRatioConstancyMethod.BackColor = System.Drawing.SystemColors.Control;
             this.buttonRecoveringOfWeatherDegradedImagesBasedOnRGBResponseRatioConstancyMethod.Location = new System.Drawing.Point(846, 507);
             this.buttonRecoveringOfWeatherDegradedImagesBasedOnRGBResponseRatioConstancyMethod.Name = "buttonRecoveringOfWeatherDegradedImagesBasedOnRGBResponseRatioConstancyMethod";
-            this.buttonRecoveringOfWeatherDegradedImagesBasedOnRGBResponseRatioConstancyMethod.Size = new System.Drawing.Size(117, 32);
+            this.buttonRecoveringOfWeatherDegradedImagesBasedOnRGBResponseRatioConstancyMethod.Size = new System.Drawing.Size(88, 32);
             this.buttonRecoveringOfWeatherDegradedImagesBasedOnRGBResponseRatioConstancyMethod.TabIndex = 33;
             this.buttonRecoveringOfWeatherDegradedImagesBasedOnRGBResponseRatioConstancyMethod.Text = "RGBRRC";
             this.buttonRecoveringOfWeatherDegradedImagesBasedOnRGBResponseRatioConstancyMethod.UseVisualStyleBackColor = false;
@@ -511,7 +521,7 @@
             // 
             // buttonTestEmguCVCudaMeanShift
             // 
-            this.buttonTestEmguCVCudaMeanShift.Location = new System.Drawing.Point(15, 751);
+            this.buttonTestEmguCVCudaMeanShift.Location = new System.Drawing.Point(276, 702);
             this.buttonTestEmguCVCudaMeanShift.Name = "buttonTestEmguCVCudaMeanShift";
             this.buttonTestEmguCVCudaMeanShift.Size = new System.Drawing.Size(141, 23);
             this.buttonTestEmguCVCudaMeanShift.TabIndex = 34;
@@ -522,7 +532,7 @@
             // 
             // buttonMSTest
             // 
-            this.buttonMSTest.Location = new System.Drawing.Point(15, 723);
+            this.buttonMSTest.Location = new System.Drawing.Point(276, 674);
             this.buttonMSTest.Name = "buttonMSTest";
             this.buttonMSTest.Size = new System.Drawing.Size(75, 23);
             this.buttonMSTest.TabIndex = 35;
@@ -533,7 +543,7 @@
             // 
             // textBoxTestMsKernel
             // 
-            this.textBoxTestMsKernel.Location = new System.Drawing.Point(96, 725);
+            this.textBoxTestMsKernel.Location = new System.Drawing.Point(357, 676);
             this.textBoxTestMsKernel.Name = "textBoxTestMsKernel";
             this.textBoxTestMsKernel.Size = new System.Drawing.Size(28, 20);
             this.textBoxTestMsKernel.TabIndex = 36;
@@ -541,7 +551,7 @@
             // 
             // textBoxTestMsSigma
             // 
-            this.textBoxTestMsSigma.Location = new System.Drawing.Point(130, 726);
+            this.textBoxTestMsSigma.Location = new System.Drawing.Point(391, 677);
             this.textBoxTestMsSigma.Name = "textBoxTestMsSigma";
             this.textBoxTestMsSigma.Size = new System.Drawing.Size(28, 20);
             this.textBoxTestMsSigma.TabIndex = 37;
@@ -550,7 +560,7 @@
             // buttonDetectUsingModifiedRatioOfHueOverIntensityMethod
             // 
             this.buttonDetectUsingModifiedRatioOfHueOverIntensityMethod.BackColor = System.Drawing.SystemColors.Control;
-            this.buttonDetectUsingModifiedRatioOfHueOverIntensityMethod.Location = new System.Drawing.Point(239, 548);
+            this.buttonDetectUsingModifiedRatioOfHueOverIntensityMethod.Location = new System.Drawing.Point(263, 547);
             this.buttonDetectUsingModifiedRatioOfHueOverIntensityMethod.Name = "buttonDetectUsingModifiedRatioOfHueOverIntensityMethod";
             this.buttonDetectUsingModifiedRatioOfHueOverIntensityMethod.Size = new System.Drawing.Size(75, 34);
             this.buttonDetectUsingModifiedRatioOfHueOverIntensityMethod.TabIndex = 38;
@@ -561,7 +571,7 @@
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(93, 709);
+            this.label6.Location = new System.Drawing.Point(354, 660);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(36, 13);
             this.label6.TabIndex = 39;
@@ -571,7 +581,7 @@
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(127, 710);
+            this.label7.Location = new System.Drawing.Point(388, 661);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(34, 13);
             this.label7.TabIndex = 40;
@@ -581,7 +591,7 @@
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(1000, 503);
+            this.label8.Location = new System.Drawing.Point(971, 503);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(34, 13);
             this.label8.TabIndex = 44;
@@ -590,7 +600,7 @@
             // label9
             // 
             this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(966, 503);
+            this.label9.Location = new System.Drawing.Point(937, 503);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(36, 13);
             this.label9.TabIndex = 43;
@@ -598,14 +608,14 @@
             // 
             // textBox_RatioConstancyMethod_sigma
             // 
-            this.textBox_RatioConstancyMethod_sigma.Location = new System.Drawing.Point(1003, 519);
+            this.textBox_RatioConstancyMethod_sigma.Location = new System.Drawing.Point(974, 519);
             this.textBox_RatioConstancyMethod_sigma.Name = "textBox_RatioConstancyMethod_sigma";
             this.textBox_RatioConstancyMethod_sigma.Size = new System.Drawing.Size(28, 20);
             this.textBox_RatioConstancyMethod_sigma.TabIndex = 42;
             // 
             // textBox_RatioConstancyMethod_kernel
             // 
-            this.textBox_RatioConstancyMethod_kernel.Location = new System.Drawing.Point(969, 519);
+            this.textBox_RatioConstancyMethod_kernel.Location = new System.Drawing.Point(940, 519);
             this.textBox_RatioConstancyMethod_kernel.Name = "textBox_RatioConstancyMethod_kernel";
             this.textBox_RatioConstancyMethod_kernel.Size = new System.Drawing.Size(28, 20);
             this.textBox_RatioConstancyMethod_kernel.TabIndex = 41;
@@ -613,7 +623,7 @@
             // label10
             // 
             this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(966, 466);
+            this.label10.Location = new System.Drawing.Point(937, 466);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(47, 13);
             this.label10.TabIndex = 46;
@@ -621,7 +631,7 @@
             // 
             // textBoxTriThresholdFuzzyIntensificationOperatorsMethod_Dzeta
             // 
-            this.textBoxTriThresholdFuzzyIntensificationOperatorsMethod_Dzeta.Location = new System.Drawing.Point(969, 480);
+            this.textBoxTriThresholdFuzzyIntensificationOperatorsMethod_Dzeta.Location = new System.Drawing.Point(940, 480);
             this.textBoxTriThresholdFuzzyIntensificationOperatorsMethod_Dzeta.Name = "textBoxTriThresholdFuzzyIntensificationOperatorsMethod_Dzeta";
             this.textBoxTriThresholdFuzzyIntensificationOperatorsMethod_Dzeta.Size = new System.Drawing.Size(44, 20);
             this.textBoxTriThresholdFuzzyIntensificationOperatorsMethod_Dzeta.TabIndex = 45;
@@ -629,7 +639,7 @@
             // label12
             // 
             this.label12.AutoSize = true;
-            this.label12.Location = new System.Drawing.Point(320, 510);
+            this.label12.Location = new System.Drawing.Point(344, 509);
             this.label12.Name = "label12";
             this.label12.Size = new System.Drawing.Size(50, 13);
             this.label12.TabIndex = 48;
@@ -638,7 +648,7 @@
             // buttonRobbyTanFogRemovalMethod
             // 
             this.buttonRobbyTanFogRemovalMethod.BackColor = System.Drawing.SystemColors.Control;
-            this.buttonRobbyTanFogRemovalMethod.Location = new System.Drawing.Point(250, 739);
+            this.buttonRobbyTanFogRemovalMethod.Location = new System.Drawing.Point(273, 734);
             this.buttonRobbyTanFogRemovalMethod.Name = "buttonRobbyTanFogRemovalMethod";
             this.buttonRobbyTanFogRemovalMethod.Size = new System.Drawing.Size(121, 32);
             this.buttonRobbyTanFogRemovalMethod.TabIndex = 49;
@@ -652,9 +662,9 @@
             this.buttonRemoveFogUsingMedianChannelPrior.BackColor = System.Drawing.SystemColors.Control;
             this.buttonRemoveFogUsingMedianChannelPrior.Location = new System.Drawing.Point(712, 507);
             this.buttonRemoveFogUsingMedianChannelPrior.Name = "buttonRemoveFogUsingMedianChannelPrior";
-            this.buttonRemoveFogUsingMedianChannelPrior.Size = new System.Drawing.Size(121, 32);
+            this.buttonRemoveFogUsingMedianChannelPrior.Size = new System.Drawing.Size(108, 32);
             this.buttonRemoveFogUsingMedianChannelPrior.TabIndex = 50;
-            this.buttonRemoveFogUsingMedianChannelPrior.Text = "MedianChannelPrior";
+            this.buttonRemoveFogUsingMedianChannelPrior.Text = "MCP";
             this.buttonRemoveFogUsingMedianChannelPrior.UseVisualStyleBackColor = false;
             this.buttonRemoveFogUsingMedianChannelPrior.Click += new System.EventHandler(this.buttonRemoveFogUsingMedianChannelPrior_Click);
             // 
@@ -663,7 +673,7 @@
             this.buttonRemoveFogUsingIdcpWithClahe.BackColor = System.Drawing.SystemColors.Control;
             this.buttonRemoveFogUsingIdcpWithClahe.Location = new System.Drawing.Point(712, 545);
             this.buttonRemoveFogUsingIdcpWithClahe.Name = "buttonRemoveFogUsingIdcpWithClahe";
-            this.buttonRemoveFogUsingIdcpWithClahe.Size = new System.Drawing.Size(121, 32);
+            this.buttonRemoveFogUsingIdcpWithClahe.Size = new System.Drawing.Size(108, 32);
             this.buttonRemoveFogUsingIdcpWithClahe.TabIndex = 51;
             this.buttonRemoveFogUsingIdcpWithClahe.Text = "IDCP with CLAHE";
             this.buttonRemoveFogUsingIdcpWithClahe.UseVisualStyleBackColor = false;
@@ -680,23 +690,12 @@
             this.buttonApplyAGC.UseVisualStyleBackColor = false;
             this.buttonApplyAGC.Click += new System.EventHandler(this.buttonApplyAGC_Click);
             // 
-            // buttonTestFilters
-            // 
-            this.buttonTestFilters.Location = new System.Drawing.Point(15, 694);
-            this.buttonTestFilters.Name = "buttonTestFilters";
-            this.buttonTestFilters.Size = new System.Drawing.Size(75, 23);
-            this.buttonTestFilters.TabIndex = 53;
-            this.buttonTestFilters.Text = "Test filters";
-            this.buttonTestFilters.UseVisualStyleBackColor = true;
-            this.buttonTestFilters.Visible = false;
-            this.buttonTestFilters.Click += new System.EventHandler(this.buttonTestFilters_Click);
-            // 
             // buttonEnhaceVisibilityUsingRobbyTanMethodForRoads
             // 
             this.buttonEnhaceVisibilityUsingRobbyTanMethodForRoads.BackColor = System.Drawing.SystemColors.Control;
             this.buttonEnhaceVisibilityUsingRobbyTanMethodForRoads.Location = new System.Drawing.Point(846, 545);
             this.buttonEnhaceVisibilityUsingRobbyTanMethodForRoads.Name = "buttonEnhaceVisibilityUsingRobbyTanMethodForRoads";
-            this.buttonEnhaceVisibilityUsingRobbyTanMethodForRoads.Size = new System.Drawing.Size(117, 32);
+            this.buttonEnhaceVisibilityUsingRobbyTanMethodForRoads.Size = new System.Drawing.Size(88, 32);
             this.buttonEnhaceVisibilityUsingRobbyTanMethodForRoads.TabIndex = 54;
             this.buttonEnhaceVisibilityUsingRobbyTanMethodForRoads.Text = "RTFR";
             this.buttonEnhaceVisibilityUsingRobbyTanMethodForRoads.UseVisualStyleBackColor = false;
@@ -707,7 +706,7 @@
             this.buttonRemoveFogUsingDCPAndDFT.BackColor = System.Drawing.SystemColors.Control;
             this.buttonRemoveFogUsingDCPAndDFT.Location = new System.Drawing.Point(712, 583);
             this.buttonRemoveFogUsingDCPAndDFT.Name = "buttonRemoveFogUsingDCPAndDFT";
-            this.buttonRemoveFogUsingDCPAndDFT.Size = new System.Drawing.Size(121, 32);
+            this.buttonRemoveFogUsingDCPAndDFT.Size = new System.Drawing.Size(108, 32);
             this.buttonRemoveFogUsingDCPAndDFT.TabIndex = 55;
             this.buttonRemoveFogUsingDCPAndDFT.Text = "DCP with DFT";
             this.buttonRemoveFogUsingDCPAndDFT.UseVisualStyleBackColor = false;
@@ -718,16 +717,16 @@
             this.buttonRemoveFogUsingCustomMethod.BackColor = System.Drawing.SystemColors.Control;
             this.buttonRemoveFogUsingCustomMethod.Location = new System.Drawing.Point(712, 659);
             this.buttonRemoveFogUsingCustomMethod.Name = "buttonRemoveFogUsingCustomMethod";
-            this.buttonRemoveFogUsingCustomMethod.Size = new System.Drawing.Size(121, 32);
+            this.buttonRemoveFogUsingCustomMethod.Size = new System.Drawing.Size(108, 32);
             this.buttonRemoveFogUsingCustomMethod.TabIndex = 56;
-            this.buttonRemoveFogUsingCustomMethod.Text = "Custom";
+            this.buttonRemoveFogUsingCustomMethod.Text = "CUS";
             this.buttonRemoveFogUsingCustomMethod.UseVisualStyleBackColor = false;
             this.buttonRemoveFogUsingCustomMethod.Click += new System.EventHandler(this.buttonRemoveFogUsingCustomMethod_Click);
             // 
             // buttonRemoveFogUsingLocalExtremaMethod
             // 
             this.buttonRemoveFogUsingLocalExtremaMethod.BackColor = System.Drawing.SystemColors.Control;
-            this.buttonRemoveFogUsingLocalExtremaMethod.Location = new System.Drawing.Point(504, 739);
+            this.buttonRemoveFogUsingLocalExtremaMethod.Location = new System.Drawing.Point(527, 734);
             this.buttonRemoveFogUsingLocalExtremaMethod.Name = "buttonRemoveFogUsingLocalExtremaMethod";
             this.buttonRemoveFogUsingLocalExtremaMethod.Size = new System.Drawing.Size(121, 32);
             this.buttonRemoveFogUsingLocalExtremaMethod.TabIndex = 57;
@@ -739,7 +738,7 @@
             // buttonRemoveFogUsingPhysicsBasedMethod
             // 
             this.buttonRemoveFogUsingPhysicsBasedMethod.BackColor = System.Drawing.SystemColors.Control;
-            this.buttonRemoveFogUsingPhysicsBasedMethod.Location = new System.Drawing.Point(377, 739);
+            this.buttonRemoveFogUsingPhysicsBasedMethod.Location = new System.Drawing.Point(400, 734);
             this.buttonRemoveFogUsingPhysicsBasedMethod.Name = "buttonRemoveFogUsingPhysicsBasedMethod";
             this.buttonRemoveFogUsingPhysicsBasedMethod.Size = new System.Drawing.Size(121, 32);
             this.buttonRemoveFogUsingPhysicsBasedMethod.TabIndex = 58;
@@ -771,9 +770,9 @@
             this.buttonRemoveFogUsingCustomMethodWithDepthEstimation.BackColor = System.Drawing.SystemColors.Control;
             this.buttonRemoveFogUsingCustomMethodWithDepthEstimation.Location = new System.Drawing.Point(712, 697);
             this.buttonRemoveFogUsingCustomMethodWithDepthEstimation.Name = "buttonRemoveFogUsingCustomMethodWithDepthEstimation";
-            this.buttonRemoveFogUsingCustomMethodWithDepthEstimation.Size = new System.Drawing.Size(121, 32);
+            this.buttonRemoveFogUsingCustomMethodWithDepthEstimation.Size = new System.Drawing.Size(108, 32);
             this.buttonRemoveFogUsingCustomMethodWithDepthEstimation.TabIndex = 61;
-            this.buttonRemoveFogUsingCustomMethodWithDepthEstimation.Text = "Custom With Depth Est";
+            this.buttonRemoveFogUsingCustomMethodWithDepthEstimation.Text = "CUSD";
             this.buttonRemoveFogUsingCustomMethodWithDepthEstimation.UseVisualStyleBackColor = false;
             this.buttonRemoveFogUsingCustomMethodWithDepthEstimation.Click += new System.EventHandler(this.buttonRemoveFogUsingCustomMethodWithDepthEstimation_Click);
             // 
@@ -782,19 +781,19 @@
             this.buttonRemoveFogUsingMultiCoreDSPMethod.BackColor = System.Drawing.SystemColors.Control;
             this.buttonRemoveFogUsingMultiCoreDSPMethod.Location = new System.Drawing.Point(712, 621);
             this.buttonRemoveFogUsingMultiCoreDSPMethod.Name = "buttonRemoveFogUsingMultiCoreDSPMethod";
-            this.buttonRemoveFogUsingMultiCoreDSPMethod.Size = new System.Drawing.Size(121, 32);
+            this.buttonRemoveFogUsingMultiCoreDSPMethod.Size = new System.Drawing.Size(108, 32);
             this.buttonRemoveFogUsingMultiCoreDSPMethod.TabIndex = 62;
-            this.buttonRemoveFogUsingMultiCoreDSPMethod.Text = "Multi-core DSP";
+            this.buttonRemoveFogUsingMultiCoreDSPMethod.Text = "DSP";
             this.buttonRemoveFogUsingMultiCoreDSPMethod.UseVisualStyleBackColor = false;
             this.buttonRemoveFogUsingMultiCoreDSPMethod.Click += new System.EventHandler(this.buttonRemoveFogUsingMultiCoreDSPMethod_Click);
             // 
             // buttonRunAllMethods
             // 
-            this.buttonRunAllMethods.Location = new System.Drawing.Point(8, 497);
+            this.buttonRunAllMethods.Location = new System.Drawing.Point(162, 12);
             this.buttonRunAllMethods.Name = "buttonRunAllMethods";
-            this.buttonRunAllMethods.Size = new System.Drawing.Size(114, 27);
+            this.buttonRunAllMethods.Size = new System.Drawing.Size(73, 95);
             this.buttonRunAllMethods.TabIndex = 63;
-            this.buttonRunAllMethods.Text = "Run All Methods";
+            this.buttonRunAllMethods.Text = "Start";
             this.buttonRunAllMethods.UseVisualStyleBackColor = true;
             this.buttonRunAllMethods.Click += new System.EventHandler(this.buttonRunAllMethods_Click);
             // 
@@ -1004,7 +1003,7 @@
             this.checkBoxUpdateStats.AutoSize = true;
             this.checkBoxUpdateStats.Checked = true;
             this.checkBoxUpdateStats.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBoxUpdateStats.Location = new System.Drawing.Point(14, 528);
+            this.checkBoxUpdateStats.Location = new System.Drawing.Point(6, 18);
             this.checkBoxUpdateStats.Name = "checkBoxUpdateStats";
             this.checkBoxUpdateStats.Size = new System.Drawing.Size(92, 17);
             this.checkBoxUpdateStats.TabIndex = 86;
@@ -1016,7 +1015,7 @@
             this.checkBoxRunAllMethodsFog.AutoSize = true;
             this.checkBoxRunAllMethodsFog.Checked = true;
             this.checkBoxRunAllMethodsFog.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBoxRunAllMethodsFog.Location = new System.Drawing.Point(14, 573);
+            this.checkBoxRunAllMethodsFog.Location = new System.Drawing.Point(6, 63);
             this.checkBoxRunAllMethodsFog.Name = "checkBoxRunAllMethodsFog";
             this.checkBoxRunAllMethodsFog.Size = new System.Drawing.Size(44, 17);
             this.checkBoxRunAllMethodsFog.TabIndex = 87;
@@ -1028,7 +1027,7 @@
             this.checkBoxRunAllMethodsDust.AutoSize = true;
             this.checkBoxRunAllMethodsDust.Checked = true;
             this.checkBoxRunAllMethodsDust.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBoxRunAllMethodsDust.Location = new System.Drawing.Point(14, 594);
+            this.checkBoxRunAllMethodsDust.Location = new System.Drawing.Point(6, 84);
             this.checkBoxRunAllMethodsDust.Name = "checkBoxRunAllMethodsDust";
             this.checkBoxRunAllMethodsDust.Size = new System.Drawing.Size(48, 17);
             this.checkBoxRunAllMethodsDust.TabIndex = 88;
@@ -1040,7 +1039,7 @@
             this.checkBoxRunAllMethodsSaveAllImages.AutoSize = true;
             this.checkBoxRunAllMethodsSaveAllImages.Checked = true;
             this.checkBoxRunAllMethodsSaveAllImages.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBoxRunAllMethodsSaveAllImages.Location = new System.Drawing.Point(14, 550);
+            this.checkBoxRunAllMethodsSaveAllImages.Location = new System.Drawing.Point(6, 40);
             this.checkBoxRunAllMethodsSaveAllImages.Name = "checkBoxRunAllMethodsSaveAllImages";
             this.checkBoxRunAllMethodsSaveAllImages.Size = new System.Drawing.Size(106, 17);
             this.checkBoxRunAllMethodsSaveAllImages.TabIndex = 89;
@@ -1068,7 +1067,7 @@
             // label27
             // 
             this.label27.AutoSize = true;
-            this.label27.Location = new System.Drawing.Point(1068, 503);
+            this.label27.Location = new System.Drawing.Point(1039, 503);
             this.label27.Name = "label27";
             this.label27.Size = new System.Drawing.Size(29, 13);
             this.label27.TabIndex = 95;
@@ -1077,7 +1076,7 @@
             // label28
             // 
             this.label28.AutoSize = true;
-            this.label28.Location = new System.Drawing.Point(1034, 503);
+            this.label28.Location = new System.Drawing.Point(1005, 503);
             this.label28.Name = "label28";
             this.label28.Size = new System.Drawing.Size(26, 13);
             this.label28.TabIndex = 94;
@@ -1085,31 +1084,31 @@
             // 
             // textBox_RatioConstancyMethod_Imax
             // 
-            this.textBox_RatioConstancyMethod_Imax.Location = new System.Drawing.Point(1071, 519);
+            this.textBox_RatioConstancyMethod_Imax.Location = new System.Drawing.Point(1042, 519);
             this.textBox_RatioConstancyMethod_Imax.Name = "textBox_RatioConstancyMethod_Imax";
             this.textBox_RatioConstancyMethod_Imax.Size = new System.Drawing.Size(28, 20);
             this.textBox_RatioConstancyMethod_Imax.TabIndex = 93;
             // 
             // textBox_RatioConstancyMethod_Imin
             // 
-            this.textBox_RatioConstancyMethod_Imin.Location = new System.Drawing.Point(1037, 519);
+            this.textBox_RatioConstancyMethod_Imin.Location = new System.Drawing.Point(1008, 519);
             this.textBox_RatioConstancyMethod_Imin.Name = "textBox_RatioConstancyMethod_Imin";
             this.textBox_RatioConstancyMethod_Imin.Size = new System.Drawing.Size(28, 20);
             this.textBox_RatioConstancyMethod_Imin.TabIndex = 92;
             // 
             // buttonComputeMetrics
             // 
-            this.buttonComputeMetrics.Location = new System.Drawing.Point(8, 612);
+            this.buttonComputeMetrics.Location = new System.Drawing.Point(162, 15);
             this.buttonComputeMetrics.Name = "buttonComputeMetrics";
-            this.buttonComputeMetrics.Size = new System.Drawing.Size(114, 27);
+            this.buttonComputeMetrics.Size = new System.Drawing.Size(73, 93);
             this.buttonComputeMetrics.TabIndex = 96;
-            this.buttonComputeMetrics.Text = "Compute metrics";
+            this.buttonComputeMetrics.Text = "Start";
             this.buttonComputeMetrics.UseVisualStyleBackColor = true;
             this.buttonComputeMetrics.Click += new System.EventHandler(this.buttonComputeMetrics_Click);
             // 
             // buttonTestVideo
             // 
-            this.buttonTestVideo.Location = new System.Drawing.Point(15, 668);
+            this.buttonTestVideo.Location = new System.Drawing.Point(275, 645);
             this.buttonTestVideo.Name = "buttonTestVideo";
             this.buttonTestVideo.Size = new System.Drawing.Size(75, 23);
             this.buttonTestVideo.TabIndex = 97;
@@ -1125,7 +1124,7 @@
             // label11
             // 
             this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(320, 474);
+            this.label11.Location = new System.Drawing.Point(344, 473);
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(50, 13);
             this.label11.TabIndex = 47;
@@ -1259,7 +1258,7 @@
             this.checkBoxMinifyLargeImages.AutoSize = true;
             this.checkBoxMinifyLargeImages.Checked = true;
             this.checkBoxMinifyLargeImages.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBoxMinifyLargeImages.Location = new System.Drawing.Point(8, 471);
+            this.checkBoxMinifyLargeImages.Location = new System.Drawing.Point(6, 38);
             this.checkBoxMinifyLargeImages.Name = "checkBoxMinifyLargeImages";
             this.checkBoxMinifyLargeImages.Size = new System.Drawing.Size(121, 17);
             this.checkBoxMinifyLargeImages.TabIndex = 113;
@@ -1267,12 +1266,108 @@
             this.checkBoxMinifyLargeImages.UseVisualStyleBackColor = true;
             this.checkBoxMinifyLargeImages.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
             // 
+            // groupBoxComputeMetrics
+            // 
+            this.groupBoxComputeMetrics.Controls.Add(this.checkBoxTestDustMethods);
+            this.groupBoxComputeMetrics.Controls.Add(this.checkBoxCloudyFog);
+            this.groupBoxComputeMetrics.Controls.Add(this.checkBoxCloudyHeterogeneousFog);
+            this.groupBoxComputeMetrics.Controls.Add(this.checkBoxHeterogeneousFog);
+            this.groupBoxComputeMetrics.Controls.Add(this.checkBoxUniformFog);
+            this.groupBoxComputeMetrics.Controls.Add(this.buttonComputeMetrics);
+            this.groupBoxComputeMetrics.Location = new System.Drawing.Point(8, 532);
+            this.groupBoxComputeMetrics.Name = "groupBoxComputeMetrics";
+            this.groupBoxComputeMetrics.Size = new System.Drawing.Size(241, 118);
+            this.groupBoxComputeMetrics.TabIndex = 114;
+            this.groupBoxComputeMetrics.TabStop = false;
+            this.groupBoxComputeMetrics.Text = "Compute metrics";
+            // 
+            // checkBoxUniformFog
+            // 
+            this.checkBoxUniformFog.AutoSize = true;
+            this.checkBoxUniformFog.Checked = true;
+            this.checkBoxUniformFog.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBoxUniformFog.Location = new System.Drawing.Point(6, 15);
+            this.checkBoxUniformFog.Name = "checkBoxUniformFog";
+            this.checkBoxUniformFog.Size = new System.Drawing.Size(80, 17);
+            this.checkBoxUniformFog.TabIndex = 115;
+            this.checkBoxUniformFog.Text = "Uniform fog";
+            this.checkBoxUniformFog.UseVisualStyleBackColor = true;
+            // 
+            // checkBoxHeterogeneousFog
+            // 
+            this.checkBoxHeterogeneousFog.AutoSize = true;
+            this.checkBoxHeterogeneousFog.Location = new System.Drawing.Point(6, 35);
+            this.checkBoxHeterogeneousFog.Name = "checkBoxHeterogeneousFog";
+            this.checkBoxHeterogeneousFog.Size = new System.Drawing.Size(117, 17);
+            this.checkBoxHeterogeneousFog.TabIndex = 116;
+            this.checkBoxHeterogeneousFog.Text = "Heterogeneous fog";
+            this.checkBoxHeterogeneousFog.UseVisualStyleBackColor = true;
+            // 
+            // checkBoxCloudyHeterogeneousFog
+            // 
+            this.checkBoxCloudyHeterogeneousFog.AutoSize = true;
+            this.checkBoxCloudyHeterogeneousFog.Location = new System.Drawing.Point(6, 73);
+            this.checkBoxCloudyHeterogeneousFog.Name = "checkBoxCloudyHeterogeneousFog";
+            this.checkBoxCloudyHeterogeneousFog.Size = new System.Drawing.Size(150, 17);
+            this.checkBoxCloudyHeterogeneousFog.TabIndex = 117;
+            this.checkBoxCloudyHeterogeneousFog.Text = "Cloudy heterogeneous fog";
+            this.checkBoxCloudyHeterogeneousFog.UseVisualStyleBackColor = true;
+            // 
+            // checkBoxCloudyFog
+            // 
+            this.checkBoxCloudyFog.AutoSize = true;
+            this.checkBoxCloudyFog.Checked = true;
+            this.checkBoxCloudyFog.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBoxCloudyFog.Location = new System.Drawing.Point(6, 53);
+            this.checkBoxCloudyFog.Name = "checkBoxCloudyFog";
+            this.checkBoxCloudyFog.Size = new System.Drawing.Size(76, 17);
+            this.checkBoxCloudyFog.TabIndex = 118;
+            this.checkBoxCloudyFog.Text = "Cloudy fog";
+            this.checkBoxCloudyFog.UseVisualStyleBackColor = true;
+            // 
+            // checkBoxTestDustMethods
+            // 
+            this.checkBoxTestDustMethods.AutoSize = true;
+            this.checkBoxTestDustMethods.Location = new System.Drawing.Point(6, 91);
+            this.checkBoxTestDustMethods.Name = "checkBoxTestDustMethods";
+            this.checkBoxTestDustMethods.Size = new System.Drawing.Size(119, 17);
+            this.checkBoxTestDustMethods.TabIndex = 119;
+            this.checkBoxTestDustMethods.Text = "Test dust methods?";
+            this.checkBoxTestDustMethods.UseVisualStyleBackColor = true;
+            // 
+            // groupBox1
+            // 
+            this.groupBox1.Controls.Add(this.checkBoxShowOptionalWindows);
+            this.groupBox1.Controls.Add(this.checkBoxMinifyLargeImages);
+            this.groupBox1.Location = new System.Drawing.Point(8, 448);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(241, 77);
+            this.groupBox1.TabIndex = 115;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "Base application settings";
+            // 
+            // groupBox2
+            // 
+            this.groupBox2.Controls.Add(this.checkBoxUpdateStats);
+            this.groupBox2.Controls.Add(this.checkBoxRunAllMethodsFog);
+            this.groupBox2.Controls.Add(this.checkBoxRunAllMethodsDust);
+            this.groupBox2.Controls.Add(this.checkBoxRunAllMethodsSaveAllImages);
+            this.groupBox2.Controls.Add(this.buttonRunAllMethods);
+            this.groupBox2.Location = new System.Drawing.Point(8, 656);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Size = new System.Drawing.Size(241, 113);
+            this.groupBox2.TabIndex = 116;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Text = "Run all methods";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1235, 782);
-            this.Controls.Add(this.checkBoxMinifyLargeImages);
+            this.Controls.Add(this.groupBox2);
+            this.Controls.Add(this.groupBox1);
+            this.Controls.Add(this.groupBoxComputeMetrics);
             this.Controls.Add(this.label36);
             this.Controls.Add(this.label37);
             this.Controls.Add(this.textBoxShadowEdgeMedian_KernelRadius);
@@ -1289,17 +1384,12 @@
             this.Controls.Add(this.label30);
             this.Controls.Add(this.label29);
             this.Controls.Add(this.buttonTestVideo);
-            this.Controls.Add(this.buttonComputeMetrics);
             this.Controls.Add(this.label27);
             this.Controls.Add(this.label28);
             this.Controls.Add(this.textBox_RatioConstancyMethod_Imax);
             this.Controls.Add(this.textBox_RatioConstancyMethod_Imin);
             this.Controls.Add(this.label26);
             this.Controls.Add(this.textBoxSSIMMetric);
-            this.Controls.Add(this.checkBoxRunAllMethodsSaveAllImages);
-            this.Controls.Add(this.checkBoxRunAllMethodsDust);
-            this.Controls.Add(this.checkBoxRunAllMethodsFog);
-            this.Controls.Add(this.checkBoxUpdateStats);
             this.Controls.Add(this.label25);
             this.Controls.Add(this.label24);
             this.Controls.Add(this.label23);
@@ -1322,7 +1412,6 @@
             this.Controls.Add(this.textBoxNaeMetric);
             this.Controls.Add(this.label14);
             this.Controls.Add(this.textBoxMseMetric);
-            this.Controls.Add(this.buttonRunAllMethods);
             this.Controls.Add(this.buttonRemoveFogUsingMultiCoreDSPMethod);
             this.Controls.Add(this.buttonRemoveFogUsingCustomMethodWithDepthEstimation);
             this.Controls.Add(this.label13);
@@ -1332,7 +1421,6 @@
             this.Controls.Add(this.buttonRemoveFogUsingCustomMethod);
             this.Controls.Add(this.buttonRemoveFogUsingDCPAndDFT);
             this.Controls.Add(this.buttonEnhaceVisibilityUsingRobbyTanMethodForRoads);
-            this.Controls.Add(this.buttonTestFilters);
             this.Controls.Add(this.buttonApplyAGC);
             this.Controls.Add(this.buttonRemoveFogUsingIdcpWithClahe);
             this.Controls.Add(this.buttonRemoveFogUsingMedianChannelPrior);
@@ -1356,7 +1444,6 @@
             this.Controls.Add(this.buttonShadowRemovalLabMethod2);
             this.Controls.Add(this.buttonVisibilityEnhancementUsingTunedTriThresholdFuzzyIntensificationOperatorsMethod);
             this.Controls.Add(this.label5);
-            this.Controls.Add(this.checkBoxShowOptionalWindows);
             this.Controls.Add(this.buttonRemoveFogUsingDarkChannelMethod);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.buttonSmoothShadowEdgesUsingMedianFilter);
@@ -1387,6 +1474,12 @@
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).EndInit();
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
+            this.groupBoxComputeMetrics.ResumeLayout(false);
+            this.groupBoxComputeMetrics.PerformLayout();
+            this.groupBox1.ResumeLayout(false);
+            this.groupBox1.PerformLayout();
+            this.groupBox2.ResumeLayout(false);
+            this.groupBox2.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1445,7 +1538,6 @@
         private System.Windows.Forms.Button buttonRemoveFogUsingMedianChannelPrior;
         private System.Windows.Forms.Button buttonRemoveFogUsingIdcpWithClahe;
         private System.Windows.Forms.Button buttonApplyAGC;
-        private System.Windows.Forms.Button buttonTestFilters;
         private System.Windows.Forms.Button buttonEnhaceVisibilityUsingRobbyTanMethodForRoads;
         private System.Windows.Forms.Button buttonRemoveFogUsingDCPAndDFT;
         private System.Windows.Forms.Button buttonRemoveFogUsingCustomMethod;
@@ -1511,6 +1603,14 @@
         private System.Windows.Forms.TextBox textBoxShadowEdgeMedian_KernelRadius;
         private System.Windows.Forms.TextBox textBoxShadowEdgeMedian_DilationKernelSIze;
         private System.Windows.Forms.CheckBox checkBoxMinifyLargeImages;
+        private System.Windows.Forms.GroupBox groupBoxComputeMetrics;
+        private System.Windows.Forms.CheckBox checkBoxCloudyFog;
+        private System.Windows.Forms.CheckBox checkBoxCloudyHeterogeneousFog;
+        private System.Windows.Forms.CheckBox checkBoxHeterogeneousFog;
+        private System.Windows.Forms.CheckBox checkBoxUniformFog;
+        private System.Windows.Forms.CheckBox checkBoxTestDustMethods;
+        private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.GroupBox groupBox2;
     }
 }
 

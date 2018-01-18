@@ -1,0 +1,6 @@
+Image size: 480x640 
+Camera height with respect to road: 1.38 meter
+size of the pixel: 10.4x10.4 micrometers
+Focal lenght: 6 millimeters
+The angle between the camera axis and the road plan is -2 degrees
+

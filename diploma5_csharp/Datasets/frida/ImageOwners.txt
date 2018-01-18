@@ -1,0 +1,17 @@
+The FRIDA image database can be downloaded from
+http://www.lcpc.fr/en/produits/fog/
+and used for research purpose only after registration on the website.
+
+The authors of the FRIDA database are: 
+Jean-Philippe Tarel (LEPSiS),
+Aurelien Cord (LIVIC), 
+Houssam Halmaoui (LIVIC),
+Dominique Gruyer (LIVIC),
+Nicolas Hautiere (LEPSiS)
+
+Any query about the ownership of the FRIDA database should be addressed to 
+Jean-Philippe.Tarel@lcpc.fr
+
+Image owner is INRETS-LCPC.
+
+

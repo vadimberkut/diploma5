@@ -23,6 +23,8 @@ namespace diploma5_csharp
         private const string CSV_DELIMITER = ";"; // exel automatically formats CSV with semicolon (alternatively add "sep=;" to start of the CSV file)
         private readonly List<EnhanceMethodInfoModel> Store;
 
+        private object _lock = new object();
+
         public Dictionary<string, string> MethodNameMap = new Dictionary<string, string>()
         {
             // FOG
@@ -48,20 +50,23 @@ namespace diploma5_csharp
 
         public void AddOrUpdate(EnhanceMethodInfoModel data)
         {
-            var info = Store.FirstOrDefault(x => x.ImageFileName == data.ImageFileName && x.EnhanceMethodName == data.EnhanceMethodName);
-            if(info == null)
+            lock (_lock)
             {
-                // add
-                Store.Add(data);
-            }
-            else
-            {
-                // update
-                info.ExecutionTimeMs = data.ExecutionTimeMs;
-                info.Metrics = data.Metrics;
-            }
+                var info = Store.FirstOrDefault(x => x.ImageFileName == data.ImageFileName && x.EnhanceMethodName == data.EnhanceMethodName);
+                if (info == null)
+                {
+                    // add
+                    Store.Add(data);
+                }
+                else
+                {
+                    // update
+                    info.ExecutionTimeMs = data.ExecutionTimeMs;
+                    info.Metrics = data.Metrics;
+                }
 
-            this.SaveToFile();
+                this.SaveToFile();
+            }
         }
 
         // saves store to file
