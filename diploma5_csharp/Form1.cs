@@ -224,31 +224,6 @@ namespace diploma5_csharp
 
         #region EVENT HANDLES
 
-        private void buttonMSTest_Click(object sender, EventArgs e)
-        {
-            ////////////////////MEAN SHIFT FOR IMAGE
-            var msParams = new MeanShiftClusteringAcordParams() {
-                Kernel = Convert.ToInt32(this.textBoxTestMsKernel.Text),
-                Sigma = Convert.ToDouble(this.textBoxTestMsSigma.Text)
-            };
-            var msResult = Clustering.MeanShiftAccord(_appState.InputImageBgr, msParams);
-            EmguCvWindowManager.Display(msResult.Image, "msResult");
-        }
-
-        private void buttonTestEmguCVCudaMeanShift_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                var result = Clustering.MeanShiftEmguCVCuda(_appState.InputImageBgr);
-                _appState.SetOutputImage(result);
-                this.DisplayImageInPictureBox(pictureBox3, result.Bitmap);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
-        }
-
         // FORM LOAD
         private void Form1_Load(object sender, EventArgs e)
         {
@@ -479,7 +454,7 @@ namespace diploma5_csharp
             EndImageProcessing();
         }
 
-        private void buttonShadowRemovalLabMethod2_Click(object sender, EventArgs e)
+        private void buttonShadowRemovalLab2Method_Click(object sender, EventArgs e)
         {
             if (!this.CheckShadowRemovalPrerequirements()) return;
             StartImageProcessing();
@@ -616,29 +591,6 @@ namespace diploma5_csharp
             {
                 ImageFileName = _appState.InputImageFileName,
                 EnhanceMethodName = nameof(Fog.RemoveFogUsingDarkChannelPrior),
-                Metrics = null,
-                ExecutionTimeMs = result.ExecutionTimeMs
-            });
-            
-            EndImageProcessing();
-        }
-
-        private void buttonRobbyTanFogRemovalMethod_Click(object sender, EventArgs e)
-        {
-            if (!this.CheckFogRemovalPrerequirements()) return;
-            StartImageProcessing();
-
-            var result = _appState.Fog.RemoveUsingRobbyTanMethod(_appState.InputImageBgr, new FogRemovalParams() { ShowWindows = GetCheckBoxValue(checkBoxShowOptionalWindows) });
-            _appState.SetOutputImage(result.EnhancementResult);
-            _appState.SetShadowMaskImage(result.DetectionResult);
-            this.DisplayImageInPictureBox(pictureBox3, result.EnhancementResult.Bitmap);
-            this.DisplayImageInPictureBox(pictureBox2, result.DetectionResult.Bitmap);
-
-            // save metrics
-            _methodInfoStore.AddOrUpdate(new EnhanceMethodInfoModel
-            {
-                ImageFileName = _appState.InputImageFileName,
-                EnhanceMethodName = nameof(Fog.RemoveUsingRobbyTanMethod),
                 Metrics = null,
                 ExecutionTimeMs = result.ExecutionTimeMs
             });
@@ -1929,5 +1881,7 @@ namespace diploma5_csharp
         {
 
         }
+
+        
     }
 }

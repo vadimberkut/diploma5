@@ -34,18 +34,18 @@ namespace diploma5_csharp
             double L;
             double A;
             double B;
+            Lab color;
             for (int i = 0; i < image.Rows; i += 1)
             {
                 for (int j = 0; j < image.Cols; j += 1)
                 {
-                    Lab color = image[i, j];
-                    //                    byte shadowMaskColor = shadowMask.Data[i, j, 0];
+                    color = image[i, j];
 
                     L = color.X;
                     A = color.Y;
                     B = color.Z;
 
-                    if (channelAverage.A + channelAverage.B <= _params.Threshold)//256
+                    if (channelAverage.A + channelAverage.B <= _params.Threshold) //256
                     {
                         if (L <= (channelAverage.L - stdDevL / 3.0))
                             shadowMask.Data[i, j, 0] = 255;
@@ -74,7 +74,6 @@ namespace diploma5_csharp
             Image<Gray, Byte> shadowMask = new Image<Gray, byte>(new Size(image.Width, image.Height));
             Image<Bgr, Byte> imgGaussian = new Image<Bgr, byte>(new Size(image.Width, image.Height));
             Image<Bgr, Byte> imgMeanShift = new Image<Bgr, byte>(new Size(image.Width, image.Height));
-            Image<Gray, Byte> imgMeanShiftGray;
 
             int kernel = 9; // 5 - 15
             CvInvoke.GaussianBlur(image, imgGaussian, new Size(kernel, kernel), 0);
@@ -86,7 +85,7 @@ namespace diploma5_csharp
             CvInvoke.PyrMeanShiftFiltering(imgGaussian.Mat, imgMeanShift.Mat, sp, sr, maxLevel, new MCvTermCriteria(5, 1));
 
             //Convert BGR to Gray
-            imgMeanShiftGray = ImageHelper.ToGray(imgMeanShift);
+            var imgMeanShiftGray = ImageHelper.ToGray(imgMeanShift);
 
             //Set threshold from params or calc it
             double thresh;
@@ -120,6 +119,10 @@ namespace diploma5_csharp
                 EmguCvWindowManager.Display(shadowMask, "4_shadowMask");
             }
 
+            imgGaussian.Dispose();
+            imgMeanShift.Dispose();
+            imgMeanShiftGray.Dispose();
+
             return shadowMask;
         }
 
@@ -127,8 +130,6 @@ namespace diploma5_csharp
         //http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.695.1720&rep=rep1&type=pdf
         public Image<Emgu.CV.Structure.Gray, Byte> DetectUsingModifiedRatioOfHueOverIntensityMethod(Image<Bgr, Byte> image, ShadowDetectionParams _params)
         {
-            Image<Gray, Byte> shadowMask = new Image<Gray, byte>(new Size(image.Width, image.Height));
-
             //Check params
             //if (_params.Threshold == null)
             //    _params.Threshold = 250;
@@ -220,7 +221,7 @@ namespace diploma5_csharp
             var gray = ImageHelper.ToGray(mergedBgr.Convert<Bgr, Byte>());
             Image<Gray, Byte> grayThersholded = new Image<Gray, byte>(gray.Size);
             CvInvoke.Threshold(gray, grayThersholded, 180, 255, ThresholdType.BinaryInv);
-            shadowMask = grayThersholded;
+            var shadowMask = grayThersholded;
 
             if (_params.ShowWindows)
             {
@@ -231,10 +232,17 @@ namespace diploma5_csharp
                 EmguCvWindowManager.Display(B1, "B1");
                 EmguCvWindowManager.Display(B2, "B2");
                 EmguCvWindowManager.Display(mergedBgr, "mergedBgr");
-                //EmguCvWindowManager.Display(mergedBgr.Convert<Bgr, Byte>(), "mergedBgr c");
                 EmguCvWindowManager.Display(gray, "gray");
                 EmguCvWindowManager.Display(grayThersholded, "grayThersholded");
             }
+
+            I_e.Dispose();
+            H_e.Dispose();
+            R1.Dispose();
+            B1.Dispose();
+            B2.Dispose();
+            mergedBgr.Dispose();
+            gray.Dispose();
 
             return shadowMask;
         }
