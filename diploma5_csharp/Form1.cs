@@ -1055,6 +1055,18 @@ namespace diploma5_csharp
                 else imageType = "X";
 
                 image = new Image<Bgr, byte>(imageFileName);
+
+                // resize to optimal size
+                if (this.checkBoxMinifyLargeImages.Checked)
+                {
+                    if (image.Width > _appState.OPTIMAL_INPUT_IMAGE_WIDTH || image.Height > _appState.OPTIMAL_INPUT_IMAGE_HEIGHT)
+                    {
+                        var t = image.Resize(_appState.OPTIMAL_INPUT_IMAGE_WIDTH, _appState.OPTIMAL_INPUT_IMAGE_HEIGHT, Inter.Linear);
+                        image.Dispose();
+                        image = t;
+                    }
+                }
+
                 _params = new FogRemovalParams { ShowWindows = false, InputImageFileName = imageFileName };
 
                 // DCP
