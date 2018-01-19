@@ -122,14 +122,14 @@
             this.textBoxShadowEdgeMedian_DilationKernelSIze = new System.Windows.Forms.TextBox();
             this.checkBoxMinifyLargeImages = new System.Windows.Forms.CheckBox();
             this.groupBoxComputeMetrics = new System.Windows.Forms.GroupBox();
-            this.checkBoxUniformFog = new System.Windows.Forms.CheckBox();
-            this.checkBoxHeterogeneousFog = new System.Windows.Forms.CheckBox();
-            this.checkBoxCloudyHeterogeneousFog = new System.Windows.Forms.CheckBox();
-            this.checkBoxCloudyFog = new System.Windows.Forms.CheckBox();
+            this.checkBox1ComputeMetricsSaveImages = new System.Windows.Forms.CheckBox();
             this.checkBoxTestDustMethods = new System.Windows.Forms.CheckBox();
+            this.checkBoxCloudyFog = new System.Windows.Forms.CheckBox();
+            this.checkBoxCloudyHeterogeneousFog = new System.Windows.Forms.CheckBox();
+            this.checkBoxHeterogeneousFog = new System.Windows.Forms.CheckBox();
+            this.checkBoxUniformFog = new System.Windows.Forms.CheckBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.checkBox1ComputeMetricsSaveImages = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).BeginInit();
@@ -793,8 +793,6 @@
             // checkBoxRunAllMethodsDust
             // 
             this.checkBoxRunAllMethodsDust.AutoSize = true;
-            this.checkBoxRunAllMethodsDust.Checked = true;
-            this.checkBoxRunAllMethodsDust.CheckState = System.Windows.Forms.CheckState.Checked;
             this.checkBoxRunAllMethodsDust.Location = new System.Drawing.Point(6, 84);
             this.checkBoxRunAllMethodsDust.Name = "checkBoxRunAllMethodsDust";
             this.checkBoxRunAllMethodsDust.Size = new System.Drawing.Size(48, 17);
@@ -805,8 +803,6 @@
             // checkBoxRunAllMethodsSaveAllImages
             // 
             this.checkBoxRunAllMethodsSaveAllImages.AutoSize = true;
-            this.checkBoxRunAllMethodsSaveAllImages.Checked = true;
-            this.checkBoxRunAllMethodsSaveAllImages.CheckState = System.Windows.Forms.CheckState.Checked;
             this.checkBoxRunAllMethodsSaveAllImages.Location = new System.Drawing.Point(6, 40);
             this.checkBoxRunAllMethodsSaveAllImages.Name = "checkBoxRunAllMethodsSaveAllImages";
             this.checkBoxRunAllMethodsSaveAllImages.Size = new System.Drawing.Size(106, 17);
@@ -1032,37 +1028,25 @@
             this.groupBoxComputeMetrics.TabStop = false;
             this.groupBoxComputeMetrics.Text = "Compute metrics";
             // 
-            // checkBoxUniformFog
+            // checkBox1ComputeMetricsSaveImages
             // 
-            this.checkBoxUniformFog.AutoSize = true;
-            this.checkBoxUniformFog.Checked = true;
-            this.checkBoxUniformFog.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBoxUniformFog.Location = new System.Drawing.Point(6, 15);
-            this.checkBoxUniformFog.Name = "checkBoxUniformFog";
-            this.checkBoxUniformFog.Size = new System.Drawing.Size(80, 17);
-            this.checkBoxUniformFog.TabIndex = 115;
-            this.checkBoxUniformFog.Text = "Uniform fog";
-            this.checkBoxUniformFog.UseVisualStyleBackColor = true;
+            this.checkBox1ComputeMetricsSaveImages.AutoSize = true;
+            this.checkBox1ComputeMetricsSaveImages.Location = new System.Drawing.Point(6, 113);
+            this.checkBox1ComputeMetricsSaveImages.Name = "checkBox1ComputeMetricsSaveImages";
+            this.checkBox1ComputeMetricsSaveImages.Size = new System.Drawing.Size(93, 17);
+            this.checkBox1ComputeMetricsSaveImages.TabIndex = 120;
+            this.checkBox1ComputeMetricsSaveImages.Text = "Save images?";
+            this.checkBox1ComputeMetricsSaveImages.UseVisualStyleBackColor = true;
             // 
-            // checkBoxHeterogeneousFog
+            // checkBoxTestDustMethods
             // 
-            this.checkBoxHeterogeneousFog.AutoSize = true;
-            this.checkBoxHeterogeneousFog.Location = new System.Drawing.Point(6, 35);
-            this.checkBoxHeterogeneousFog.Name = "checkBoxHeterogeneousFog";
-            this.checkBoxHeterogeneousFog.Size = new System.Drawing.Size(117, 17);
-            this.checkBoxHeterogeneousFog.TabIndex = 116;
-            this.checkBoxHeterogeneousFog.Text = "Heterogeneous fog";
-            this.checkBoxHeterogeneousFog.UseVisualStyleBackColor = true;
-            // 
-            // checkBoxCloudyHeterogeneousFog
-            // 
-            this.checkBoxCloudyHeterogeneousFog.AutoSize = true;
-            this.checkBoxCloudyHeterogeneousFog.Location = new System.Drawing.Point(6, 73);
-            this.checkBoxCloudyHeterogeneousFog.Name = "checkBoxCloudyHeterogeneousFog";
-            this.checkBoxCloudyHeterogeneousFog.Size = new System.Drawing.Size(150, 17);
-            this.checkBoxCloudyHeterogeneousFog.TabIndex = 117;
-            this.checkBoxCloudyHeterogeneousFog.Text = "Cloudy heterogeneous fog";
-            this.checkBoxCloudyHeterogeneousFog.UseVisualStyleBackColor = true;
+            this.checkBoxTestDustMethods.AutoSize = true;
+            this.checkBoxTestDustMethods.Location = new System.Drawing.Point(6, 91);
+            this.checkBoxTestDustMethods.Name = "checkBoxTestDustMethods";
+            this.checkBoxTestDustMethods.Size = new System.Drawing.Size(119, 17);
+            this.checkBoxTestDustMethods.TabIndex = 119;
+            this.checkBoxTestDustMethods.Text = "Test dust methods?";
+            this.checkBoxTestDustMethods.UseVisualStyleBackColor = true;
             // 
             // checkBoxCloudyFog
             // 
@@ -1074,15 +1058,37 @@
             this.checkBoxCloudyFog.Text = "Cloudy fog";
             this.checkBoxCloudyFog.UseVisualStyleBackColor = true;
             // 
-            // checkBoxTestDustMethods
+            // checkBoxCloudyHeterogeneousFog
             // 
-            this.checkBoxTestDustMethods.AutoSize = true;
-            this.checkBoxTestDustMethods.Location = new System.Drawing.Point(6, 91);
-            this.checkBoxTestDustMethods.Name = "checkBoxTestDustMethods";
-            this.checkBoxTestDustMethods.Size = new System.Drawing.Size(119, 17);
-            this.checkBoxTestDustMethods.TabIndex = 119;
-            this.checkBoxTestDustMethods.Text = "Test dust methods?";
-            this.checkBoxTestDustMethods.UseVisualStyleBackColor = true;
+            this.checkBoxCloudyHeterogeneousFog.AutoSize = true;
+            this.checkBoxCloudyHeterogeneousFog.Location = new System.Drawing.Point(6, 73);
+            this.checkBoxCloudyHeterogeneousFog.Name = "checkBoxCloudyHeterogeneousFog";
+            this.checkBoxCloudyHeterogeneousFog.Size = new System.Drawing.Size(150, 17);
+            this.checkBoxCloudyHeterogeneousFog.TabIndex = 117;
+            this.checkBoxCloudyHeterogeneousFog.Text = "Cloudy heterogeneous fog";
+            this.checkBoxCloudyHeterogeneousFog.UseVisualStyleBackColor = true;
+            // 
+            // checkBoxHeterogeneousFog
+            // 
+            this.checkBoxHeterogeneousFog.AutoSize = true;
+            this.checkBoxHeterogeneousFog.Location = new System.Drawing.Point(6, 35);
+            this.checkBoxHeterogeneousFog.Name = "checkBoxHeterogeneousFog";
+            this.checkBoxHeterogeneousFog.Size = new System.Drawing.Size(117, 17);
+            this.checkBoxHeterogeneousFog.TabIndex = 116;
+            this.checkBoxHeterogeneousFog.Text = "Heterogeneous fog";
+            this.checkBoxHeterogeneousFog.UseVisualStyleBackColor = true;
+            // 
+            // checkBoxUniformFog
+            // 
+            this.checkBoxUniformFog.AutoSize = true;
+            this.checkBoxUniformFog.Checked = true;
+            this.checkBoxUniformFog.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBoxUniformFog.Location = new System.Drawing.Point(6, 15);
+            this.checkBoxUniformFog.Name = "checkBoxUniformFog";
+            this.checkBoxUniformFog.Size = new System.Drawing.Size(80, 17);
+            this.checkBoxUniformFog.TabIndex = 115;
+            this.checkBoxUniformFog.Text = "Uniform fog";
+            this.checkBoxUniformFog.UseVisualStyleBackColor = true;
             // 
             // groupBox1
             // 
@@ -1108,16 +1114,6 @@
             this.groupBox2.TabIndex = 116;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Run all methods";
-            // 
-            // checkBox1ComputeMetricsSaveImages
-            // 
-            this.checkBox1ComputeMetricsSaveImages.AutoSize = true;
-            this.checkBox1ComputeMetricsSaveImages.Location = new System.Drawing.Point(6, 113);
-            this.checkBox1ComputeMetricsSaveImages.Name = "checkBox1ComputeMetricsSaveImages";
-            this.checkBox1ComputeMetricsSaveImages.Size = new System.Drawing.Size(93, 17);
-            this.checkBox1ComputeMetricsSaveImages.TabIndex = 120;
-            this.checkBox1ComputeMetricsSaveImages.Text = "Save images?";
-            this.checkBox1ComputeMetricsSaveImages.UseVisualStyleBackColor = true;
             // 
             // Form1
             // 

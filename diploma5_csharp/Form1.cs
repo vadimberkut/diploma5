@@ -983,471 +983,414 @@ namespace diploma5_csharp
                                                 MessageBoxButtons.YesNo);
             if (confirmResult == DialogResult.No) return;
 
+            // Select folder
+            string imagesPath = "";
+            string[] files = new string[1];
+            var regex = new Regex(@"(\d*\.?jpg|\d*\.?png|\d*\.?bmp)", RegexOptions.IgnoreCase);
+            using (var fbd = new FolderBrowserDialog())
+            {
+                DialogResult result0 = fbd.ShowDialog();
+
+                if (result0 == DialogResult.OK && !string.IsNullOrWhiteSpace(fbd.SelectedPath))
+                {
+                    imagesPath = fbd.SelectedPath;
+                    files = Directory.GetFiles(fbd.SelectedPath);
+                    files = files.Where(x => regex.IsMatch(Path.GetExtension(x))).Where(x => File.Exists(x)).ToArray();
+
+                    if(files.Length == 0)
+                    {
+                        MessageBox.Show("There are no images in specified folder!", "Warning");
+                        return;
+                    }
+                }
+            }
+
             StartImageProcessing();
-            EndImageProcessing();
 
-            //   string imagesPath = @"D:\Google Drive\Diploma5\Images";
-            //   string fogImagesPath = @"FogImagesConverted";
-            //   string dustImagesPath = @"DustImagesConverted";
-            //   string rainImagesPath = @"RainImagesConverted";
-            //   string snowImagesPath = @"SnowImagesConverted";
+            string resultsDestPath = Path.Combine(imagesPath, @"Results");
+            string fogImagesDestPath = Path.Combine(imagesPath, @"Results", @"Fog");
+            string dustImagesDestPath = Path.Combine(imagesPath, @"Results", @"Dust");
 
-            //   string resultsDestPath = Path.Combine(imagesPath, @"Results");
-            //   string fogImagesDestPath = Path.Combine(imagesPath, @"Results", @"Fog");
-            //   string dustImagesDestPath = Path.Combine(imagesPath, @"Results", @"Dust");
-
-            //   if (!Directory.Exists(resultsDestPath)) Directory.CreateDirectory(resultsDestPath);
-            //   if (!Directory.Exists(fogImagesDestPath)) Directory.CreateDirectory(fogImagesDestPath);
-            //   if (!Directory.Exists(dustImagesDestPath)) Directory.CreateDirectory(dustImagesDestPath);
+            if (!Directory.Exists(resultsDestPath)) Directory.CreateDirectory(resultsDestPath);
+            if (!Directory.Exists(fogImagesDestPath)) Directory.CreateDirectory(fogImagesDestPath);
+            if (!Directory.Exists(dustImagesDestPath)) Directory.CreateDirectory(dustImagesDestPath);
 
 
-            //   // delete all files in target directories
-            //   //foreach (var file in Directory.GetFiles(resultsDestPath))
-            //   //{
-            //   //   File.Delete(file);
-            //   //}
-            //   //foreach (var file in Directory.GetFiles(Path.Combine(resultsDestPath, fogImagesDestPath)))
-            //   //{
-            //   //   File.Delete(file);
-            //   //}
-            //   //foreach (var file in Directory.GetFiles(Path.Combine(resultsDestPath, dustImagesDestPath)))
-            //   //{
-            //   //   File.Delete(file);
-            //   //}
+            // delete all files in target directories
+            foreach (var file in Directory.GetFiles(resultsDestPath))
+            {
+                File.Delete(file);
+            }
+            foreach (var file in Directory.GetFiles(Path.Combine(resultsDestPath, fogImagesDestPath)))
+            {
+                File.Delete(file);
+            }
+            foreach (var file in Directory.GetFiles(Path.Combine(resultsDestPath, dustImagesDestPath)))
+            {
+                File.Delete(file);
+            }
 
-            //   // Method_[Fog|Dust|Rain|Snow]_OriginFileName_DetailedResultNumber.Extension
-            //   const string IMAGE_FILENAME_TEMPLATE = "{0}_{1}_{2}_{3}{4}";
+            // Method_[Fog|Dust|Rain|Snow]_OriginFileName_DetailedResultNumber.Extension
+            const string IMAGE_FILENAME_TEMPLATE = "{0}_{1}_{2}_{3}{4}";
 
-            //   // fog (also test on dust, rain, snow images)
-            //   List<string> fogFiles = new List<string>();
-            //   fogFiles.AddRange(Directory.EnumerateFiles(Path.Combine(imagesPath, fogImagesPath)));
-            //   //fogFiles.AddRange(Directory.EnumerateFiles(Path.Combine(imagesPath, dustImagesPath)));
-            //   //fogFiles.AddRange(Directory.EnumerateFiles(Path.Combine(imagesPath, rainImagesPath)));
-            //   //fogFiles.AddRange(Directory.EnumerateFiles(Path.Combine(imagesPath, snowImagesPath)));
+            int totalCount = files.Length;
+            int processedCount = 0;
+            object _lock = new object();
 
-            //   List<string> dustFiles = new List<string>();
-            //   //dustFiles.AddRange(Directory.EnumerateFiles(Path.Combine(imagesPath, fogImagesPath)));
-            //    dustFiles.AddRange(Directory.EnumerateFiles(Path.Combine(imagesPath, dustImagesPath)));
-            //   // dustFiles.AddRange(Directory.EnumerateFiles(Path.Combine(imagesPath, rainImagesPath)));
-            //   //dustFiles.AddRange(Directory.EnumerateFiles(Path.Combine(imagesPath, snowImagesPath)));
-
-            //   int totalFilesToProcess = fogFiles.Count + dustFiles.Count;
-            //   int filesProcessed = 0;
-
-            //   Image<Bgr, byte> image;
-            //   FogRemovalParams _params;
-            //   string method;
-            //   BaseMethodResponse result;
-            //   string imageType;
-            //   IInputArray img;
-            //   string imgPath;
-
-            //   // fog
-            //   if (this.checkBoxRunAllMethodsFog.Checked)
-            //   {
-            //       foreach (var imageFileName in fogFiles)
-            //       {
-            //           if (!File.Exists(imageFileName)) continue;
-
-            //           if (imageFileName.ToLower().Contains("fog")) imageType = "Fog";
-            //           else if (imageFileName.ToLower().Contains("dust")) imageType = "Dust";
-            //           else if (imageFileName.ToLower().Contains("rain")) imageType = "Rain";
-            //           else if (imageFileName.ToLower().Contains("snow")) imageType = "Snow";
-            //           else imageType = "Unknown";
-
-            //           image = new Image<Bgr, byte>(imageFileName);
-            //           _params = new FogRemovalParams { ShowWindows = false, InputImageFileName = imageFileName };
-
-            //           // DCP
-            //           method = this._methodInfoStore.MethodNameMap[nameof(Fog.RemoveFogUsingDarkChannelPrior)];
-            //           result = this._appState.Fog.RemoveFogUsingDarkChannelPrior(image, _params);
-            //           if (this.checkBoxUpdateStats.Checked)
-            //           {
-            //               _methodInfoStore.AddOrUpdate(new EnhanceMethodInfoModel
-            //               {
-            //                   ImageFileName = imageFileName,
-            //                   EnhanceMethodName = nameof(Fog.RemoveFogUsingDarkChannelPrior),
-            //                   Metrics = result.Metrics,
-            //                   ExecutionTimeMs = result.ExecutionTimeMs
-            //               });
-            //           }
-            //           for (int i = result.DetailedResults.Count() - 1; i >= 0; i -= 1)
-            //           {
-            //               if (this.checkBoxRunAllMethodsSaveAllImages.Checked == false)
-            //               {
-            //                   // save only first ad last image
-            //                   if (i != result.DetailedResults.Count() - 1 && i != 0)
-            //                   {
-            //                       continue;
-            //                   }
-            //               }
-            //               img = result.DetailedResults[i];
-            //               imgPath = Path.Combine(fogImagesDestPath, String.Format(IMAGE_FILENAME_TEMPLATE, method, imageType, Path.GetFileNameWithoutExtension(imageFileName), i, Path.GetExtension(imageFileName)));
-            //               CvInvoke.Imwrite(imgPath, img);
-            //           }
-
-            //           result.EnhancementResult.Dispose();
-            //           result.DetectionResult.Dispose();
-            //           GC.Collect();
-
-            //           // MCP
-            //           method = this._methodInfoStore.MethodNameMap[nameof(Fog.RemoveFogUsingMedianChannelPrior)];
-            //           result = this._appState.Fog.RemoveFogUsingMedianChannelPrior(image, _params);
-            //           if (this.checkBoxUpdateStats.Checked)
-            //           {
-            //               _methodInfoStore.AddOrUpdate(new EnhanceMethodInfoModel
-            //               {
-            //                   ImageFileName = imageFileName,
-            //                   EnhanceMethodName = nameof(Fog.RemoveFogUsingMedianChannelPrior),
-            //                   Metrics = result.Metrics,
-            //                   ExecutionTimeMs = result.ExecutionTimeMs
-            //               });
-            //           }
-            //           for (int i = result.DetailedResults.Count() - 1; i >= 0; i -= 1)
-            //           {
-            //               if (this.checkBoxRunAllMethodsSaveAllImages.Checked == false)
-            //               {
-            //                   // save only first ad last image
-            //                   if (i != result.DetailedResults.Count() - 1 && i != 0)
-            //                   {
-            //                       continue;
-            //                   }
-            //               }
-            //               img = result.DetailedResults[i];
-            //               imgPath = Path.Combine(fogImagesDestPath, String.Format(IMAGE_FILENAME_TEMPLATE, method, imageType, Path.GetFileNameWithoutExtension(imageFileName), i, Path.GetExtension(imageFileName)));
-            //               CvInvoke.Imwrite(imgPath, img);
-            //           }
-            //           result.EnhancementResult.Dispose();
-            //           result.DetectionResult.Dispose();
-            //           GC.Collect();
-
-            //           // DCP and CLAHE
-            //           method = this._methodInfoStore.MethodNameMap[nameof(Fog.RemoveFogUsingIdcpWithClahe)];
-            //           result = this._appState.Fog.RemoveFogUsingIdcpWithClahe(image, _params);
-            //           if (this.checkBoxUpdateStats.Checked)
-            //           {
-            //               _methodInfoStore.AddOrUpdate(new EnhanceMethodInfoModel
-            //               {
-            //                   ImageFileName = imageFileName,
-            //                   EnhanceMethodName = nameof(Fog.RemoveFogUsingIdcpWithClahe),
-            //                   Metrics = result.Metrics,
-            //                   ExecutionTimeMs = result.ExecutionTimeMs
-            //               });
-            //           }
-            //           for (int i = result.DetailedResults.Count() - 1; i >= 0; i -= 1)
-            //           {
-            //               if (this.checkBoxRunAllMethodsSaveAllImages.Checked == false)
-            //               {
-            //                   // save only first ad last image
-            //                   if (i != result.DetailedResults.Count() - 1 && i != 0)
-            //                   {
-            //                       continue;
-            //                   }
-            //               }
-            //               img = result.DetailedResults[i];
-            //               imgPath = Path.Combine(fogImagesDestPath, String.Format(IMAGE_FILENAME_TEMPLATE, method, imageType, Path.GetFileNameWithoutExtension(imageFileName), i, Path.GetExtension(imageFileName)));
-            //               CvInvoke.Imwrite(imgPath, img);
-            //           }
-            //           result.EnhancementResult.Dispose();
-            //           result.DetectionResult.Dispose();
-            //           GC.Collect();
-
-            //           // DCP and DFT
-            //           // method = this._methodInfoStore.MethodNameMap[nameof(Fog.RemoveFogUsingDCPAndDFT)];
-            //           //result = this._appState.Fog.RemoveFogUsingDCPAndDFT(image, _params);
-            //           //if (this.checkBoxUpdateStats.Checked)
-            //           //{
-            //           //    _methodInfoStore.AddOrUpdate(new EnhanceMethodInfoModel
-            //           //    {
-            //           //        ImageFileName = imageFileName,
-            //           //        EnhanceMethodName = nameof(Fog.RemoveFogUsingDCPAndDFT),
-            //           //        Metrics = result.Metrics,
-            //           //        ExecutionTimeMs = result.ExecutionTimeMs
-            //           //    });
-            //           //}
-            //           //for (int i = result.DetailedResults.Count() - 1; i >= 0; i -= 1)
-            //           //{
-            //           //if (this.checkBoxRunAllMethodsSaveAllImages.Checked == false)
-            //           //{
-            //           //    // save only first ad last image
-            //           //    if (i != result.DetailedResults.Count() - 1 && i != 0)
-            //           //    {
-            //           //        continue;
-            //           //    }
-            //           //}
-            //           //    img = result.DetailedResults[i];
-            //           //    imgPath = Path.Combine(fogImagesDestPath, String.Format(IMAGE_FILENAME_TEMPLATE, method, imageType, Path.GetFileNameWithoutExtension(imageFileName), i, Path.GetExtension(imageFileName)));
-            //           //    CvInvoke.Imwrite(imgPath, img);
-            //           //}
-            //           //result.EnhancementResult.Dispose();
-            //           //result.DetectionResult.Dispose();
-            //           //GC.Collect();
-
-            //           // MultiCoreDSP
-            //           method = this._methodInfoStore.MethodNameMap[nameof(Fog.RemoveFogUsingMultiCoreDSPMethod)];
-            //           result = this._appState.Fog.RemoveFogUsingMultiCoreDSPMethod(image, _params);
-            //           if (this.checkBoxUpdateStats.Checked)
-            //           {
-            //               _methodInfoStore.AddOrUpdate(new EnhanceMethodInfoModel
-            //               {
-            //                   ImageFileName = imageFileName,
-            //                   EnhanceMethodName = nameof(Fog.RemoveFogUsingMultiCoreDSPMethod),
-            //                   Metrics = result.Metrics,
-            //                   ExecutionTimeMs = result.ExecutionTimeMs
-            //               });
-            //           }
-            //           for (int i = result.DetailedResults.Count() - 1; i >= 0; i -= 1)
-            //           {
-            //               if (this.checkBoxRunAllMethodsSaveAllImages.Checked == false)
-            //               {
-            //                   // save only first ad last image
-            //                   if (i != result.DetailedResults.Count() - 1 && i != 0)
-            //                   {
-            //                       continue;
-            //                   }
-            //               }
-            //               img = result.DetailedResults[i];
-            //               imgPath = Path.Combine(fogImagesDestPath, String.Format(IMAGE_FILENAME_TEMPLATE, method, imageType, Path.GetFileNameWithoutExtension(imageFileName), i, Path.GetExtension(imageFileName)));
-            //               CvInvoke.Imwrite(imgPath, img);
-            //           }
-            //           result.EnhancementResult.Dispose();
-            //           result.DetectionResult.Dispose();
-            //           GC.Collect();
-
-            //           // RobbyTanMethodForRoads
-            //           // method = this._methodInfoStore.MethodNameMap[nameof(Fog.EnhaceVisibilityUsingRobbyTanMethodForRoads)];
-            //           //result = this._appState.Fog.EnhaceVisibilityUsingRobbyTanMethodForRoads(image, _params);
-            //           //if (this.checkBoxUpdateStats.Checked)
-            //           //{
-            //           //    _methodInfoStore.AddOrUpdate(new EnhanceMethodInfoModel
-            //           //    {
-            //           //        ImageFileName = imageFileName,
-            //           //        EnhanceMethodName = nameof(Fog.EnhaceVisibilityUsingRobbyTanMethodForRoads),
-            //           //        Metrics = result.Metrics,
-            //           //        ExecutionTimeMs = result.ExecutionTimeMs
-            //           //    });
-            //           //}
-            //           //for (int i = result.DetailedResults.Count() - 1; i >= 0; i -= 1)
-            //           //{
-            //           //if (this.checkBoxRunAllMethodsSaveAllImages.Checked == false)
-            //           //{
-            //           //    // save only first ad last image
-            //           //    if (i != result.DetailedResults.Count() - 1 && i != 0)
-            //           //    {
-            //           //        continue;
-            //           //    }
-            //           //}
-            //           //    img = result.DetailedResults[i];
-            //           //    imgPath = Path.Combine(fogImagesDestPath, String.Format(IMAGE_FILENAME_TEMPLATE, method, imageType, Path.GetFileNameWithoutExtension(imageFileName), i, Path.GetExtension(imageFileName)));
-            //           //    CvInvoke.Imwrite(imgPath, img);
-            //           //}
-            //           //result.EnhancementResult.Dispose();
-            //           //result.DetectionResult.Dispose();
-            //           //GC.Collect();
-
-            //           // Custom
-            //           method = this._methodInfoStore.MethodNameMap[nameof(Fog.RemoveFogUsingCustomMethod)];
-            //           result = this._appState.Fog.RemoveFogUsingCustomMethod(image, _params);
-            //           if (this.checkBoxUpdateStats.Checked)
-            //           {
-            //               _methodInfoStore.AddOrUpdate(new EnhanceMethodInfoModel
-            //               {
-            //                   ImageFileName = imageFileName,
-            //                   EnhanceMethodName = nameof(Fog.RemoveFogUsingCustomMethod),
-            //                   Metrics = result.Metrics,
-            //                   ExecutionTimeMs = result.ExecutionTimeMs
-            //               });
-            //           }
-            //           for (int i = result.DetailedResults.Count() - 1; i >= 0; i -= 1)
-            //           {
-            //               if (this.checkBoxRunAllMethodsSaveAllImages.Checked == false)
-            //               {
-            //                   // save only first ad last image
-            //                   if (i != result.DetailedResults.Count() - 1 && i != 0)
-            //                   {
-            //                       continue;
-            //                   }
-            //               }
-            //               img = result.DetailedResults[i];
-            //               imgPath = Path.Combine(fogImagesDestPath, String.Format(IMAGE_FILENAME_TEMPLATE, method, imageType, Path.GetFileNameWithoutExtension(imageFileName), i, Path.GetExtension(imageFileName)));
-            //               CvInvoke.Imwrite(imgPath, img);
-            //           }
-            //           result.EnhancementResult.Dispose();
-            //           result.DetectionResult.Dispose();
-            //           GC.Collect();
-
-            //           //// RemoveFogUsingCustomMethodWithDepthEstimation
-            //           //try
-            //           //{
-            //           //    method = this._methodInfoStore.MethodNameMap[nameof(Fog.RemoveFogUsingCustomMethodWithDepthEstimation)];
-            //           //    result = this._appState.Fog.RemoveFogUsingCustomMethodWithDepthEstimation(image, _params);
-            //           //    if (this.checkBoxUpdateStats.Checked)
-            //           //    {
-            //           //        _methodInfoStore.AddOrUpdate(new EnhanceMethodInfoModel
-            //           //        {
-            //           //            ImageFileName = imageFileName,
-            //           //            EnhanceMethodName = nameof(Fog.RemoveFogUsingCustomMethodWithDepthEstimation),
-            //           //            Metrics = result.Metrics,
-            //           //            ExecutionTimeMs = result.ExecutionTimeMs
-            //           //        });
-            //           //    }
-            //           //    for (int i = result.DetailedResults.Count() - 1; i >= 0; i -= 1)
-            //           //    {
-            //           //        if (this.checkBoxRunAllMethodsSaveAllImages.Checked == false)
-            //           //        {
-            //           //            // save only first ad last image
-            //           //            if (i != result.DetailedResults.Count() - 1 && i != 0)
-            //           //            {
-            //           //                continue;
-            //           //            }
-            //           //        }
-            //           //        img = result.DetailedResults[i];
-            //           //        imgPath = Path.Combine(fogImagesDestPath, String.Format(IMAGE_FILENAME_TEMPLATE, method, imageType, Path.GetFileNameWithoutExtension(imageFileName), i, Path.GetExtension(imageFileName)));
-            //           //        CvInvoke.Imwrite(imgPath, img);
-            //           //    }
-            //           //    result.EnhancementResult.Dispose();
-            //           //    result.DetectionResult.Dispose();
-            //           //    GC.Collect();
-            //           //}
-            //           //catch(Exception ex)
-            //           //{
-            //           //    // skip
-            //           //}
-
-            //           // update counter
-            //           filesProcessed += 1;
-
-            //           image.Dispose();
-            //           GC.Collect();
-
-            //           //long maxMemory = 2 * 1024 * 1024 * 1024; // 4 Gb
-            //           // long memoryBytes = GC.GetTotalMemory(true);
-            //       }
-            //   }
-
-            //   // dust (also test on fog, rain, snow images)
-            //   if (this.checkBoxRunAllMethodsDust.Checked)
-            //   {
-            //       foreach (var imageFileName in dustFiles)
-            //       {
-            //           if (imageFileName.ToLower().Contains("fog")) imageType = "Fog";
-            //           else if (imageFileName.ToLower().Contains("dust")) imageType = "Dust";
-            //           else if (imageFileName.ToLower().Contains("rain")) imageType = "Rain";
-            //           else if (imageFileName.ToLower().Contains("snow")) imageType = "Snow";
-            //           else imageType = "Unknown";
-
-            //           image = new Image<Bgr, byte>(imageFileName);
-
-            //           // FuzzyOperators
-            //           method = this._methodInfoStore.MethodNameMap[nameof(Dust.VisibilityEnhancementUsingTunedTriThresholdFuzzyIntensificationOperatorsMethod)];
-            //           var result2 = this._appState.Dust.VisibilityEnhancementUsingTunedTriThresholdFuzzyIntensificationOperatorsMethod(image, new TriThresholdFuzzyIntensificationOperatorsMethodParams { Dzeta = null });
-            //           if (this.checkBoxUpdateStats.Checked)
-            //           {
-            //               _methodInfoStore.AddOrUpdate(new EnhanceMethodInfoModel
-            //               {
-            //                   ImageFileName = imageFileName,
-            //                   EnhanceMethodName = nameof(Dust.VisibilityEnhancementUsingTunedTriThresholdFuzzyIntensificationOperatorsMethod),
-            //                   Metrics = result2.Metrics,
-            //                   ExecutionTimeMs = result2.ExecutionTimeMs
-            //               });
-            //           }
-            //           for (int i = result2.DetailedResults.Count() - 1; i >= 0; i -= 1)
-            //           {
-            //               if (this.checkBoxRunAllMethodsSaveAllImages.Checked == false)
-            //               {
-            //                   // save only first ad last image
-            //                   if (i != result2.DetailedResults.Count() - 1 && i != 0)
-            //                   {
-            //                       continue;
-            //                   }
-            //               }
-            //               img = result2.DetailedResults[i];
-            //               imgPath = Path.Combine(dustImagesDestPath, String.Format(IMAGE_FILENAME_TEMPLATE, method, imageType, Path.GetFileNameWithoutExtension(imageFileName), i, Path.GetExtension(imageFileName)));
-            //               CvInvoke.Imwrite(imgPath, img);
-            //           }
-            //           result2.EnhancementResult.Dispose();
-            //           result2.DetectionResult.Dispose();
-            //           GC.Collect();
-
-            //           // RGBResponseRatioConstancy
-            //           try
-            //           {
-            //               method = this._methodInfoStore.MethodNameMap[nameof(Dust.RecoveringOfWeatherDegradedImagesBasedOnRGBResponseRatioConstancyMethod)];
-            //               result2 = this._appState.Dust.RecoveringOfWeatherDegradedImagesBasedOnRGBResponseRatioConstancyMethod(image, new RGBResponseRatioConstancyMethodParams { ShowWindows = false });
-            //               if (this.checkBoxUpdateStats.Checked)
-            //               {
-            //                   _methodInfoStore.AddOrUpdate(new EnhanceMethodInfoModel
-            //                   {
-            //                       ImageFileName = imageFileName,
-            //                       EnhanceMethodName = nameof(Dust.RecoveringOfWeatherDegradedImagesBasedOnRGBResponseRatioConstancyMethod),
-            //                       Metrics = result2.Metrics,
-            //                       ExecutionTimeMs = result2.ExecutionTimeMs
-            //                   });
-            //               }
-            //               for (int i = result2.DetailedResults.Count() - 1; i >= 0; i -= 1)
-            //               {
-            //                   if (this.checkBoxRunAllMethodsSaveAllImages.Checked == false)
-            //                   {
-            //                       // save only first ad last image
-            //                       if (i != result2.DetailedResults.Count() - 1 && i != 0)
-            //                       {
-            //                           continue;
-            //                       }
-            //                   }
-            //                   img = result2.DetailedResults[i];
-            //                   imgPath = Path.Combine(dustImagesDestPath, String.Format(IMAGE_FILENAME_TEMPLATE, method, imageType, Path.GetFileNameWithoutExtension(imageFileName), i, Path.GetExtension(imageFileName)));
-            //                   CvInvoke.Imwrite(imgPath, img);
-            //               }
-            //               result2.EnhancementResult.Dispose();
-            //               result2.DetectionResult.Dispose();
-            //               GC.Collect();
-            //           }
-            //           catch (Exception ex)
-            //           {
-            //               //Console.Error.WriteLine(ex.Message);
-            //           }
+            files.AsParallel().ForAll(imageFileName =>
+            {
+                Image<Bgr, byte> image;
+                FogRemovalParams _params;
+                string method;
+                BaseMethodResponse result;
+                string imageType;
+                IInputArray img;
+                string imgPath;
 
 
-            //           // RobbyTanMethodForRoads
-            //           method = this._methodInfoStore.MethodNameMap[nameof(Fog.EnhaceVisibilityUsingRobbyTanMethodForRoads)];
-            //           result2 = this._appState.Fog.EnhaceVisibilityUsingRobbyTanMethodForRoads(image, new FogRemovalParams() { ShowWindows = false, InputImageFileName = imageFileName });
-            //           if (this.checkBoxUpdateStats.Checked)
-            //           {
-            //               _methodInfoStore.AddOrUpdate(new EnhanceMethodInfoModel
-            //               {
-            //                   ImageFileName = imageFileName,
-            //                   EnhanceMethodName = nameof(Fog.EnhaceVisibilityUsingRobbyTanMethodForRoads),
-            //                   Metrics = result2.Metrics,
-            //                   ExecutionTimeMs = result2.ExecutionTimeMs
-            //               });
-            //           }
-            //           for (int i = result2.DetailedResults.Count() - 1; i >= 0; i -= 1)
-            //           {
-            //               if (this.checkBoxRunAllMethodsSaveAllImages.Checked == false)
-            //               {
-            //                   // save only first ad last image
-            //                   if (i != result2.DetailedResults.Count() - 1 && i != 0)
-            //                   {
-            //                       continue;
-            //                   }
-            //               }
-            //               img = result2.DetailedResults[i];
-            //               imgPath = Path.Combine(dustImagesDestPath, String.Format(IMAGE_FILENAME_TEMPLATE, method, imageType, Path.GetFileNameWithoutExtension(imageFileName), i, Path.GetExtension(imageFileName)));
-            //               CvInvoke.Imwrite(imgPath, img);
-            //           }
-            //           result2.EnhancementResult.Dispose();
-            //           result2.DetectionResult.Dispose();
-            //           GC.Collect();
+                if (imageFileName.ToLower().Contains("fog")) imageType = "Fog";
+                else if (imageFileName.ToLower().Contains("dust")) imageType = "Dust";
+                else if (imageFileName.ToLower().Contains("rain")) imageType = "Rain";
+                else if (imageFileName.ToLower().Contains("snow")) imageType = "Snow";
+                else imageType = "X";
 
-            //           // update counter
-            //           filesProcessed += 1;
+                image = new Image<Bgr, byte>(imageFileName);
+                _params = new FogRemovalParams { ShowWindows = false, InputImageFileName = imageFileName };
 
-            //           image.Dispose();
-            //           GC.Collect();
-            //       }
-            //   }
+                // DCP
+                method = this._methodInfoStore.MethodNameMap[nameof(Fog.RemoveFogUsingDarkChannelPrior)];
+                result = this._appState.Fog.RemoveFogUsingDarkChannelPrior(image, _params);
+                if (this.checkBoxUpdateStats.Checked)
+                {
+                    _methodInfoStore.AddOrUpdate(new EnhanceMethodInfoModel
+                    {
+                        ImageFileName = imageFileName,
+                        EnhanceMethodName = nameof(Fog.RemoveFogUsingDarkChannelPrior),
+                        ExecutionTimeMs = result.ExecutionTimeMs
+                    });
+                }
+                for (int i = result.DetailedResults.Count() - 1; i >= 0; i -= 1)
+                {
+                    if (this.checkBoxRunAllMethodsSaveAllImages.Checked == false)
+                    {
+                        // save only first and last image
+                        if (i != result.DetailedResults.Count() - 1 && i != 0)
+                        {
+                            continue;
+                        }
+                    }
+                    img = result.DetailedResults[i];
+                    imgPath = Path.Combine(fogImagesDestPath, String.Format(IMAGE_FILENAME_TEMPLATE, method, imageType, Path.GetFileNameWithoutExtension(imageFileName), i, Path.GetExtension(imageFileName)));
+                    CvInvoke.Imwrite(imgPath, img);
+                }
+                result.EnhancementResult.Dispose();
+                result.DetectionResult.Dispose();
+                GC.Collect();
 
-            //MessageBox.Show("Done");
+                // MCP
+                method = this._methodInfoStore.MethodNameMap[nameof(Fog.RemoveFogUsingMedianChannelPrior)];
+                result = this._appState.Fog.RemoveFogUsingMedianChannelPrior(image, _params);
+                if (this.checkBoxUpdateStats.Checked)
+                {
+                    _methodInfoStore.AddOrUpdate(new EnhanceMethodInfoModel
+                    {
+                        ImageFileName = imageFileName,
+                        EnhanceMethodName = nameof(Fog.RemoveFogUsingMedianChannelPrior),
+                        ExecutionTimeMs = result.ExecutionTimeMs
+                    });
+                }
+                for (int i = result.DetailedResults.Count() - 1; i >= 0; i -= 1)
+                {
+                    if (this.checkBoxRunAllMethodsSaveAllImages.Checked == false)
+                    {
+                        // save only first ad last image
+                        if (i != result.DetailedResults.Count() - 1 && i != 0)
+                        {
+                            continue;
+                        }
+                    }
+                    img = result.DetailedResults[i];
+                    imgPath = Path.Combine(fogImagesDestPath, String.Format(IMAGE_FILENAME_TEMPLATE, method, imageType, Path.GetFileNameWithoutExtension(imageFileName), i, Path.GetExtension(imageFileName)));
+                    CvInvoke.Imwrite(imgPath, img);
+                }
+                result.EnhancementResult.Dispose();
+                result.DetectionResult.Dispose();
+                GC.Collect();
+
+                // DCP and CLAHE
+                method = this._methodInfoStore.MethodNameMap[nameof(Fog.RemoveFogUsingIdcpWithClahe)];
+                result = this._appState.Fog.RemoveFogUsingIdcpWithClahe(image, _params);
+                if (this.checkBoxUpdateStats.Checked)
+                {
+                    _methodInfoStore.AddOrUpdate(new EnhanceMethodInfoModel
+                    {
+                        ImageFileName = imageFileName,
+                        EnhanceMethodName = nameof(Fog.RemoveFogUsingIdcpWithClahe),
+                        ExecutionTimeMs = result.ExecutionTimeMs
+                    });
+                }
+                for (int i = result.DetailedResults.Count() - 1; i >= 0; i -= 1)
+                {
+                    if (this.checkBoxRunAllMethodsSaveAllImages.Checked == false)
+                    {
+                        // save only first ad last image
+                        if (i != result.DetailedResults.Count() - 1 && i != 0)
+                        {
+                            continue;
+                        }
+                    }
+                    img = result.DetailedResults[i];
+                    imgPath = Path.Combine(fogImagesDestPath, String.Format(IMAGE_FILENAME_TEMPLATE, method, imageType, Path.GetFileNameWithoutExtension(imageFileName), i, Path.GetExtension(imageFileName)));
+                    CvInvoke.Imwrite(imgPath, img);
+                }
+                result.EnhancementResult.Dispose();
+                result.DetectionResult.Dispose();
+                GC.Collect();
+
+                // DCP and DFT
+                method = this._methodInfoStore.MethodNameMap[nameof(Fog.RemoveFogUsingDCPAndDFT)];
+                result = this._appState.Fog.RemoveFogUsingDCPAndDFT(image, _params);
+                if (this.checkBoxUpdateStats.Checked)
+                {
+                    _methodInfoStore.AddOrUpdate(new EnhanceMethodInfoModel
+                    {
+                        ImageFileName = imageFileName,
+                        EnhanceMethodName = nameof(Fog.RemoveFogUsingDCPAndDFT),
+                        ExecutionTimeMs = result.ExecutionTimeMs
+                    });
+                }
+                for (int i = result.DetailedResults.Count() - 1; i >= 0; i -= 1)
+                {
+                    if (this.checkBoxRunAllMethodsSaveAllImages.Checked == false)
+                    {
+                        // save only first ad last image
+                        if (i != result.DetailedResults.Count() - 1 && i != 0)
+                        {
+                            continue;
+                        }
+                    }
+                    img = result.DetailedResults[i];
+                    imgPath = Path.Combine(fogImagesDestPath, String.Format(IMAGE_FILENAME_TEMPLATE, method, imageType, Path.GetFileNameWithoutExtension(imageFileName), i, Path.GetExtension(imageFileName)));
+                    CvInvoke.Imwrite(imgPath, img);
+                }
+                result.EnhancementResult.Dispose();
+                result.DetectionResult.Dispose();
+                GC.Collect();
+
+                // MultiCoreDSP
+                method = this._methodInfoStore.MethodNameMap[nameof(Fog.RemoveFogUsingMultiCoreDSPMethod)];
+                result = this._appState.Fog.RemoveFogUsingMultiCoreDSPMethod(image, _params);
+                if (this.checkBoxUpdateStats.Checked)
+                {
+                    _methodInfoStore.AddOrUpdate(new EnhanceMethodInfoModel
+                    {
+                        ImageFileName = imageFileName,
+                        EnhanceMethodName = nameof(Fog.RemoveFogUsingMultiCoreDSPMethod),
+                        ExecutionTimeMs = result.ExecutionTimeMs
+                    });
+                }
+                for (int i = result.DetailedResults.Count() - 1; i >= 0; i -= 1)
+                {
+                    if (this.checkBoxRunAllMethodsSaveAllImages.Checked == false)
+                    {
+                        // save only first ad last image
+                        if (i != result.DetailedResults.Count() - 1 && i != 0)
+                        {
+                            continue;
+                        }
+                    }
+                    img = result.DetailedResults[i];
+                    imgPath = Path.Combine(fogImagesDestPath, String.Format(IMAGE_FILENAME_TEMPLATE, method, imageType, Path.GetFileNameWithoutExtension(imageFileName), i, Path.GetExtension(imageFileName)));
+                    CvInvoke.Imwrite(imgPath, img);
+                }
+                result.EnhancementResult.Dispose();
+                result.DetectionResult.Dispose();
+                GC.Collect();
+
+                // Custom
+                method = this._methodInfoStore.MethodNameMap[nameof(Fog.RemoveFogUsingCustomMethod)];
+                result = this._appState.Fog.RemoveFogUsingCustomMethod(image, _params);
+                if (this.checkBoxUpdateStats.Checked)
+                {
+                    _methodInfoStore.AddOrUpdate(new EnhanceMethodInfoModel
+                    {
+                        ImageFileName = imageFileName,
+                        EnhanceMethodName = nameof(Fog.RemoveFogUsingCustomMethod),
+                        ExecutionTimeMs = result.ExecutionTimeMs
+                    });
+                }
+                for (int i = result.DetailedResults.Count() - 1; i >= 0; i -= 1)
+                {
+                    if (this.checkBoxRunAllMethodsSaveAllImages.Checked == false)
+                    {
+                        // save only first ad last image
+                        if (i != result.DetailedResults.Count() - 1 && i != 0)
+                        {
+                            continue;
+                        }
+                    }
+                    img = result.DetailedResults[i];
+                    imgPath = Path.Combine(fogImagesDestPath, String.Format(IMAGE_FILENAME_TEMPLATE, method, imageType, Path.GetFileNameWithoutExtension(imageFileName), i, Path.GetExtension(imageFileName)));
+                    CvInvoke.Imwrite(imgPath, img);
+                }
+                result.EnhancementResult.Dispose();
+                result.DetectionResult.Dispose();
+                GC.Collect();
+
+                //// RemoveFogUsingCustomMethodWithDepthEstimation
+                //try
+                //{
+                //    method = this._methodInfoStore.MethodNameMap[nameof(Fog.RemoveFogUsingCustomMethodWithDepthEstimation)];
+                //    result = this._appState.Fog.RemoveFogUsingCustomMethodWithDepthEstimation(image, _params);
+                //    if (this.checkBoxUpdateStats.Checked)
+                //    {
+                //        _methodInfoStore.AddOrUpdate(new EnhanceMethodInfoModel
+                //        {
+                //            ImageFileName = imageFileName,
+                //            EnhanceMethodName = nameof(Fog.RemoveFogUsingCustomMethodWithDepthEstimation),
+                //            Metrics = result.Metrics,
+                //            ExecutionTimeMs = result.ExecutionTimeMs
+                //        });
+                //    }
+                //    for (int i = result.DetailedResults.Count() - 1; i >= 0; i -= 1)
+                //    {
+                //        if (this.checkBoxRunAllMethodsSaveAllImages.Checked == false)
+                //        {
+                //            // save only first ad last image
+                //            if (i != result.DetailedResults.Count() - 1 && i != 0)
+                //            {
+                //                continue;
+                //            }
+                //        }
+                //        img = result.DetailedResults[i];
+                //        imgPath = Path.Combine(fogImagesDestPath, String.Format(IMAGE_FILENAME_TEMPLATE, method, imageType, Path.GetFileNameWithoutExtension(imageFileName), i, Path.GetExtension(imageFileName)));
+                //        CvInvoke.Imwrite(imgPath, img);
+                //    }
+                //    result.EnhancementResult.Dispose();
+                //    result.DetectionResult.Dispose();
+                //    GC.Collect();
+                //}
+                //catch(Exception ex)
+                //{
+                //    // skip
+                //}
+
+
+                // dust (also test on fog, rain, snow images)
+                if (this.checkBoxRunAllMethodsDust.Checked)
+                {
+                    // FuzzyOperators
+                    method = this._methodInfoStore.MethodNameMap[nameof(Dust.VisibilityEnhancementUsingTunedTriThresholdFuzzyIntensificationOperatorsMethod)];
+                    var result2 = this._appState.Dust.VisibilityEnhancementUsingTunedTriThresholdFuzzyIntensificationOperatorsMethod(image, new TriThresholdFuzzyIntensificationOperatorsMethodParams { Dzeta = null });
+                    if (this.checkBoxUpdateStats.Checked)
+                    {
+                        _methodInfoStore.AddOrUpdate(new EnhanceMethodInfoModel
+                        {
+                            ImageFileName = imageFileName,
+                            EnhanceMethodName = nameof(Dust.VisibilityEnhancementUsingTunedTriThresholdFuzzyIntensificationOperatorsMethod),
+                            ExecutionTimeMs = result2.ExecutionTimeMs
+                        });
+                    }
+                    for (int i = result2.DetailedResults.Count() - 1; i >= 0; i -= 1)
+                    {
+                        if (this.checkBoxRunAllMethodsSaveAllImages.Checked == false)
+                        {
+                            // save only first ad last image
+                            if (i != result2.DetailedResults.Count() - 1 && i != 0)
+                            {
+                                continue;
+                            }
+                        }
+                        img = result2.DetailedResults[i];
+                        imgPath = Path.Combine(dustImagesDestPath, String.Format(IMAGE_FILENAME_TEMPLATE, method, imageType, Path.GetFileNameWithoutExtension(imageFileName), i, Path.GetExtension(imageFileName)));
+                        CvInvoke.Imwrite(imgPath, img);
+                    }
+                    result2.EnhancementResult.Dispose();
+                    result2.DetectionResult.Dispose();
+                    GC.Collect();
+
+                    // RGBResponseRatioConstancy
+                    try
+                    {
+                        method = this._methodInfoStore.MethodNameMap[nameof(Dust.RecoveringOfWeatherDegradedImagesBasedOnRGBResponseRatioConstancyMethod)];
+                        result2 = this._appState.Dust.RecoveringOfWeatherDegradedImagesBasedOnRGBResponseRatioConstancyMethod(image, new RGBResponseRatioConstancyMethodParams { ShowWindows = false });
+                        if (this.checkBoxUpdateStats.Checked)
+                        {
+                            _methodInfoStore.AddOrUpdate(new EnhanceMethodInfoModel
+                            {
+                                ImageFileName = imageFileName,
+                                EnhanceMethodName = nameof(Dust.RecoveringOfWeatherDegradedImagesBasedOnRGBResponseRatioConstancyMethod),
+                                ExecutionTimeMs = result2.ExecutionTimeMs
+                            });
+                        }
+                        for (int i = result2.DetailedResults.Count() - 1; i >= 0; i -= 1)
+                        {
+                            if (this.checkBoxRunAllMethodsSaveAllImages.Checked == false)
+                            {
+                                // save only first ad last image
+                                if (i != result2.DetailedResults.Count() - 1 && i != 0)
+                                {
+                                    continue;
+                                }
+                            }
+                            img = result2.DetailedResults[i];
+                            imgPath = Path.Combine(dustImagesDestPath, String.Format(IMAGE_FILENAME_TEMPLATE, method, imageType, Path.GetFileNameWithoutExtension(imageFileName), i, Path.GetExtension(imageFileName)));
+                            CvInvoke.Imwrite(imgPath, img);
+                        }
+                        result2.EnhancementResult.Dispose();
+                        result2.DetectionResult.Dispose();
+                        GC.Collect();
+                    }
+                    catch (Exception ex)
+                    {
+                        //Console.Error.WriteLine(ex.Message);
+                    }
+
+
+                    // RobbyTanMethodForRoads
+                    method = this._methodInfoStore.MethodNameMap[nameof(Fog.EnhaceVisibilityUsingRobbyTanMethodForRoads)];
+                    result2 = this._appState.Fog.EnhaceVisibilityUsingRobbyTanMethodForRoads(image, new FogRemovalParams() { ShowWindows = false, InputImageFileName = imageFileName });
+                    if (this.checkBoxUpdateStats.Checked)
+                    {
+                        _methodInfoStore.AddOrUpdate(new EnhanceMethodInfoModel
+                        {
+                            ImageFileName = imageFileName,
+                            EnhanceMethodName = nameof(Fog.EnhaceVisibilityUsingRobbyTanMethodForRoads),
+                            ExecutionTimeMs = result2.ExecutionTimeMs
+                        });
+                    }
+                    for (int i = result2.DetailedResults.Count() - 1; i >= 0; i -= 1)
+                    {
+                        if (this.checkBoxRunAllMethodsSaveAllImages.Checked == false)
+                        {
+                            // save only first ad last image
+                            if (i != result2.DetailedResults.Count() - 1 && i != 0)
+                            {
+                                continue;
+                            }
+                        }
+                        img = result2.DetailedResults[i];
+                        imgPath = Path.Combine(dustImagesDestPath, String.Format(IMAGE_FILENAME_TEMPLATE, method, imageType, Path.GetFileNameWithoutExtension(imageFileName), i, Path.GetExtension(imageFileName)));
+                        CvInvoke.Imwrite(imgPath, img);
+                    }
+                    result2.EnhancementResult.Dispose();
+                    result2.DetectionResult.Dispose();
+                    GC.Collect();
+                }
+
+                image.Dispose();
+                GC.Collect();
+
+                lock (_lock)
+                {
+                    processedCount += 1;
+                    if(processedCount == totalCount)
+                    {
+                        MessageBox.Show($"Results were saved to ${resultsDestPath}", "Done");
+                        EndImageProcessing();
+                    }
+                }
+            });
         }
 
         // Compute metrics for test images dataset
@@ -1659,7 +1602,7 @@ namespace diploma5_csharp
                     _methodInfoStore.AddOrUpdate(new EnhanceMethodInfoModel
                     {
                         ImageFileName = imageFileName,
-                        EnhanceMethodName = nameof(Fog.RemoveFogUsingMultiCoreDSPMethod),
+                        EnhanceMethodName = nameof(Fog.RemoveFogUsingDCPAndDFT),
                         Metrics = ImageMetricHelper.ComputeAll(image, result.EnhancementResult),
                         ExecutionTimeMs = result.ExecutionTimeMs
                     });
