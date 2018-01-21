@@ -74,69 +74,6 @@ namespace diploma5_csharp
             return MDCP;
         }
 
-        //estimate airlight by the 0.1% brightest pixels in dark channel
-//        private int EstimateAirlight(Image<Gray, Byte> DC, Image<Bgr, Byte> inputImage)
-//        {
-//            Image<Lab, Byte> inputImageLab = new Image<Lab, byte>(inputImage.Size);
-
-//            double minDC = 0;
-//            double maxDC = 0;
-//            Point minDCLoc = new Point();
-//            Point maxDCLoc = new Point();
-//            int size = DC.Rows * DC.Cols;
-//            double requiredPercent = 0.001; //0.1%
-//            double requiredAmount = size * requiredPercent; //
-
-//            CvInvoke.MinMaxLoc(DC, ref minDC, ref maxDC, ref minDCLoc, ref maxDCLoc);
-//            double max = maxDC;
-//            List<List<int>> brightestDarkChannelPixels = new List<List<int>>();
-//            for (int k = 0; k < requiredAmount && max >= 0; max--)
-//            {
-//                for (int i = 0; i < DC.Rows; i++)
-//                {
-//                    bool _break = false;
-//                    for (int j = 0; j < DC.Cols; j++)
-//                    {
-////                        uchar val = DC.at<uchar>(i, j);
-//                        Gray val = DC[i, j];
-//                        if (val.Intensity == max)
-//                            brightestDarkChannelPixels.Add(new List<int>() { i, j });
-
-//                        if (brightestDarkChannelPixels.Count >= requiredAmount - 1)
-//                        {
-//                            _break = true;
-//                            break;
-//                        }
-//                    }
-//                    if (_break)
-//                        break;
-//                }
-
-//                if (brightestDarkChannelPixels.Count >= requiredAmount)
-//                    break;
-//            }
-
-//            //take pixels with highest intensity in the input image
-//            CvInvoke.CvtColor(inputImage, inputImageLab, ColorConversion.Bgr2Lab);
-//            int airlight = -1;
-//            for (int r = 0; r != brightestDarkChannelPixels.Count; r++)
-//            {
-//                int i = brightestDarkChannelPixels[r][0];
-//                int j = brightestDarkChannelPixels[r][1];
-
-//                Lab pixel = inputImageLab[i, j];
-
-//                double L = pixel.X;
-//                double intensity = L; //take Lab L as insetsity
-//                if (intensity > airlight)
-//                    airlight = (int)intensity;
-//            }
-
-//            /////////////////
-
-//            return airlight;
-//        }
-
         /// <summary>
         /// More elegant (and propeer) code to estimate A
         /// </summary>
@@ -173,9 +110,7 @@ namespace diploma5_csharp
                 return lab[x.Coords.Row, x.Coords.Col].X;
             }).First();
             var A = lab[mostBrightesTransmissionPixelInImage.Coords.Row, mostBrightesTransmissionPixelInImage.Coords.Col].X; // take most dark
-
             lab.Dispose();
-
             return (int)A;
 
         }
@@ -237,7 +172,6 @@ namespace diploma5_csharp
         public BaseMethodResponse EnhaceVisibilityUsingRobbyTanMethodForRoads(Image<Bgr, Byte> image, FogRemovalParams _params)
         {
             Image<Bgr, Byte> E = image;
-            
 
             var stopwatch = new Stopwatch();
             stopwatch.Start();
@@ -251,17 +185,9 @@ namespace diploma5_csharp
             double Airlight = Math.Max(minmax.MaxValues[0], Math.Max(minmax.MaxValues[1], minmax.MaxValues[2]));
 
             // compute Г_c
-            //double G_b = I_b / (I_b + I_g + I_r);
-            //double G_g = I_g / (I_b + I_g + I_r);
-            //double G_r = I_r / (I_b + I_g + I_r);
-
             double G_b = I_b / 255.0;
             double G_g = I_g / 255.0;
             double G_r = I_r / 255.0;
-
-            //double G_b = I_b / Airlight;
-            //double G_g = I_g / Airlight;
-            //double G_r = I_r / Airlight;
 
             // compute normilized input images E'_c
             Image<Bgr, double> E_normilized = new Image<Bgr, double>(image.Size);
@@ -274,10 +200,6 @@ namespace diploma5_csharp
                     double B = E[m, n].Blue / G_b;
                     double G = E[m, n].Green / G_g;
                     double R = E[m, n].Red / G_r;
-
-                    //double B = E[m, n].Blue * G_b;
-                    //double G = E[m, n].Green * G_g;
-                    //double R = E[m, n].Red * G_r;
 
                     // take mod to cut hight value (my assumption)
                     B = B % 255;
@@ -352,9 +274,6 @@ namespace diploma5_csharp
             //var E_normilized_AdjustContast = ImageHelper.AdjustContrast(E_normilized.Convert<Bgr, Byte>(), 5);
             var E_normilized_Gamma = E_normilized.Convert<Bgr, Byte>().Clone();
             E_normilized_Gamma._GammaCorrect(1.4);
-            //EmguCvWindowManager.Display(E_normilized_AGC, "E_normilized_AGC");
-            //EmguCvWindowManager.Display(E_normilized_AdjustContast, "E_normilized_AdjustContast");
-            //EmguCvWindowManager.Display(E_normilized_Gamma, "E_normilized_Gamma");
 
             stopwatch.Stop();
 
@@ -362,12 +281,6 @@ namespace diploma5_csharp
             {
                 EmguCvWindowManager.Display(image, "1 image");
                 EmguCvWindowManager.Display(E_normilized.Convert<Bgr, Byte>(), "2 E_normilized");
-                //EmguCvWindowManager.Display(F, "3 F");
-                //EmguCvWindowManager.Display(F.Convert<Bgr, Byte>(), "3 F.Convert<Bgr, Byte>()");
-                //EmguCvWindowManager.Display(e_beta_dx, "4 e_beta_dx");
-                //EmguCvWindowManager.Display(e_beta_dx.Convert<Bgr, Byte>(), "4 e_beta_dx");
-                //EmguCvWindowManager.Display(processed, "processed");
-                //EmguCvWindowManager.Display(postProcessed, "postProcessed");
                 EmguCvWindowManager.Display(E_normilized_Gamma, "E_normilized_Gamma");
             }
 
@@ -542,17 +455,17 @@ namespace diploma5_csharp
             //var idealHightPassFilter = ImageHelper.IdealHightPassFilter(gray);
             //var idealPassFiltersSum = idealLowPassFilter + idealHightPassFilter;
 
-            //var butterworthLowPassFilter = ImageHelper.ButterworthLowPassFilter(gray);
-            //var butterworthHightPassFilter = ImageHelper.ButterworthHightPassFilter(gray);
-            //var butterworthPassFiltersSum = butterworthLowPassFilter + butterworthHightPassFilter;
+            var butterworthLowPassFilter = ImageHelper.ButterworthLowPassFilter(gray);
+            var butterworthHightPassFilter = ImageHelper.ButterworthHightPassFilter(gray);
+            var butterworthPassFiltersSum = butterworthLowPassFilter + butterworthHightPassFilter;
 
-            var gaussianLowPassFilter = ImageHelper.GaussianLowPassFilter(gray);
-            var gaussianHightPassFilter = ImageHelper.GaussianHightPassFilter(gray);
-            var gaussianPassFiltersSum = gaussianLowPassFilter + gaussianHightPassFilter;
+            //var gaussianLowPassFilter = ImageHelper.GaussianLowPassFilter(gray);
+            //var gaussianHightPassFilter = ImageHelper.GaussianHightPassFilter(gray);
+            //var gaussianPassFiltersSum = gaussianLowPassFilter + gaussianHightPassFilter;
 
             // compute transmission map
-            //var transmission = butterworthPassFiltersSum.Convert<Gray, Byte>().Resize(image.Width, image.Height, Inter.Linear);
-            var transmission = gaussianPassFiltersSum.Convert<Gray, Byte>().Resize(image.Width, image.Height, Inter.Linear);
+            var transmission = butterworthPassFiltersSum.Convert<Gray, Byte>().Resize(image.Width, image.Height, Inter.Linear);
+            //var transmission = gaussianPassFiltersSum.Convert<Gray, Byte>().Resize(image.Width, image.Height, Inter.Linear);
 
             // inverse
             transmission = ImageHelper.Inverse(transmission);
@@ -600,13 +513,13 @@ namespace diploma5_csharp
                 //EmguCvWindowManager.Display(idealHightPassFilter.Convert<Gray, Byte>(), "idealHightPassFilter");
                 //EmguCvWindowManager.Display(idealPassFiltersSum.Convert<Gray, Byte>(), "passFiltersSum");
 
-                //EmguCvWindowManager.Display(butterworthLowPassFilter.Convert<Gray, Byte>(), "butterworthLowPassFilter");
-                //EmguCvWindowManager.Display(butterworthHightPassFilter.Convert<Gray, Byte>(), "butterworthHightPassFilter");
-                //EmguCvWindowManager.Display(butterworthPassFiltersSum.Convert<Gray, Byte>(), "butterworthPassFiltersSum");
+                EmguCvWindowManager.Display(butterworthLowPassFilter.Convert<Gray, Byte>(), "butterworthLowPassFilter");
+                EmguCvWindowManager.Display(butterworthHightPassFilter.Convert<Gray, Byte>(), "butterworthHightPassFilter");
+                EmguCvWindowManager.Display(butterworthPassFiltersSum.Convert<Gray, Byte>(), "butterworthPassFiltersSum");
 
-                EmguCvWindowManager.Display(gaussianLowPassFilter.Convert<Gray, Byte>(), "gaussianLowPassFilter");
-                EmguCvWindowManager.Display(gaussianHightPassFilter.Convert<Gray, Byte>(), "gaussianHightPassFilter");
-                EmguCvWindowManager.Display(gaussianPassFiltersSum.Convert<Gray, Byte>(), "gaussianPassFiltersSum");
+                //EmguCvWindowManager.Display(gaussianLowPassFilter.Convert<Gray, Byte>(), "gaussianLowPassFilter");
+                //EmguCvWindowManager.Display(gaussianHightPassFilter.Convert<Gray, Byte>(), "gaussianHightPassFilter");
+                //EmguCvWindowManager.Display(gaussianPassFiltersSum.Convert<Gray, Byte>(), "gaussianPassFiltersSum");
 
                 EmguCvWindowManager.Display(image, "image");
                 EmguCvWindowManager.Display(transmission, "transmission");
@@ -1233,19 +1146,5 @@ namespace diploma5_csharp
         }
 
         #endregion
-    }
-
-    class RobbyTanPixelPhi
-    {
-        public List<double[,]> PixelPhi{ get; set; }
-
-        public RobbyTanPixelPhi()
-        {
-            PixelPhi = new List<double[,]>();
-        }
-        public RobbyTanPixelPhi(List<double[,]> pixelPhi)
-        {
-            PixelPhi = pixelPhi;
-        }
     }
 }

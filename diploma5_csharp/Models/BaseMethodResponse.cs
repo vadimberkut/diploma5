@@ -17,9 +17,6 @@ namespace diploma5_csharp.Models
         /// Contains intermediate images that was obtained during method execution and describe step-by-step method process
         /// </summary>
         public List<IInputArray> DetailedResults { get; set; }
-
-        //public MetricsResult  Metrics { get; set; }
-        //public MetricsResult  MetricsGT { get; set; }
         public double ExecutionTimeMs { get; set; }
     }
 
