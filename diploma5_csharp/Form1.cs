@@ -274,13 +274,21 @@ namespace diploma5_csharp
                 }
 
                 // resize to optimal size
+                bool largerThanOptimal = image2.Width > _appState.OPTIMAL_INPUT_IMAGE_WIDTH || image2.Height > _appState.OPTIMAL_INPUT_IMAGE_HEIGHT;
                 if (this.checkBoxMinifyLargeImages.Checked)
                 {
-                    if(image2.Width > _appState.OPTIMAL_INPUT_IMAGE_WIDTH || image2.Height > _appState.OPTIMAL_INPUT_IMAGE_HEIGHT)
+                    if(largerThanOptimal)
                     {
                         var t = image2.Resize(_appState.OPTIMAL_INPUT_IMAGE_WIDTH, _appState.OPTIMAL_INPUT_IMAGE_HEIGHT, Inter.Linear);
                         image2.Dispose();
                         image2 = t;
+                    }
+                }
+                else
+                {
+                    if (largerThanOptimal)
+                    {
+                        MessageBox.Show("You opened big size image. Be aware that it will affect execution time.", "Warning!");
                     }
                 }
 
@@ -942,6 +950,8 @@ namespace diploma5_csharp
             using (var fbd = new FolderBrowserDialog())
             {
                 DialogResult result0 = fbd.ShowDialog();
+
+                if (result0 != DialogResult.OK) return;
 
                 if (result0 == DialogResult.OK && !string.IsNullOrWhiteSpace(fbd.SelectedPath))
                 {
