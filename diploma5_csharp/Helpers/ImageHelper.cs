@@ -648,6 +648,8 @@ namespace diploma5_csharp.Helpers
             return result;
         }
 
+
+
         #region Fast Fourier Transform
         // TAKEN FROM https://github.com/rajatvikramsingh/RajatView
 
@@ -724,10 +726,10 @@ namespace diploma5_csharp.Helpers
 
         public static Image<Gray, float> IdealLowPassFilter(Image<Gray, byte> img)
         {
-            Image<Gray, float> im_pad = filter(img.Convert<Gray, float>());
+            Image<Gray, float> im_pad = PerformForwardDiscreteFourierTransform(img.Convert<Gray, float>());
             Image<Gray, float> retimage = new Image<Gray, float>(2 * img.Width, 2 * img.Height);
             var h = retidealmask(img, 150, 0);
-            retimage = convolve(im_pad, h);
+            retimage = Convolve(im_pad, h);
 
             //var maskImg = MaskToImage(h);
             //EmguCvWindowManager.Display(pad(img.Convert<Gray, float>()), "IdealLowPassFilter pad1");
@@ -742,60 +744,77 @@ namespace diploma5_csharp.Helpers
 
         public static Image<Gray, float> IdealHightPassFilter(Image<Gray, byte> img)
         {
-            Image<Gray, float> im_pad = filter(img.Convert<Gray, float>());
+            Image<Gray, float> im_pad = PerformForwardDiscreteFourierTransform(img.Convert<Gray, float>());
             Image<Gray, float> retimage = new Image<Gray, float>(2 * img.Width, 2 * img.Height);
             var h = retidealmask(img, 200, 1);
-            retimage = convolve(im_pad, h);
+            retimage = Convolve(im_pad, h);
             return retimage;
         }
 
         public static Image<Gray, float> ButterworthLowPassFilter(Image<Gray, byte> img)
         {
-            Image<Gray, float> im_pad = filter(img.Convert<Gray, float>());
-            Image<Gray, float> retimage = new Image<Gray, float>(2 * img.Width, 2 * img.Height);
-            var h = retbutterworthmask(img, 1, 0);
-            retimage = convolve(im_pad, h);
-            return retimage;
+            Image<Gray, float> paddedImage = PerformForwardDiscreteFourierTransform(img.Convert<Gray, float>());
+            Image<Gray, float> resultImage = null;
+            var h = GetButterworthMask(img, 1, 0);
+            resultImage = Convolve(paddedImage, h);
+            return resultImage;
         }
 
         public static Image<Gray, float> ButterworthHightPassFilter(Image<Gray, byte> img)
         {
-            Image<Gray, float> im_pad = filter(img.Convert<Gray, float>());
-            Image<Gray, float> retimage = new Image<Gray, float>(2 * img.Width, 2 * img.Height);
-            var h = retbutterworthmask(img, 1, 1);
-            retimage = convolve(im_pad, h);
-            return retimage;
+            Image<Gray, float> paddedImage = PerformForwardDiscreteFourierTransform(img.Convert<Gray, float>());
+            Image<Gray, float> resultImage = null;
+            var mask = GetButterworthMask(img, 1, 1);
+            resultImage = Convolve(paddedImage, mask);
+            return resultImage;
         }
 
         public static Image<Gray, float> GaussianLowPassFilter(Image<Gray, byte> img)
         {
-            Image<Gray, float> im_pad = filter(img.Convert<Gray, float>());
+            Image<Gray, float> im_pad = PerformForwardDiscreteFourierTransform(img.Convert<Gray, float>());
             Image<Gray, float> retimage = new Image<Gray, float>(2 * img.Width, 2 * img.Height);
             var h = retgaussianmask(img, 0);
-            retimage = convolve(im_pad, h);
+            retimage = Convolve(im_pad, h);
             return retimage;
         }
 
         public static Image<Gray, float> GaussianHightPassFilter(Image<Gray, byte> img)
         {
-            Image<Gray, float> im_pad = filter(img.Convert<Gray, float>());
+            Image<Gray, float> im_pad = PerformForwardDiscreteFourierTransform(img.Convert<Gray, float>());
             Image<Gray, float> retimage = new Image<Gray, float>(2 * img.Width, 2 * img.Height);
             var h = retgaussianmask(img, 1);
-            retimage = convolve(im_pad, h);
+            retimage = Convolve(im_pad, h);
             return retimage;
         }
 
-        private static Image<Gray, float> filter(Image<Gray, float> img)
+        /// <summary>
+        /// Performs a forward Discrete Fourier transform 
+        /// </summary>
+        /// <param name="img"></param>
+        /// <returns></returns>
+        private static Image<Gray, float> PerformForwardDiscreteFourierTransform(Image<Gray, float> img)
         {
             Image<Gray, float> im_pad = new Image<Gray, float>(img.Width * 2, img.Height * 2);
             Image<Gray, float> dft = new Image<Gray, float>(img.Width * 2, img.Height * 2);
-            im_pad = pad(img);
-            CvInvoke.Dft(im_pad, dft, DxtType.Forward, 0);
-            return dft;
+            im_pad = PadImage(img);
 
+            // http://www.emgu.com/wiki/files/3.0.0/document/html/030dfa0f-c105-c661-92d2-c79ba367df3b.htm
+            // https://docs.opencv.org/3.4/d2/de8/group__core__array.html#gadd6cf9baf2b8b704a11b5f04aaf4f39d
+            CvInvoke.Dft(
+                src: im_pad, // Source array, real or complex
+                dst: dft, // Destination array of the same size and same type as the source
+                flags: DxtType.Forward, // Transformation flags
+                nonzeroRows: 0 // Number of nonzero rows to in the source array (in case of forward 2d transform), or a number of rows of interest in the destination array (in case of inverse 2d transform). If the value is negative, zero, or greater than the total number of rows, it is ignored. The parameter can be used to speed up 2d convolution/correlation when computing them via DFT
+            );
+            return dft;
         }
 
-        private static Image<Gray, float> pad(Image<Gray, float> ig)
+        /// <summary>
+        /// Increases image in size 2x
+        /// </summary>
+        /// <param name="img"></param>
+        /// <returns></returns>
+        private static Image<Gray, float> PadImage(Image<Gray, float> img)
         {
             // Origin (double size of image with white pixels)
             //Image<Gray, float> im_new = new Image<Gray, float>(ig.Width * 2, ig.Height * 2);
@@ -815,7 +834,9 @@ namespace diploma5_csharp.Helpers
             // return img_return;
 
             // My (resize image in 2 times)
-            return ig.Resize(ig.Width * 2, ig.Height * 2, Inter.Linear);
+            // http://www.emgu.com/wiki/files/3.1.0/document/html/c9c13b1e-4f15-31ea-9d40-4a76d5bee079.htm
+            // https://docs.opencv.org/trunk/da/d54/group__imgproc__transform.html#ga47a974309e9102f5f08231edc7e7529d
+            return img.Resize(img.Width * 2, img.Height * 2, Inter.Linear);
 
             // My (resize optimal)
             //int m = CvInvoke.GetOptimalDFTSize(ig.Rows);
@@ -847,7 +868,18 @@ namespace diploma5_csharp.Helpers
             return h;
         }
 
-        private static double[,] retbutterworthmask(Image<Gray, byte> img, int n, int mode)
+        /// <summary>
+        /// The Butterworth High Pass / Low Pass Filter
+        /// About: https://www.sciencedirect.com/topics/engineering/butterworth
+        /// </summary>
+        /// <param name="img"></param>
+        /// <param name="n">The parameter n is a user-defined positive integer called the order of the filter. As the value of n increases, the BHPF approaches the ideal filter.</param>
+        /// <param name="mode">
+        /// 0 - Low Pass (inverse of High Pass)
+        /// 1 - High Pass
+        /// </param>
+        /// <returns></returns>
+        private static double[,] GetButterworthMask(Image<Gray, byte> img, int n, int mode)
         {
             var h = new double[img.Rows * 2, img.Cols * 2];
             for (int i = 0; i < 2 * img.Rows; i++)
@@ -885,36 +917,45 @@ namespace diploma5_csharp.Helpers
             return h;
         }
 
-        private static Image<Gray, float> convolve(Image<Gray, float> img, double[,] h)
+        private static Image<Gray, float> Convolve(Image<Gray, float> img, double[,] mask)
         {
-            Image<Gray, float> ans = new Image<Gray, float>(img.Width, img.Height);
-            Image<Gray, float> retimg = new Image<Gray, float>(img.Width, img.Height);
-            Image<Gray, float> retimg1 = new Image<Gray, float>(img.Width / 2, img.Height / 2);
+            Image<Gray, float> convultionResult = new Image<Gray, float>(img.Width, img.Height);
+            Image<Gray, float> resultImage = new Image<Gray, float>(img.Width, img.Height);
+            Image<Gray, float> resultResizedImage = new Image<Gray, float>(img.Width / 2, img.Height / 2);
+
             for (int k = 0; k < img.Rows; k++)
+            {
                 for (int l = 0; l < img.Cols; l++)
                 {
-                    ans[k, l] = new Gray(img[k, l].Intensity * h[k, l]);
+                    convultionResult[k, l] = new Gray(img[k, l].Intensity * mask[k, l]);
                 }
-            CvInvoke.Dft(ans, retimg, DxtType.InvScale, 0);
-            //CvInvoke.Dft(ans, retimg, DxtType.Inverse, 0);
+            }
+
+            CvInvoke.Dft(
+                src: convultionResult, 
+                dst: resultImage, 
+                flags: DxtType.InvScale, 
+                nonzeroRows: 0
+            );
+            //CvInvoke.Dft(convultionResult, resultImage, DxtType.Inverse, 0);
 
             // Original (reduce image size back)
             //for (int k = 0; k < img.Rows / 2; k++)
             //    for (int l = 0; l < img.Cols / 2; l++)
             //    {
-            //        retimg1[k, l] = retimg[k, l];
+            //        resultResizedImage[k, l] = resultImage[k, l];
             //    }
 
             // My (resize image back)
-            retimg1 = retimg.Resize(retimg.Width / 2, retimg.Height / 2, Inter.Linear);
+            resultResizedImage = resultImage.Resize(resultImage.Width / 2, resultImage.Height / 2, Inter.Linear);
 
-            // My (resize optimal)
-            //retimg1 = retimg;
-
-            return retimg1;
+            return resultResizedImage;
         }
 
       #endregion
+
+
+
 
 
       // Source - http://efundies.com/adjust-the-contrast-of-an-image-in-c/
