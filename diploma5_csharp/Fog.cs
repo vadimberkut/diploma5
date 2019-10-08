@@ -1009,9 +1009,12 @@ namespace diploma5_csharp
             var processed = ImageHelper.ToBgr(hsv);
             var postProcessed = ImageHelper.AdjustContrast(processed);
 
+            // https://en.wikipedia.org/wiki/Unsharp_masking
+            // https://github.com/fschultz/NetImageLibrary/blob/master/Filters/UnsharpMaskFilter.cs
             KalikoImage imageK = new KalikoImage(postProcessed.Bitmap);
             imageK.ApplyFilter(new UnsharpMaskFilter(radius: 2.5f, amount: 0.7f, threshold: 0));
             var postProcessed2 = new Image<Bgr, byte>(imageK.GetAsBitmap());
+
             return postProcessed2;
         }
 
