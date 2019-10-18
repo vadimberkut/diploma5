@@ -873,19 +873,25 @@ namespace diploma5_csharp.Helpers
         /// About: https://www.sciencedirect.com/topics/engineering/butterworth
         /// </summary>
         /// <param name="img"></param>
-        /// <param name="n">The parameter n is a user-defined positive integer called the order of the filter. As the value of n increases, the BHPF approaches the ideal filter.</param>
+        /// <param name="p">
+        /// The parameter n is a user-defined positive integer called the order of the filter. As the value of n increases, the BHPF approaches the ideal filter.
+        /// порядок фильтра (если верить литературе, то его оптимальное значение 2)
+        /// </param>
         /// <param name="mode">
         /// 0 - Low Pass (inverse of High Pass)
         /// 1 - High Pass
         /// </param>
         /// <returns></returns>
-        private static double[,] GetButterworthMask(Image<Gray, byte> img, int n, int mode)
+        private static double[,] GetButterworthMask(Image<Gray, byte> img, int p, int mode)
         {
+            // D0 - расстояние от начала координат в частотной области
+            int D0 = 30;
+
             var h = new double[img.Rows * 2, img.Cols * 2];
             for (int i = 0; i < 2 * img.Rows; i++)
                 for (int j = 0; j < 2 * img.Cols; j++)
                 {
-                    h[i, j] = 1 / (Math.Pow((Math.Sqrt(Math.Pow((i - (img.Width)), 2) + Math.Pow(j - (img.Height), 2)) / 30), 2 * n) + 1);
+                    h[i, j] = 1 / (Math.Pow((Math.Sqrt(Math.Pow((i - (img.Width)), 2) + Math.Pow(j - (img.Height), 2)) / D0), 2 * p) + 1);
                 }
             if (mode == 0)
             {

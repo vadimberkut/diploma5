@@ -935,14 +935,24 @@ namespace diploma5_csharp
 
             // 1. Compute transmission using high/low pass filters
             var gray = ImageHelper.ToGray(image);
+
+            // contains positive and negative numbers
             var hpF = ImageHelper.ButterworthHightPassFilter(gray);
             var lpF = ImageHelper.ButterworthLowPassFilter(gray);
+
+            // result is in [0;255]
             var T_float = hpF + lpF;
+
             var T = T_float.Convert<Gray, byte>();
             T = ImageHelper.Inverse(T);
             T = T.SmoothMedian(5);
 
-            // stretch to [0;1]
+            // just for debug
+            hpF.MinMax(out double[] minValues1, out double[] maxValues1, out Point[] minLocations1, out Point[] maxLocations1);
+            lpF.MinMax(out double[] minValues2, out double[] maxValues2, out Point[] minLocations2, out Point[] maxLocations2);
+            T_float.MinMax(out double[] minValues3, out double[] maxValues3, out Point[] minLocations3, out Point[] maxLocations3);
+
+            // stretch to [0;255]
             double[] minValues, maxValues; Point[] minLocations, maxLocations;
             T.MinMax(out minValues, out maxValues, out minLocations, out maxLocations);
             double Tmin = minValues[0];
@@ -968,6 +978,16 @@ namespace diploma5_csharp
             if (_params.ShowWindows)
             {
                 EmguCvWindowManager.Display(image, "image");
+
+                EmguCvWindowManager.Display(hpF, "hpF");
+                EmguCvWindowManager.Display(hpF.Convert<Gray, byte>(), "hpF.Convert<Gray, byte>()");
+                EmguCvWindowManager.Display(lpF, "lpF");
+                EmguCvWindowManager.Display(lpF.Convert<Gray, byte>(), "lpF.Convert<Gray, byte>()");
+                EmguCvWindowManager.Display(T_float, "T_float");
+                EmguCvWindowManager.Display(T_float.Convert<Gray, byte>(), "T_float.Convert<Gray, byte>()");
+
+                EmguCvWindowManager.Display(ImageHelper.Inverse(image.Convert<Gray, byte>()), "ImageHelper.Inverse(image.Convert<Gray, byte>())");
+
                 EmguCvWindowManager.Display(T, "T");
                 EmguCvWindowManager.Display(processed, "processed");
             }
